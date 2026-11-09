@@ -114,10 +114,10 @@ h1{font-size:var(--fs-title);margin:0 0 6px;letter-spacing:-.02em;color:var(--te
 <body>
 <div class="wrap">
   <h1>Gói AI của Tuấn</h1>
-  <p class="summary">Theo dõi nhanh 4 gói AI và credit API — sắp xếp theo ngày gia hạn. Cả 4 gói trả bằng Visa •••• 4771. Cập nhật <span class="js-vn-time">9/11 18:28</span>.</p>
+  <p class="summary">Theo dõi nhanh 4 gói AI và credit API — sắp xếp theo ngày gia hạn. Cả 4 gói trả bằng Visa •••• 4771. Cập nhật <span class="js-vn-time">10/11 03:20</span>.</p>
 
   <div class="hero"><div class="hero-grad"><div class="hero-inner">
-    <div class="hero-label">Tổng chi tháng · 4/4 gói · Cập nhật <span class="js-vn-time">9/11 18:28</span></div>
+    <div class="hero-label">Tổng chi tháng · 4/4 gói · Cập nhật <span class="js-vn-time">10/11 03:20</span></div>
     <div class="hero-total">8.354.000₫</div>
     <div class="hero-fx">1 USD ≈ 25.580₫ · Claude ~2.558k + ChatGPT ~2.558k + Grok 2.749k + Gemini 489k</div>
     <div class="brand-row">
@@ -129,10 +129,10 @@ h1{font-size:var(--fs-title);margin:0 0 6px;letter-spacing:-.02em;color:var(--te
     <div class="next">
       <div>
         <div class="next-kicker">KẾ TIẾP</div>
-        <div class="next-title">Claude Max · 23/11/2026</div>
-        <div class="next-sub">$100/tháng · ~2.558.000₫</div>
+        <div class="next-title" id="next-title">Claude Max · 23/11/2026</div>
+        <div class="next-sub" id="next-sub">$100/tháng · ~2.558.000₫</div>
       </div>
-      <span class="chip amber"><span class="dot"></span>Còn 14 ngày</span>
+      <span class="chip amber" id="next-chip"><span class="dot"></span>Còn — ngày</span>
     </div>
   </div></div></div>
 
@@ -207,7 +207,7 @@ h1{font-size:var(--fs-title);margin:0 0 6px;letter-spacing:-.02em;color:var(--te
           <div class="subblock">
             <div class="bar-top"><div class="bar-label">Hạn mức tuần (gói Super)</div><div class="bar-val" style="color:#16A34A">0% đã dùng</div></div>
             <div class="track"><div class="fill" style="width:0%;background:#16A34A"></div></div>
-            <div class="bar-detail">Reset 08:55 thứ Năm 12/11/2026 (giờ VN) · dùng chung với các app khác trong gói · reset sớm 10/11</div>
+            <div class="bar-detail" id="grok-reset-line">Reset 08:55 thứ Năm 12/11/2026 (giờ VN) · dùng chung với các app khác trong gói · reset sớm 10/11</div>
             <div class="bar-meta">Nguồn: kiểm 10/11/2026 02:56</div>
           </div>
           <div class="subblock" style="margin-top:12px">
@@ -247,7 +247,6 @@ h1{font-size:var(--fs-title);margin:0 0 6px;letter-spacing:-.02em;color:var(--te
   </details>
 </div>
 <script>
-const TODAY=new Date(2026,10,9);
 const logos={
   claude:`<svg style="width:16px;height:16px;display:block;flex-shrink:0;color:#fff"  viewBox="0 0 24 24" ><path fill="currentColor" d="M17.3041 3.541h-3.6718l6.696 16.918H24Zm-10.6082 0L0 20.459h3.7442l1.3693-3.5527h7.0052l1.3693 3.5528h3.7442L10.5363 3.5409Zm-.3712 10.2232 2.2914-5.9456 2.2914 5.9456Z"/></svg>`,
   chatgpt:`<svg style="width:16px;height:16px;display:block;flex-shrink:0;color:#fff"  viewBox="0 0 24 24" ><path fill="currentColor" d="M22.2819 9.8211a5.9847 5.9847 0 0 0-.5157-4.9108 6.0462 6.0462 0 0 0-6.5098-2.9A6.0651 6.0651 0 0 0 4.9807 4.1818a5.9847 5.9847 0 0 0-3.9977 2.9 6.0462 6.0462 0 0 0 .7427 7.0966 5.98 5.98 0 0 0 .511 4.9107 6.051 6.051 0 0 0 6.5146 2.9001A5.9847 5.9847 0 0 0 13.2599 24a6.0557 6.0557 0 0 0 5.7718-4.2058 5.9894 5.9894 0 0 0 3.9977-2.9001 6.0557 6.0557 0 0 0-.7475-7.0729zm-9.022 12.6081a4.4755 4.4755 0 0 1-2.8764-1.0408l.1419-.0804 4.7783-2.7582a.7948.7948 0 0 0 .3927-.6813v-6.7369l2.02 1.1686a.071.071 0 0 1 .038.052v5.5826a4.504 4.504 0 0 1-4.4945 4.4944zm-9.6607-4.1254a4.4708 4.4708 0 0 1-.5346-3.0137l.142.0852 4.783 2.7582a.7712.7712 0 0 0 .7806 0l5.8428-3.3685v2.3324a.0804.0804 0 0 1-.0332.0615L9.74 19.9502a4.4992 4.4992 0 0 1-6.1408-1.6464zM2.3408 7.8956a4.485 4.485 0 0 1 2.3655-1.9728V11.6a.7664.7664 0 0 0 .3879.6765l5.8144 3.3543-2.0201 1.1685a.0757.0757 0 0 1-.071 0l-4.8303-2.7865A4.504 4.504 0 0 1 2.3408 7.872zm16.5963 3.8558L13.1038 8.364 15.1192 7.2a.0757.0757 0 0 1 .071 0l4.8303 2.7913a4.4944 4.4944 0 0 1-.6765 8.1042v-5.6772a.79.79 0 0 0-.407-.667zm2.0107-3.0231l-.142-.0852-4.7735-2.7818a.7759.7759 0 0 0-.7854 0L9.409 9.2297V6.8974a.0662.0662 0 0 1 .0284-.0615l4.8303-2.7866a4.4992 4.4992 0 0 1 6.6802 4.66zM8.3065 12.863l-2.02-1.1638a.0804.0804 0 0 1-.038-.0567V6.0742a4.4992 4.4992 0 0 1 7.3757-3.4537l-.142.0805L8.704 5.459a.7948.7948 0 0 0-.3927.6813zm1.0976-2.3654l2.602-1.4998 2.6069 1.4998v2.9994l-2.5974 1.4997-2.6067-1.4997Z"/></svg>`,
@@ -270,8 +269,59 @@ const entries=[
   {id:"gemini",kind:"sub",name:"Google AI Pro (5 TB)",plan:"Google One — Google AI Pro (5 TB)",dateLabel:"3/12/2026",date:new Date(2026,11,3),priceMain:"489.000₫/tháng",priceSub:"không có hoá đơn trong Gmail — số liệu từ trang billing 9/11/2026",payment:"Google Wallet Visa •••• 4771",detailLines:["Tự động gia hạn","Cùng thẻ Visa •••• 4771 với Claude / ChatGPT / Grok","Nguồn: screenshot Google Wallet 9/11/2026; giá one.google.com / gemini.google/vn"]},
   {id:"grok",kind:"sub",name:"Grok Super",plan:"Super (monthly)",dateLabel:"7/12/2026",date:new Date(2026,11,7),priceMain:"2.749.000₫",priceSub:"lần sau · charge 7/11: 2.643.323₫ đã paid",payment:"Visa •••• 4771",detailLines:["Kỳ 7/11–7/12/2026","PDF hoá đơn FF3789F04A","Cùng thẻ Visa •••• 4771 với Claude / ChatGPT / Gemini","Nguồn: email X Subscription 7/11/2026"]}
 ];
-function daysUntil(d){return Math.round((d.getTime()-TODAY.getTime())/86400000)}
-function chipClass(d){if(d<=3)return"red";if(d<=14)return"amber";return"ok"}
+function vnTodayParts(){
+  const parts=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Ho_Chi_Minh',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date());
+  const get=t=>parts.find(p=>p.type===t).value;
+  return {y:+get('year'),m:+get('month'),d:+get('day')};
+}
+function daysUntil(d){
+  const t=vnTodayParts();
+  const a=Date.UTC(t.y,t.m-1,t.d);
+  const b=Date.UTC(d.getFullYear(),d.getMonth(),d.getDate());
+  return Math.round((b-a)/86400000);
+}
+function chipClass(days){
+  if(days<0)return"red";
+  if(days<=3)return"red";
+  if(days<=14)return"amber";
+  return"ok";
+}
+function chipLabel(days){
+  if(days<0)return"Đã qua";
+  if(days===0)return"Hôm nay";
+  return"Còn "+days+" ngày";
+}
+function formatGrokResetLine(){
+  const target=Date.parse('2026-11-12T01:55:00.000Z'); // 12/11/2026 08:55 Asia/Ho_Chi_Minh (UTC+7)
+  const diff=target-Date.now();
+  const base="Reset 08:55 thứ Năm 12/11/2026 (giờ VN) · dùng chung với các app khác trong gói · reset sớm 10/11";
+  if(diff<=0)return base+" · Đã qua mốc reset";
+  const days=Math.floor(diff/86400000);
+  const hours=Math.floor((diff%86400000)/3600000);
+  const mins=Math.floor((diff%3600000)/60000);
+  if(days>0)return base+" · còn "+days+" ngày "+hours+"g đến reset";
+  return base+" · còn "+hours+"g "+mins+"p đến reset";
+}
+function updateHeroNext(){
+  const upcoming=entries
+    .map(e=>({e,days:daysUntil(e.date)}))
+    .filter(x=>x.days>=0)
+    .sort((a,b)=>a.days-b.days||a.e.date-b.e.date);
+  const pick=upcoming[0]||{e:entries[0],days:daysUntil(entries[0].date)};
+  const title=document.getElementById('next-title');
+  const sub=document.getElementById('next-sub');
+  const chip=document.getElementById('next-chip');
+  if(title)title.textContent=pick.e.name+" · "+pick.e.dateLabel;
+  if(sub){
+    const priceBit=pick.e.priceMain;
+    const vnd=(pick.e.priceSub||"").split(" · ")[0]||"";
+    sub.textContent=vnd?priceBit+" · "+vnd:priceBit;
+  }
+  if(chip){
+    chip.className="chip "+chipClass(pick.days);
+    chip.innerHTML='<span class="dot"></span>'+chipLabel(pick.days);
+  }
+}
 const root=document.getElementById("timeline");
 let openId="claude";
 function render(){
@@ -285,10 +335,10 @@ function render(){
         <div class="card-head-bar ${b.hdr}"><div class="logo-wrap">${logos[b.logo]}</div><span style="font-weight:750">${e.name}</span>${e.kind==="api"?'<span class="tag-api">API</span>':""}</div>
         <div class="card-head" role="button" tabindex="0">
           <div class="card-top"><div class="card-meta"><span class="date" style="color:${b.accent}">${e.dateLabel}</span></div>
-          <span class="chip ${tone}"><span class="dot"></span>Còn ${days} ngày</span></div>
+          <span class="chip ${tone}"><span class="dot"></span>${chipLabel(days)}</span></div>
           <div class="price-row"><span class="price-main">${e.priceMain}</span>${e.priceSub?`<span class="price-sub">${e.priceSub}</span>`:""}</div>
           ${e.kind==="sub"&&e.payment?`<div class="pay-line">Thanh toán: ${e.payment}</div>`:""}
-          <div class="hint">${open?"Thu gọn chi tiết ▴":"Xem thẻ / nguồn ▾"}${tone==="amber"||tone==="red"?" · sắp đến hạn":""}</div>
+          <div class="hint">${open?"Thu gọn chi tiết ▴":"Xem thẻ / nguồn ▾"}${days<0?"":(tone==="amber"||tone==="red"?" · sắp đến hạn":"")}</div>
         </div>
         <div class="details">
           ${e.plan?`<div class="dl"><span class="k">Gói</span><span class="v">${e.plan}</span></div>`:""}
@@ -301,6 +351,11 @@ function render(){
   });
 }
 render();
+updateHeroNext();
+(function(){
+  const el=document.getElementById('grok-reset-line');
+  if(el) el.textContent=formatGrokResetLine();
+})();
 </script>
 
 <script>
