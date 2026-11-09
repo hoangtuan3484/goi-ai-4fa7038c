@@ -103,6 +103,12 @@ h1{font-size:var(--fs-title);margin:0 0 6px;letter-spacing:-.02em;color:var(--te
 .hdr-gemini{background:linear-gradient(135deg,#4285F4,#9B72CB,#D96570)}
 .hdr-grok{background:linear-gradient(135deg,#1f2937,#111);border-bottom:2px solid #EAB308}
 .hdr-bot{background:linear-gradient(135deg,#FF5C8A,#FF8F6B)}
+.api-group{display:flex;flex-direction:column;gap:10px;padding:12px;border-radius:16px;border:1px solid var(--border);background:rgba(255,255,255,.65);box-shadow:0 6px 16px rgba(14,165,233,.08)}
+.api-group-title{display:flex;align-items:center;gap:8px;font-weight:750;font-size:var(--fs-section);color:var(--text);margin:0 0 2px}
+.api-group-title .logo-wrap{width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,#4285F4,#9B72CB,#D96570);display:flex;align-items:center;justify-content:center}
+.api-group-title .logo-wrap svg{width:16px;height:16px;color:#fff}
+.api-group-cap{font-size:var(--fs-meta);color:var(--text3);margin:0 0 4px}
+.bar.nested{box-shadow:none}
 </style>
 </head>
 <body>
@@ -136,43 +142,71 @@ h1{font-size:var(--fs-title);margin:0 0 6px;letter-spacing:-.02em;color:var(--te
     <div id="timeline"></div>
   </section>
 
-  <section class="section">
+  <section class="section" id="api-balances">
     <h2>Số dư API</h2>
-    <p class="cap">Kiểm 9/11/2026</p>
+    <p class="cap">Kiểm 9/11/2026 19:09</p>
     <div class="bars">
       <div class="bar">
         <div class="bar-hdr hdr-claude"><div class="logo-wrap"><svg style="width:16px;height:16px;display:block;flex-shrink:0;color:#fff"  viewBox="0 0 24 24" ><path fill="currentColor" d="M17.3041 3.541h-3.6718l6.696 16.918H24Zm-10.6082 0L0 20.459h3.7442l1.3693-3.5527h7.0052l1.3693 3.5528h3.7442L10.5363 3.5409Zm-.3712 10.2232 2.2914-5.9456 2.2914 5.9456Z"/></svg></div><strong>Anthropic API</strong></div>
         <div class="bar-body">
-          <div class="bar-top"><div class="bar-label">Credit Max</div><div class="bar-val">$83,57 / $100</div></div>
-          <div class="track"><div class="fill" style="width:83.57%;background:var(--claude)"></div></div>
-          <div class="bar-detail">Tuan Nguyen&apos;s Individual Org · credit $100/tháng gắn Max · nạp lại 24/11 · đã dùng $16,43 tháng này · Key trên box hết hạn 2/12/2026</div>
-          <div class="bar-meta">platform.claude.com + screenshot billing, 9/11/2026</div>
+          <div class="bar-top"><div class="bar-label">Promotional credit</div><div class="bar-val">$82,86 / $100</div></div>
+          <div class="track"><div class="fill" style="width:82.86%;background:var(--claude)"></div></div>
+          <div class="bar-detail">Purchased $0,00 · cấp 23/10/2026 · <strong>HẾT HẠN 26/11/2026</strong> · trang billing ghi hết hạn 26/11, chưa thấy thông tin nạp lại (gói Max thường cấp $100/tháng) · Key trên box hết hạn 2/12/2026</div>
+          <div class="bar-meta">platform.claude.com billing, kiểm 9/11/2026 19:09</div>
         </div>
       </div>
       <div class="bar">
         <div class="bar-hdr hdr-openai"><div class="logo-wrap"><svg style="width:16px;height:16px;display:block;flex-shrink:0;color:#fff"  viewBox="0 0 24 24" ><path fill="currentColor" d="M22.2819 9.8211a5.9847 5.9847 0 0 0-.5157-4.9108 6.0462 6.0462 0 0 0-6.5098-2.9A6.0651 6.0651 0 0 0 4.9807 4.1818a5.9847 5.9847 0 0 0-3.9977 2.9 6.0462 6.0462 0 0 0 .7427 7.0966 5.98 5.98 0 0 0 .511 4.9107 6.051 6.051 0 0 0 6.5146 2.9001A5.9847 5.9847 0 0 0 13.2599 24a6.0557 6.0557 0 0 0 5.7718-4.2058 5.9894 5.9894 0 0 0 3.9977-2.9001 6.0557 6.0557 0 0 0-.7475-7.0729zm-9.022 12.6081a4.4755 4.4755 0 0 1-2.8764-1.0408l.1419-.0804 4.7783-2.7582a.7948.7948 0 0 0 .3927-.6813v-6.7369l2.02 1.1686a.071.071 0 0 1 .038.052v5.5826a4.504 4.504 0 0 1-4.4945 4.4944zm-9.6607-4.1254a4.4708 4.4708 0 0 1-.5346-3.0137l.142.0852 4.783 2.7582a.7712.7712 0 0 0 .7806 0l5.8428-3.3685v2.3324a.0804.0804 0 0 1-.0332.0615L9.74 19.9502a4.4992 4.4992 0 0 1-6.1408-1.6464zM2.3408 7.8956a4.485 4.485 0 0 1 2.3655-1.9728V11.6a.7664.7664 0 0 0 .3879.6765l5.8144 3.3543-2.0201 1.1685a.0757.0757 0 0 1-.071 0l-4.8303-2.7865A4.504 4.504 0 0 1 2.3408 7.872zm16.5963 3.8558L13.1038 8.364 15.1192 7.2a.0757.0757 0 0 1 .071 0l4.8303 2.7913a4.4944 4.4944 0 0 1-.6765 8.1042v-5.6772a.79.79 0 0 0-.407-.667zm2.0107-3.0231l-.142-.0852-4.7735-2.7818a.7759.7759 0 0 0-.7854 0L9.409 9.2297V6.8974a.0662.0662 0 0 1 .0284-.0615l4.8303-2.7866a4.4992 4.4992 0 0 1 6.6802 4.66zM8.3065 12.863l-2.02-1.1638a.0804.0804 0 0 1-.038-.0567V6.0742a4.4992 4.4992 0 0 1 7.3757-3.4537l-.142.0805L8.704 5.459a.7948.7948 0 0 0-.3927.6813zm1.0976-2.3654l2.602-1.4998 2.6069 1.4998v2.9994l-2.5974 1.4997-2.6067-1.4997Z"/></svg></div><strong>OpenAI API</strong></div>
         <div class="bar-body">
-          <div class="bar-top"><div class="bar-label">org Personal</div><div class="bar-val">$70,00</div></div>
-          <div class="track"><div class="fill" style="width:70%;background:var(--openai)"></div></div>
-          <div class="bar-detail">hết hạn 1/12/2026 · credits đi kèm ChatGPT Pro · không payment method</div>
-          <div class="bar-meta">platform.openai.com billing, 9/11/2026</div>
+          <div class="bar-top"><div class="bar-label">org Personal</div><div class="bar-val">$69,97</div></div>
+          <div class="track"><div class="fill" style="width:69.97%;background:var(--openai)"></div></div>
+          <div class="bar-detail">hết hạn 1/12/2026 · không payment method</div>
+          <div class="bar-meta">platform.openai.com billing, kiểm 9/11/2026 19:09</div>
         </div>
       </div>
-      <div class="bar">
-        <div class="bar-hdr hdr-gemini"><div class="logo-wrap"><svg style="width:16px;height:16px;display:block;flex-shrink:0;color:#fff"  viewBox="0 0 24 24" ><path fill="currentColor" d="M11.04 19.32Q12 21.51 12 24q0-2.49.93-4.68.96-2.19 2.58-3.81t3.81-2.55Q21.51 12 24 12q-2.49 0-4.68-.93a12.3 12.3 0 0 1-3.81-2.58 12.3 12.3 0 0 1-2.58-3.81Q12 2.49 12 0q0 2.49-.96 4.68-.93 2.19-2.55 3.81a12.3 12.3 0 0 1-3.81 2.58Q2.49 12 0 12q2.49 0 4.68.96 2.19.93 3.81 2.55t2.55 3.81"/></svg></div><strong>Gemini Cloud</strong></div>
-        <div class="bar-body">
-          <div class="bar-top"><div class="bar-label">Developer Program</div><div class="bar-val">₫258.138 / ₫258.491</div></div>
-          <div class="track"><div class="fill" style="width:99.86%;background:linear-gradient(90deg,#4285F4,#9B72CB,#D96570)"></div></div>
-          <div class="bar-detail">AI Studio Tier 1 · tháng 11 ₫706 đã cover</div>
-          <div class="bar-meta">Google Cloud / AI Studio, 9/11/2026</div>
+
+      <div class="api-group">
+        <div class="api-group-title"><div class="logo-wrap"><svg style="width:16px;height:16px;display:block;flex-shrink:0;color:#fff"  viewBox="0 0 24 24" ><path fill="currentColor" d="M11.04 19.32Q12 21.51 12 24q0-2.49.93-4.68.96-2.19 2.58-3.81t3.81-2.55Q21.51 12 24 12q-2.49 0-4.68-.93a12.3 12.3 0 0 1-3.81-2.58 12.3 12.3 0 0 1-2.58-3.81Q12 2.49 12 0q0 2.49-.96 4.68-.93 2.19-2.55 3.81a12.3 12.3 0 0 1-3.81 2.58Q2.49 12 0 12q2.49 0 4.68.96 2.19.93 3.81 2.55t2.55 3.81"/></svg></div>Google / Gemini</div>
+        <p class="api-group-cap">Billing account: My Billing Account · kiểm 9/11/2026 19:09</p>
+
+        <div class="bar nested">
+          <div class="bar-hdr hdr-gemini"><div class="logo-wrap"><svg style="width:16px;height:16px;display:block;flex-shrink:0;color:#fff"  viewBox="0 0 24 24" ><path fill="currentColor" d="M11.04 19.32Q12 21.51 12 24q0-2.49.93-4.68.96-2.19 2.58-3.81t3.81-2.55Q21.51 12 24 12q-2.49 0-4.68-.93a12.3 12.3 0 0 1-3.81-2.58 12.3 12.3 0 0 1-2.58-3.81Q12 2.49 12 0q0 2.49-.96 4.68-.93 2.19-2.55 3.81a12.3 12.3 0 0 1-3.81 2.58Q2.49 12 0 12q2.49 0 4.68.96 2.19.93 3.81 2.55t2.55 3.81"/></svg></div><strong>AI Studio prepaid</strong></div>
+          <div class="bar-body">
+            <div class="bar-top"><div class="bar-label">Credit prepaid (Gemini API key)</div><div class="bar-val">₫150.000</div></div>
+            <div class="bar-detail">Nạp 2/11/2026 · hết hạn 1 năm sau khi mua · auto-reload tắt · Tier: Paid Tier 1</div>
+            <div class="bar-detail" style="margin-top:4px">Tháng 11 (1–9/11): chi ₫2.290, được giảm ₫2.290, phải trả ₫0</div>
+            <div class="bar-meta">Dùng trực tiếp cho Gemini API key · Google AI Studio, 9/11/2026 19:09</div>
+          </div>
+        </div>
+
+        <div class="bar nested">
+          <div class="bar-hdr hdr-gemini"><div class="logo-wrap"><svg style="width:16px;height:16px;display:block;flex-shrink:0;color:#fff"  viewBox="0 0 24 24" ><path fill="currentColor" d="M11.04 19.32Q12 21.51 12 24q0-2.49.93-4.68.96-2.19 2.58-3.81t3.81-2.55Q21.51 12 24 12q-2.49 0-4.68-.93a12.3 12.3 0 0 1-3.81-2.58 12.3 12.3 0 0 1-2.58-3.81Q12 2.49 12 0q0 2.49-.96 4.68-.93 2.19-2.55 3.81a12.3 12.3 0 0 1-3.81 2.58Q2.49 12 0 12q2.49 0 4.68.96 2.19.93 3.81 2.55t2.55 3.81"/></svg></div><strong>Developer Program</strong></div>
+          <div class="bar-body">
+            <div class="bar-top"><div class="bar-label">Premium benefit (AI Pro)</div><div class="bar-val">₫254.994,59 / ₫258.491</div></div>
+            <div class="track"><div class="fill" style="width:98.65%;background:linear-gradient(90deg,#4285F4,#9B72CB,#D96570)"></div></div>
+            <div class="bar-detail">~99% · bắt đầu 2/11/2026 · hết hạn 3/11/2027 · credit hàng tháng của gói AI Pro, áp cho toàn bộ Google Cloud + Maps</div>
+            <div class="bar-meta">Google Developer Program, 9/11/2026 19:09</div>
+          </div>
+        </div>
+
+        <div class="bar nested">
+          <div class="bar-hdr hdr-gemini"><div class="logo-wrap"><svg style="width:16px;height:16px;display:block;flex-shrink:0;color:#fff"  viewBox="0 0 24 24" ><path fill="currentColor" d="M11.04 19.32Q12 21.51 12 24q0-2.49.93-4.68.96-2.19 2.58-3.81t3.81-2.55Q21.51 12 24 12q-2.49 0-4.68-.93a12.3 12.3 0 0 1-3.81-2.58 12.3 12.3 0 0 1-2.58-3.81Q12 2.49 12 0q0 2.49-.96 4.68-.93 2.19-2.55 3.81a12.3 12.3 0 0 1-3.81 2.58Q2.49 12 0 12q2.49 0 4.68.96 2.19.93 3.81 2.55t2.55 3.81"/></svg></div><strong>Cloud Free Trial</strong></div>
+          <div class="bar-body">
+            <div class="bar-top"><div class="bar-label">Free Trial</div><div class="bar-val">₫7.754.701 / ₫7.754.701</div></div>
+            <div class="track"><div class="fill" style="width:100%;background:linear-gradient(90deg,#4285F4,#9B72CB,#D96570)"></div></div>
+            <div class="bar-detail">100% · ~300 USD · 3/11/2026 → hết hạn 2/2/2027 · chỉ dùng cho một số dịch vụ Cloud (theo điều khoản free trial)</div>
+            <div class="bar-detail" style="margin-top:4px">Free Trial trước đó đã hết hạn 3/11/2026</div>
+            <div class="bar-meta">Google Cloud, 9/11/2026 19:09</div>
+          </div>
         </div>
       </div>
+
       <div class="bar">
         <div class="bar-hdr hdr-bot"><div class="logo-wrap"><svg style="width:16px;height:16px;display:block;flex-shrink:0;color:#fff"  viewBox="0 0 24 24" ><path fill="currentColor" d="M12 2a4 4 0 0 1 4 4v1h1a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3h-1v1a4 4 0 0 1-8 0v-1H7a3 3 0 0 1-3-3V10a3 3 0 0 1 3-3h1V6a4 4 0 0 1 4-4zm-2 9a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm4 0a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zM9 17h6v1a2 2 0 0 1-6 0v-1z"/></svg></div><strong>Grok Bot – credit dùng thêm</strong><span style="margin-left:auto;font-weight:750">Tuần 100%</span></div>
         <div class="bar-body">
           <div class="subblock">
-            <div class="bar-top"><div class="bar-label">Hạn mức tuần (gói Super)</div><div class="bar-val" style="color:var(--danger)">100% đã dùng</div></div>
-            <div class="track"><div class="fill" style="width:100%;background:var(--danger)"></div></div>
+            <div class="bar-top"><div class="bar-label">Hạn mức tuần (gói Super)</div><div class="bar-val" style="color:#DC2626">100% đã dùng</div></div>
+            <div class="track"><div class="fill" style="width:100%;background:#DC2626"></div></div>
             <div class="bar-detail">Reset 08:55 thứ Năm 12/11/2026 (giờ VN) · dùng chung với các app khác trong gói</div>
             <div class="bar-meta">Nguồn: kiểm 9/11/2026 17:43</div>
           </div>
@@ -203,7 +237,9 @@ h1{font-size:var(--fs-title);margin:0 0 6px;letter-spacing:-.02em;color:var(--te
       <li>Screenshot ChatGPT billing 9/11/2026 — Pro 100, renew 1/12, Visa •••• 4771</li>
       <li>Screenshot Google Wallet 9/11/2026 — Google AI Pro 5TB, renew 3/12, Visa •••• 4771; giá 489.000₫</li>
       <li>Gmail — X Subscription 7/11/2026, PDF FF3789F04A; SpaceXSI prepaid $20 FRL5-26EF-27FH + $50 QCNL-JU4K-54BL (9/11)</li>
-      <li>platform.claude.com / platform.openai.com / Google Cloud — kiểm 9/11/2026</li>
+      <li>platform.claude.com billing 9/11/2026 19:09 — promotional credit $82,86/$100, hết hạn 26/11/2026; purchased $0,00; cấp 23/10/2026</li>
+      <li>platform.openai.com billing 9/11/2026 19:09 — credit $69,97 hết hạn 1/12/2026; không payment method</li>
+      <li>Google AI Studio / Cloud / Developer Program 9/11/2026 19:09 — AI Studio prepaid ₫150.000; Dev Program ₫254.994,59/₫258.491; Free Trial ₫7.754.701; billing account My Billing Account</li>
       <li>Tỷ giá USD→VND ~25.580 (9/11/2026)</li>
       <li>Logos: simple-icons Anthropic, OpenAI, Google Gemini, X; Grok Bot monogram tùy chỉnh</li>
     </ul>
@@ -227,9 +263,9 @@ const brand={
 };
 const entries=[
   {id:"claude",kind:"sub",name:"Claude Max",plan:"Claude Max (5x Pro usage / 5h & / tuần)",dateLabel:"23/11/2026",date:new Date(2026,10,23),priceMain:"$100/tháng",priceSub:"~2.558.000₫ · không có hoá đơn trong Gmail — số liệu từ trang billing 9/11/2026",payment:"Visa •••• 4771 (mặc định, hết 12/2031)",detailLines:["Tự động gia hạn","Org API liên kết Max từ 8/10/2026","Cùng thẻ Visa •••• 4771 với ChatGPT / Gemini / Grok","Nguồn: screenshot Claude billing 9/11/2026"]},
-  {id:"anthropic-refill",kind:"api",name:"Credit Anthropic API",dateLabel:"24/11/2026",date:new Date(2026,10,24),priceMain:"Nạp lại $100",priceSub:"Tuan Nguyen's Individual Org · credit $100/tháng gắn Max",detailLines:["Hiện còn $83,57 / $100 · tháng này đã dùng $16,43","Console từng hiển thị hết hạn 26/11","Nguồn: platform.claude.com + screenshot billing, 9/11/2026"]},
+  {id:"anthropic-refill",kind:"api",name:"Credit Anthropic API",dateLabel:"26/11/2026",date:new Date(2026,10,26),priceMain:"$82,86 / $100 hết hạn",priceSub:"Promotional credit · purchased $0,00 · cấp 23/10/2026",detailLines:["Trang billing ghi hết hạn 26/11, chưa thấy thông tin nạp lại (gói Max thường cấp $100/tháng)","Key trên box hết hạn 2/12/2026","Nguồn: platform.claude.com billing, 9/11/2026 19:09"]},
   {id:"chatgpt",kind:"sub",name:"ChatGPT Pro 100",plan:"ChatGPT Pro 100",dateLabel:"1/12/2026",date:new Date(2026,11,1),priceMain:"$100/tháng",priceSub:"~2.558.000₫ · không có hoá đơn trong Gmail — số liệu từ trang billing 9/11/2026",payment:"Visa •••• 4771",detailLines:["Tự động gia hạn","Thanh toán: Visa •••• 4771 (cùng thẻ với Claude / Gemini / Grok)","Nguồn: screenshot ChatGPT billing 9/11/2026; giá help.openai.com Pro tiers; Visa •••• 4771 theo xác nhận user 9/11/2026"]},
-  {id:"openai-credit",kind:"api",name:"Credit OpenAI API",dateLabel:"1/12/2026",date:new Date(2026,11,1),priceMain:"$70,00 hết hạn",priceSub:"org Personal · credits đi kèm ChatGPT Pro",detailLines:["$70 next expiration · không có payment method","Key trên box: gpt-6-astra, gpt-6-sol","Nguồn: platform.openai.com billing, 9/11/2026"]},
+  {id:"openai-credit",kind:"api",name:"Credit OpenAI API",dateLabel:"1/12/2026",date:new Date(2026,11,1),priceMain:"$69,97 hết hạn",priceSub:"org Personal · không payment method",detailLines:["Credit $69,97 hết hạn 1/12/2026","Nguồn: platform.openai.com billing, 9/11/2026 19:09"]},
   {id:"gemini",kind:"sub",name:"Google AI Pro (5 TB)",plan:"Google One — Google AI Pro (5 TB)",dateLabel:"3/12/2026",date:new Date(2026,11,3),priceMain:"489.000₫/tháng",priceSub:"không có hoá đơn trong Gmail — số liệu từ trang billing 9/11/2026",payment:"Google Wallet Visa •••• 4771",detailLines:["Tự động gia hạn","Cùng thẻ Visa •••• 4771 với Claude / ChatGPT / Grok","Nguồn: screenshot Google Wallet 9/11/2026; giá one.google.com / gemini.google/vn"]},
   {id:"grok",kind:"sub",name:"Grok Super",plan:"Super (monthly)",dateLabel:"7/12/2026",date:new Date(2026,11,7),priceMain:"2.749.000₫",priceSub:"lần sau · charge 7/11: 2.643.323₫ đã paid",payment:"Visa •••• 4771",detailLines:["Kỳ 7/11–7/12/2026","PDF hoá đơn FF3789F04A","Cùng thẻ Visa •••• 4771 với Claude / ChatGPT / Gemini","Nguồn: email X Subscription 7/11/2026"]}
 ];
