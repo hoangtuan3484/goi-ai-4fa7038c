@@ -23,3 +23,7 @@ gh api repos/hoangtuan3484/goi-ai-4fa7038c/pages -X POST -f source[branch]=main 
 2. Regenerate `index.html` (same data + design)
 3. `git -C /workspace/goi-ai-4fa7038c add -A && git commit -m "sync from canvas" && git push`
 4. Do not put API keys in the repo. Card: last 4 only.
+
+
+## IMPORTANT (9/11 17:55)
+Content now lives in `app.html`. `index.html` is a tiny loader that fetches app.html with no-store to beat iPhone caching. Edit app.html only; never overwrite index.html with content.
