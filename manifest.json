@@ -1,7 +1,7 @@
 {
-  "name": "Gói AI của Tuấn",
-  "short_name": "Gói AI",
-  "description": "Theo dõi 4 gói AI và credit API",
+  "name": "AI Subscription",
+  "short_name": "AI Sub",
+  "description": "Quick tracker for 4 AI plans and API credits",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
