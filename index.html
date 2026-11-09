@@ -10,8 +10,8 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default" />
 <meta name="apple-mobile-web-app-title" content="Gói AI" />
 <meta name="mobile-web-app-capable" content="yes" />
-<link rel="apple-touch-icon" href="apple-touch-icon.png?v=1745" />
-<link rel="manifest" href="manifest.json?v=1745" />
+<link rel="apple-touch-icon" href="apple-touch-icon.png?v=1750" />
+<link rel="manifest" href="manifest.json?v=1750" />
 <style>
   :root {
     --bg: #f7f7f5; --elevated: #ffffff; --text: #1a1a1a; --text2: #5c5c5c; --text3: #8a8a8a;
@@ -78,6 +78,9 @@
   .fill { height: 100%; border-radius: 999px; }
   .bar-detail { font-size: 0.78rem; color: var(--text2); }
   .bar-meta { margin-top: 3px; font-size: 0.72rem; color: var(--text3); }
+  .subblock { margin-top: 4px; }
+  .topup { padding: 10px 12px; border-radius: 10px; background: var(--subtle); border: 1px solid var(--border-weak); margin-bottom: 8px; }
+  .grok-card .subblock + .subblock { margin-top: 10px; }
   .sources { margin-top: 24px; font-size: 0.72rem; color: var(--text3); }
   .sources summary { cursor: pointer; font-weight: 600; color: var(--text2); }
   .sources ul { padding-left: 18px; margin: 8px 0 0; }
@@ -86,11 +89,11 @@
 <body>
 <div class="wrap">
   <h1>Gói AI của Tuấn</h1>
-  <p class="summary">Theo dõi nhanh 4 gói AI và credit API — sắp xếp theo ngày gia hạn, tối ưu iPhone. Cả 4 gói trả bằng Visa •••• 4771. Cập nhật 9/11 17:45.</p>
+  <p class="summary">Theo dõi nhanh 4 gói AI và credit API — sắp xếp theo ngày gia hạn, tối ưu iPhone. Cả 4 gói trả bằng Visa •••• 4771. Cập nhật 9/11 17:50.</p>
   <div class="hero">
     <div class="hero-bar"></div>
     <div class="hero-body">
-      <div class="hero-label">Tổng chi tháng · 4/4 gói · Cập nhật 9/11 17:45</div>
+      <div class="hero-label">Tổng chi tháng · 4/4 gói · Cập nhật 9/11 17:50</div>
       <div class="hero-total">8.354.000₫</div>
       <div class="hero-fx">1 USD ≈ 25.580₫ · Claude ~2.558k + ChatGPT ~2.558k + Grok 2.749k + Gemini 489k</div>
       <div class="next">
@@ -130,11 +133,29 @@
         <div class="bar-detail">Developer Program · AI Studio Tier 1 · tháng 11 ₫706 đã cover</div>
         <div class="bar-meta">Google Cloud / AI Studio, 9/11/2026</div>
       </div>
-      <div class="bar" style="border-left:3px solid var(--grok)">
-        <div class="bar-top"><div class="bar-label">Grok Bot – credit dùng thêm</div><div class="bar-val">nạp $20</div></div>
-        <div class="track"><div class="fill" style="width:100%;background:var(--grok)"></div></div>
-        <div class="bar-detail">Nạp $20 ngày 9/11/2026 (ref FRL5-26EF-27FH, ≈511.600₫). Hạn mức tuần gói Super đã dùng 100% (9/11 16:59) → đang trừ vào credit này; hạn mức reset Thứ Năm 12/11 08:55. Số dư còn lại: xem trong app Grok Bot › Settings › Usage.</div>
-        <div class="bar-meta">Email SpaceXSI 9/11/2026 · không phải gói Super</div>
+      <div class="bar grok-card" style="border-left:3px solid var(--grok)">
+        <div class="bar-top"><div class="bar-label">Grok Bot – credit dùng thêm</div><div class="bar-val" style="color:var(--danger)">Tuần 100%</div></div>
+        <div class="subblock">
+          <div class="bar-top"><div class="bar-label" style="font-size:0.78rem">Hạn mức tuần (gói Super)</div><div class="bar-val" style="color:var(--danger)">100% đã dùng</div></div>
+          <div class="track"><div class="fill" style="width:100%;background:var(--danger)"></div></div>
+          <div class="bar-detail">Reset 08:55 thứ Năm 12/11/2026 (giờ VN) · dùng chung với các app khác trong gói</div>
+          <div class="bar-meta">Nguồn: kiểm 9/11/2026 17:43</div>
+        </div>
+        <div class="subblock">
+          <div class="bar-label" style="font-size:0.78rem;margin-bottom:8px">Lịch sử nạp</div>
+          <div class="topup">
+            <div class="bar-top"><span class="pay-line">$50,00 · ≈1.279.000₫</span><span class="bar-meta">9/11/2026</span></div>
+            <div class="bar-detail">Ref QCNL-JU4K-54BL</div>
+            <div class="bar-meta">Email SpaceXSI 9/11/2026 17:28 (Asia/Bangkok)</div>
+          </div>
+          <div class="topup">
+            <div class="bar-top"><span class="pay-line">$20,00 · ≈511.600₫</span><span class="bar-meta">9/11/2026</span></div>
+            <div class="bar-detail">Ref FRL5-26EF-27FH</div>
+            <div class="bar-meta">Email SpaceXSI 9/11/2026 14:46 (Asia/Bangkok)</div>
+          </div>
+        </div>
+        <div class="bar-detail">Số dư $ còn lại chỉ xem trong app Grok Bot › Settings › Usage &amp; Billing — gửi screenshot để cập nhật.</div>
+        <div class="bar-meta">Không phải gói Super · tổng đã nạp (Gmail): $70,00</div>
       </div>
     </div>
   </section>
@@ -144,7 +165,7 @@
       <li>Screenshot Claude billing 9/11/2026 — Max, renew 23/11, Visa 4771</li>
       <li>Screenshot ChatGPT billing 9/11/2026 — Pro 100, renew 1/12, Visa •••• 4771</li>
       <li>Screenshot Google Wallet 9/11/2026 — Google AI Pro 5TB, renew 3/12, Visa 4771; giá 489.000₫</li>
-      <li>Gmail — X Subscription 7/11/2026, PDF FF3789F04A; SpaceXSI prepaid $20 9/11</li>
+      <li>Gmail — X Subscription 7/11/2026, PDF FF3789F04A; SpaceXSI prepaid $20 FRL5-26EF-27FH + $50 QCNL-JU4K-54BL (9/11)</li>
       <li>platform.claude.com / platform.openai.com / Google Cloud — kiểm 9/11/2026</li>
       <li>Tỷ giá USD→VND ~25.580 (9/11/2026)</li>
     </ul>
