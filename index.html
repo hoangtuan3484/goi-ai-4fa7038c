@@ -10,8 +10,8 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default" />
 <meta name="apple-mobile-web-app-title" content="Gói AI" />
 <meta name="mobile-web-app-capable" content="yes" />
-<link rel="apple-touch-icon" href="apple-touch-icon.png" />
-<link rel="manifest" href="manifest.json" />
+<link rel="apple-touch-icon" href="apple-touch-icon.png?v=1745" />
+<link rel="manifest" href="manifest.json?v=1745" />
 <style>
   :root {
     --bg: #f7f7f5; --elevated: #ffffff; --text: #1a1a1a; --text2: #5c5c5c; --text3: #8a8a8a;
@@ -62,6 +62,7 @@
   .price-main { font-weight: 650; }
   .price-sub { font-size: 0.78rem; color: var(--text2); }
   .hint { font-size: 0.75rem; color: var(--text3); }
+  .pay-line { font-size: 0.78rem; font-weight: 600; color: var(--text); }
   .details { display: none; padding: 0 14px 14px; border-top: 1px solid var(--border-weak); padding-top: 12px; flex-direction: column; gap: 6px; }
   .card.open .details { display: flex; }
   .dl { display: flex; flex-wrap: wrap; gap: 6px; font-size: 0.78rem; }
@@ -85,11 +86,11 @@
 <body>
 <div class="wrap">
   <h1>Gói AI của Tuấn</h1>
-  <p class="summary">Theo dõi nhanh 4 gói AI và credit API — sắp xếp theo ngày gia hạn, tối ưu iPhone.</p>
+  <p class="summary">Theo dõi nhanh 4 gói AI và credit API — sắp xếp theo ngày gia hạn, tối ưu iPhone. Cả 4 gói trả bằng Visa •••• 4771. Cập nhật 9/11 17:45.</p>
   <div class="hero">
     <div class="hero-bar"></div>
     <div class="hero-body">
-      <div class="hero-label">Tổng chi tháng · 4/4 gói · cập nhật 9/11/2026</div>
+      <div class="hero-label">Tổng chi tháng · 4/4 gói · Cập nhật 9/11 17:45</div>
       <div class="hero-total">8.354.000₫</div>
       <div class="hero-fx">1 USD ≈ 25.580₫ · Claude ~2.558k + ChatGPT ~2.558k + Grok 2.749k + Gemini 489k</div>
       <div class="next">
@@ -141,7 +142,7 @@
     <summary>Nguồn số liệu</summary>
     <ul>
       <li>Screenshot Claude billing 9/11/2026 — Max, renew 23/11, Visa 4771</li>
-      <li>Screenshot ChatGPT billing 9/11/2026 — Pro 100, renew 1/12</li>
+      <li>Screenshot ChatGPT billing 9/11/2026 — Pro 100, renew 1/12, Visa •••• 4771</li>
       <li>Screenshot Google Wallet 9/11/2026 — Google AI Pro 5TB, renew 3/12, Visa 4771; giá 489.000₫</li>
       <li>Gmail — X Subscription 7/11/2026, PDF FF3789F04A; SpaceXSI prepaid $20 9/11</li>
       <li>platform.claude.com / platform.openai.com / Google Cloud — kiểm 9/11/2026</li>
@@ -154,7 +155,7 @@ const TODAY = new Date(2026, 10, 9);
 const entries = [
   {id:"claude",kind:"sub",name:"Claude Max",plan:"Claude Max (5x Pro usage / 5h & / tuần)",dateLabel:"23/11/2026",date:new Date(2026,10,23),priceMain:"$100/tháng",priceSub:"~2.558.000₫ · không có hoá đơn trong Gmail — số liệu từ trang billing 9/11/2026",payment:"Visa •••• 4771 (mặc định, hết 12/2031)",detailLines:["Tự động gia hạn","Org API liên kết Max từ 8/10/2026","Cùng thẻ Visa •••• 4771 với ChatGPT / Gemini / Grok","Nguồn: screenshot Claude billing 9/11/2026"],accent:"#C45C26",soft:"#F4E0D4"},
   {id:"anthropic-refill",kind:"api",name:"Credit Anthropic API",dateLabel:"24/11/2026",date:new Date(2026,10,24),priceMain:"Nạp lại $100",priceSub:"Tuan Nguyen's Individual Org · credit $100/tháng gắn Max",detailLines:["Hiện còn $83,57 / $100 · tháng này đã dùng $16,43","Console từng hiển thị hết hạn 26/11","Nguồn: platform.claude.com + screenshot billing, 9/11/2026"],accent:"#C45C26",soft:"#F4E0D4"},
-  {id:"chatgpt",kind:"sub",name:"ChatGPT Pro 100",plan:"ChatGPT Pro 100",dateLabel:"1/12/2026",date:new Date(2026,11,1),priceMain:"$100/tháng",priceSub:"~2.558.000₫ · không có hoá đơn trong Gmail — số liệu từ trang billing 9/11/2026",payment:"Visa •••• 4771",detailLines:["Tự động gia hạn","Cùng thẻ Visa •••• 4771 với Claude / Gemini / Grok","Nguồn: screenshot ChatGPT billing 9/11/2026; giá help.openai.com Pro tiers; thẻ theo xác nhận user 9/11/2026"],accent:"#0D9488",soft:"#D5F5F0"},
+  {id:"chatgpt",kind:"sub",name:"ChatGPT Pro 100",plan:"ChatGPT Pro 100",dateLabel:"1/12/2026",date:new Date(2026,11,1),priceMain:"$100/tháng",priceSub:"~2.558.000₫ · không có hoá đơn trong Gmail — số liệu từ trang billing 9/11/2026",payment:"Visa •••• 4771",detailLines:["Tự động gia hạn","Thanh toán: Visa •••• 4771 (cùng thẻ với Claude / Gemini / Grok)","Nguồn: screenshot ChatGPT billing 9/11/2026; giá help.openai.com Pro tiers; Visa •••• 4771 theo xác nhận user 9/11/2026"],accent:"#0D9488",soft:"#D5F5F0"},
   {id:"openai-credit",kind:"api",name:"Credit OpenAI API",dateLabel:"1/12/2026",date:new Date(2026,11,1),priceMain:"$70,00 hết hạn",priceSub:"org Personal · credits đi kèm ChatGPT Pro",detailLines:["$70 next expiration · không có payment method","Key trên box: gpt-6-astra, gpt-6-sol","Nguồn: platform.openai.com billing, 9/11/2026"],accent:"#0D9488",soft:"#D5F5F0"},
   {id:"gemini",kind:"sub",name:"Google AI Pro (5 TB)",plan:"Google One — Google AI Pro (5 TB)",dateLabel:"3/12/2026",date:new Date(2026,11,3),priceMain:"489.000₫/tháng",priceSub:"không có hoá đơn trong Gmail — số liệu từ trang billing 9/11/2026",payment:"Google Wallet Visa •••• 4771",detailLines:["Tự động gia hạn","Cùng thẻ Visa •••• 4771 với Claude / ChatGPT / Grok","Nguồn: screenshot Google Wallet 9/11/2026; giá one.google.com / gemini.google/vn"],accent:"#5B4BDB",soft:"#E4E0FF"},
   {id:"grok",kind:"sub",name:"Grok Super",plan:"Super (monthly)",dateLabel:"7/12/2026",date:new Date(2026,11,7),priceMain:"2.749.000₫",priceSub:"lần sau · charge 7/11: 2.643.323₫ đã paid",payment:"Visa •••• 4771",detailLines:["Kỳ 7/11–7/12/2026","PDF hoá đơn FF3789F04A","Cùng thẻ Visa •••• 4771 với Claude / ChatGPT / Gemini","Nguồn: email X Subscription 7/11/2026"],accent:"#111111",soft:"#E8E8E8"}
@@ -175,6 +176,7 @@ function render(){
           <div class="card-top"><div class="card-meta"><span class="date" style="color:${e.accent}">${e.dateLabel}</span><span class="name">${e.name}</span>${e.kind==="api"?'<span class="tag-api">API</span>':""}</div>
           <span class="chip ${tone}"><span class="dot"></span>Còn ${days} ngày</span></div>
           <div class="price-row"><span class="price-main">${e.priceMain}</span>${e.priceSub?`<span class="price-sub">${e.priceSub}</span>`:""}</div>
+          ${e.kind==="sub"&&e.payment?`<div class="pay-line">Thanh toán: ${e.payment}</div>`:""}
           <div class="hint">${open?"Thu gọn chi tiết ▴":"Xem thẻ / nguồn ▾"}${tone==="amber"||tone==="red"?" · sắp đến hạn":""}</div>
         </div>
         <div class="details">
