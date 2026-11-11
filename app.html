@@ -4,8 +4,10 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>AI Subscription</title>
-<meta name="description" content="Quick tracker for 4 AI plans and API credits." />
-<meta name="theme-color" content="#7DD3FC" />
+<meta name="description" content="Tracker for 4 AI plans, API credits and usage limits." />
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#F7F7F5" />
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#111113" />
+<meta name="color-scheme" content="light dark" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="default" />
 <meta name="apple-mobile-web-app-title" content="AI Sub" />
@@ -14,366 +16,195 @@
 <link rel="manifest" href="manifest.json?v=0331" />
 <style>
 :root{
-  --bg0:#E0F2FE; --bg1:#BAE6FD;
-  --card:#FFFFFF; --text:#0F172A; --text2:#475569; --text3:#64748B;
-  --border:#CBD5E1; --rail:#94A3B8; --track:#E2E8F0;
-  --claude:#D97757; --openai:#10A37F; --gemini1:#4285F4; --gemini2:#9B72CB; --gemini3:#D96570;
-  --grok:#111111; --grok-accent:#CA8A04; --bot:#FF5C8A;
-  --ok-bg:#DCFCE7; --ok-fg:#166534;
-  --amber-bg:#FEF3C7; --amber-fg:#92400E;
-  --danger-bg:#FEE2E2; --danger-fg:#991B1B;
-  --next-bg:#F0F9FF; --next-border:#7DD3FC;
-  --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
-  --fs-hero:36px; --fs-title:24px; --fs-section:20px;
-  --fs-card:16px; --fs-price:18px; --fs-body:16px;
-  --fs-label:14px; --fs-meta:14px; --fs-chip:13px; --fs-pill:12px;
+  --bg:#F7F7F5; --surface:#FFFFFF; --text:#18181B; --text2:#52525B; --text3:#71717A;
+  --border:#E4E4E7; --track:#ECECEE; --fill:#3F3F46;
+  --amber-bg:#FEF3C7; --amber-fg:#92400E; --red-bg:#FEE2E2; --red-fg:#B91C1C;
+  --chip-bg:#F1F1F3; --focus:#2563EB;
+  --font:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#111113; --surface:#1B1B1F; --text:#F4F4F5; --text2:#C4C4CC; --text3:#9A9AA5;
+    --border:#2E2E35; --track:#2E2E35; --fill:#D4D4D8;
+    --amber-bg:#3B2A0A; --amber-fg:#FCD34D; --red-bg:#3F1414; --red-fg:#FCA5A5;
+    --chip-bg:#26262C; --focus:#60A5FA;
+  }
 }
 *{box-sizing:border-box}
-body{margin:0;font-family:var(--font);font-size:var(--fs-body);background:linear-gradient(180deg,var(--bg0) 0%,var(--bg1) 55%,#F0F9FF 100%);color:var(--text);line-height:1.45;-webkit-text-size-adjust:100%;min-height:100vh}
-.wrap{max-width:700px;margin:0 auto;padding:16px 14px 48px}
-h1{font-size:var(--fs-title);margin:0 0 6px;letter-spacing:-.02em;color:var(--text);font-weight:750}
-.summary{color:var(--text2);font-size:var(--fs-body);margin:0 0 16px}
-.hero{border-radius:20px;overflow:hidden;margin-bottom:18px;box-shadow:0 10px 28px rgba(14,165,233,.18);border:1px solid rgba(14,165,233,.22)}
-.hero-grad{background:linear-gradient(135deg,#D97757 0%,#9B72CB 35%,#4285F4 55%,#10A37F 78%,#EAB308 100%);padding:2px}
-.hero-inner{background:rgba(255,255,255,.96);backdrop-filter:blur(12px);border-radius:18px;padding:20px 16px 16px}
-.hero-label{font-size:var(--fs-meta);color:var(--text3);margin-bottom:6px;font-weight:600}
-.hero-total{font-size:var(--fs-hero);font-weight:800;letter-spacing:-.03em;line-height:1.05;background:linear-gradient(90deg,#0369A1,#7C3AED,#D97757);-webkit-background-clip:text;background-clip:text;color:transparent}
-.hero-fx{margin-top:8px;font-size:var(--fs-meta);color:var(--text3)}
-.brand-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
-.brand-pill{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;font-size:var(--fs-pill);font-weight:700;color:#fff}
-.brand-pill .logo,.brand-pill svg{width:14px;height:14px;color:#fff}
-.bp-claude{background:linear-gradient(135deg,#D97757,#E8A07A)}
-.bp-gpt{background:linear-gradient(135deg,#0B8F6E,#10A37F)}
-.bp-gemini{background:linear-gradient(135deg,#4285F4,#9B72CB,#D96570)}
-.bp-grok{background:linear-gradient(135deg,#1f2937,#111);border:1px solid #EAB308;color:#EAB308}
-.bp-grok svg{color:#EAB308}
-.next{margin-top:14px;padding:12px 14px;border-radius:14px;background:var(--next-bg);border:1px solid var(--next-border);display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px}
-.next-kicker{font-size:var(--fs-pill);font-weight:750;color:#0369A1;letter-spacing:.04em}
-.next-title{font-weight:700;margin-top:2px;font-size:var(--fs-body);color:var(--text)}
-.next-sub{font-size:var(--fs-meta);color:var(--text2);margin-top:2px}
-.section{margin-top:24px}
-.section h2{font-size:var(--fs-section);margin:0 0 4px;color:var(--text);font-weight:750}
-.section .cap{font-size:var(--fs-meta);color:var(--text3);margin:0 0 12px}
-.chip{display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:999px;font-size:var(--fs-chip);font-weight:750;white-space:nowrap}
-.chip .dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
-.chip.ok{background:var(--ok-bg);color:var(--ok-fg)}.chip.ok .dot{background:#16A34A}
-.chip.amber{background:var(--amber-bg);color:var(--amber-fg)}.chip.amber .dot{background:#D97706}
-.chip.red{background:var(--danger-bg);color:var(--danger-fg)}.chip.red .dot{background:#DC2626}
-.row{display:flex;gap:12px;width:100%}
-.rail{display:flex;flex-direction:column;align-items:center;width:16px;flex-shrink:0}
-.rail .dot{width:12px;height:12px;border-radius:50%;margin-top:22px;z-index:1}
-.rail .line{width:2px;flex:1;background:var(--rail);margin-top:4px;min-height:24px}
-.card{flex:1;min-width:0;margin-bottom:12px;border-radius:16px;overflow:hidden;border:1px solid var(--border);background:var(--card);box-shadow:0 8px 20px rgba(14,165,233,.10)}
-.card.last{margin-bottom:0}
-.card-head-bar{padding:10px 14px;display:flex;align-items:center;gap:10px;color:#fff;font-size:var(--fs-card);font-weight:750}
-.card-head-bar .logo-wrap{width:28px;height:28px;border-radius:8px;background:rgba(255,255,255,.22);display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.card-head-bar .logo-wrap svg{width:16px;height:16px;color:#fff}
-.card-head{padding:12px 14px;cursor:pointer;display:flex;flex-direction:column;gap:6px;-webkit-tap-highlight-color:transparent;background:#fff}
-.card-top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px}
-.card-meta{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px;min-width:0}
-.date{font-size:var(--fs-label);font-weight:750}
-.price-row{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px}
-.price-main{font-weight:750;font-size:var(--fs-price);color:var(--text)}
-.price-sub{font-size:var(--fs-meta);color:var(--text2)}
-.pay-line{font-size:var(--fs-label);font-weight:650;color:var(--text)}
-.hint{font-size:var(--fs-meta);color:var(--text3)}
-.details{display:none;padding:0 14px 14px;border-top:1px solid var(--border);padding-top:12px;flex-direction:column;gap:6px;background:#fff}
-.card.open .details{display:flex}
-.dl{display:flex;flex-wrap:wrap;gap:6px;font-size:var(--fs-label)}
-.dl .k{color:var(--text3);min-width:72px}.dl .v{color:var(--text);font-weight:550}
-.bullet{font-size:var(--fs-meta);color:var(--text2)}
-.tag-api{font-size:var(--fs-pill);padding:2px 7px;border-radius:999px;background:rgba(255,255,255,.22);color:#fff}
-.bars{display:flex;flex-direction:column;gap:12px}
-.bar{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;box-shadow:0 8px 20px rgba(14,165,233,.10)}
-.bar-hdr{padding:10px 14px;display:flex;align-items:center;gap:10px;color:#fff;font-size:var(--fs-card);font-weight:750}
-.bar-hdr .logo-wrap{width:28px;height:28px;border-radius:8px;background:rgba(255,255,255,.22);display:flex;align-items:center;justify-content:center}
-.bar-hdr .logo-wrap svg{width:16px;height:16px;color:#fff}
-.bar-body{padding:14px;background:#fff}
-.bar-top{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;margin-bottom:8px}
-.bar-label{font-weight:750;font-size:var(--fs-body);color:var(--text)}.bar-val{font-size:var(--fs-label);font-weight:750;color:var(--text2)}
-.track{height:9px;border-radius:999px;background:var(--track);overflow:hidden;margin-bottom:8px}
-.fill{height:100%;border-radius:999px}
-.bar-detail{font-size:var(--fs-meta);color:var(--text2)}.bar-meta{margin-top:3px;font-size:var(--fs-meta);color:var(--text3)}
-.subblock{margin-top:4px}.topup{padding:10px 12px;border-radius:12px;background:#F8FAFC;border:1px solid var(--border);margin-bottom:8px}
-.sources{margin-top:24px;font-size:var(--fs-meta);color:var(--text3)}
-.sources summary{cursor:pointer;font-weight:650;color:var(--text2)}
-.sources ul{padding-left:18px;margin:8px 0 0}
-.hdr-claude{background:linear-gradient(135deg,#D97757,#E8A07A)}
-.hdr-openai{background:linear-gradient(135deg,#0B8F6E,#10A37F)}
-.hdr-gemini{background:linear-gradient(135deg,#4285F4,#9B72CB,#D96570)}
-.hdr-grok{background:linear-gradient(135deg,#1f2937,#111);border-bottom:2px solid #EAB308}
-.hdr-bot{background:linear-gradient(135deg,#FF5C8A,#FF8F6B)}
-.api-group{display:flex;flex-direction:column;gap:10px;padding:12px;border-radius:16px;border:1px solid var(--border);background:rgba(255,255,255,.65);box-shadow:0 6px 16px rgba(14,165,233,.08)}
-.api-group-title{display:flex;align-items:center;gap:8px;font-weight:750;font-size:var(--fs-section);color:var(--text);margin:0 0 2px}
-.api-group-title .logo-wrap{width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,#4285F4,#9B72CB,#D96570);display:flex;align-items:center;justify-content:center}
-.api-group-title .logo-wrap svg{width:16px;height:16px;color:#fff}
-.api-group-cap{font-size:var(--fs-meta);color:var(--text3);margin:0 0 4px}
-.bar.nested{box-shadow:none}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--font);font-size:16px;line-height:1.45;font-variant-numeric:tabular-nums}
+.wrap{max-width:700px;margin:0 auto;padding:calc(16px + env(safe-area-inset-top)) calc(16px + env(safe-area-inset-right)) calc(40px + env(safe-area-inset-bottom)) calc(16px + env(safe-area-inset-left))}
+h1{font-size:26px;line-height:1.2;margin:0;font-weight:700;letter-spacing:-.02em}
+.lede{margin:6px 0 0;color:var(--text2);font-size:15px}
+.updated{margin:0 0 12px;font-size:14px;color:var(--text2);display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.sched{font-size:13px;color:var(--text3);margin-top:2px}
+.tag{display:inline-flex;align-items:center;padding:2px 8px;border-radius:999px;font-size:12px;font-weight:600}
+.tag.amber{background:var(--amber-bg);color:var(--amber-fg)}
+.tag.red{background:var(--red-bg);color:var(--red-fg)}
+.tag.neutral{background:var(--chip-bg);color:var(--text2)}
+.attention{margin-top:16px;border-radius:12px;background:var(--red-bg);color:var(--red-fg);padding:12px 14px;font-size:15px}
+.attention b{display:block;font-size:12px;letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:16px}
+.summary{margin-top:16px;padding:16px}
+.k{font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--text3)}
+.big{font-size:30px;font-weight:700;letter-spacing:-.02em;line-height:1.15;margin-top:2px}
+.muted{color:var(--text2);font-size:14px}
+.faint{color:var(--text3);font-size:13px}
+.sgrid{display:grid;grid-template-columns:1fr;gap:0;margin-top:14px;border-top:1px solid var(--border)}
+.sgrid>div{padding:12px 0;border-bottom:1px solid var(--border)}
+.sgrid>div:last-child{border-bottom:0;padding-bottom:0}
+@media (min-width:520px){.sgrid{grid-template-columns:1fr 1fr}.sgrid>div{border-bottom:0}.sgrid>div:first-child{border-right:1px solid var(--border);padding-right:14px}.sgrid>div:nth-child(2){padding-left:14px}.sgrid>div:last-child{grid-column:1/-1;border-top:1px solid var(--border);padding-top:12px}}
+.mid{font-size:18px;font-weight:650;margin-top:2px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+h2{font-size:19px;margin:28px 0 2px;font-weight:700}
+.cap{margin:0 0 10px;font-size:14px;color:var(--text2)}
+.list{overflow:hidden}
+.item+.item{border-top:1px solid var(--border)}
+.row{all:unset;box-sizing:border-box;display:flex;gap:12px;align-items:flex-start;width:100%;padding:12px 14px;min-height:56px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.row:focus-visible{outline:2px solid var(--focus);outline-offset:-2px;border-radius:12px}
+.logo{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.logo.x{box-shadow:inset 0 0 0 1px var(--border)}
+.logo svg{width:16px;height:16px;display:block}
+.main{flex:1;min-width:0}
+.l1{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+.name{font-weight:600;font-size:16px;min-width:0}
+.amt{font-weight:650;font-size:16px;text-align:right;white-space:nowrap}
+.l2{display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap;margin-top:3px;font-size:14px;color:var(--text2)}
+.l2 .left{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.chev{color:var(--text3);font-size:14px;margin-top:5px;transition:transform .15s;flex-shrink:0}
+.item.open .chev{transform:rotate(90deg)}
+.bar{height:4px;border-radius:999px;background:var(--track);overflow:hidden;margin-top:8px}
+.bar>i{display:block;height:100%;border-radius:999px;background:var(--fill)}
+.det{display:none;padding:0 14px 14px 54px;font-size:14px;color:var(--text2)}
+.item.open .det{display:block}
+.det div{padding:2px 0}
+.topup{margin-top:6px;padding:8px 10px;border:1px solid var(--border);border-radius:10px}
+details.src{margin-top:28px}
+details.src summary{cursor:pointer;font-size:16px;font-weight:650;min-height:44px;display:flex;align-items:center}
+details.src ul{margin:4px 0 0;padding-left:18px;font-size:13px;color:var(--text2)}
+details.src li{margin:4px 0}
+.foot{margin-top:12px;font-size:13px;color:var(--text3)}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <h1>AI Subscription</h1>
-  <p class="summary">Quick tracker for 4 AI plans and API credits — sorted by renewal date. All 4 plans on Visa •••• 4771. Updated <span class="js-vn-time">Nov 10, 03:31</span>.</p>
-
-  <div class="hero"><div class="hero-grad"><div class="hero-inner">
-    <div class="hero-label">Monthly total · 4/4 plans · Updated <span class="js-vn-time">Nov 10, 03:31</span></div>
-    <div class="hero-total">8,354,000₫</div>
-    <div class="hero-fx">1 USD ≈ 25,580₫ · Claude ~2,558k + ChatGPT ~2,558k + Grok 2,749k + Gemini 489k</div>
-    <div class="brand-row">
-      <span class="brand-pill bp-claude"><svg style="width:14px;height:14px;display:block;flex-shrink:0;color:#fff"  viewBox="0 0 24 24" ><path fill="currentColor" d="M17.3041 3.541h-3.6718l6.696 16.918H24Zm-10.6082 0L0 20.459h3.7442l1.3693-3.5527h7.0052l1.3693 3.5528h3.7442L10.5363 3.5409Zm-.3712 10.2232 2.2914-5.9456 2.2914 5.9456Z"/></svg>Claude</span>
-      <span class="brand-pill bp-gpt"><svg style="width:14px;height:14px;display:block;flex-shrink:0;color:#fff"  viewBox="0 0 24 24" ><path fill="currentColor" d="M22.2819 9.8211a5.9847 5.9847 0 0 0-.5157-4.9108 6.0462 6.0462 0 0 0-6.5098-2.9A6.0651 6.0651 0 0 0 4.9807 4.1818a5.9847 5.9847 0 0 0-3.9977 2.9 6.0462 6.0462 0 0 0 .7427 7.0966 5.98 5.98 0 0 0 .511 4.9107 6.051 6.051 0 0 0 6.5146 2.9001A5.9847 5.9847 0 0 0 13.2599 24a6.0557 6.0557 0 0 0 5.7718-4.2058 5.9894 5.9894 0 0 0 3.9977-2.9001 6.0557 6.0557 0 0 0-.7475-7.0729zm-9.022 12.6081a4.4755 4.4755 0 0 1-2.8764-1.0408l.1419-.0804 4.7783-2.7582a.7948.7948 0 0 0 .3927-.6813v-6.7369l2.02 1.1686a.071.071 0 0 1 .038.052v5.5826a4.504 4.504 0 0 1-4.4945 4.4944zm-9.6607-4.1254a4.4708 4.4708 0 0 1-.5346-3.0137l.142.0852 4.783 2.7582a.7712.7712 0 0 0 .7806 0l5.8428-3.3685v2.3324a.0804.0804 0 0 1-.0332.0615L9.74 19.9502a4.4992 4.4992 0 0 1-6.1408-1.6464zM2.3408 7.8956a4.485 4.485 0 0 1 2.3655-1.9728V11.6a.7664.7664 0 0 0 .3879.6765l5.8144 3.3543-2.0201 1.1685a.0757.0757 0 0 1-.071 0l-4.8303-2.7865A4.504 4.504 0 0 1 2.3408 7.872zm16.5963 3.8558L13.1038 8.364 15.1192 7.2a.0757.0757 0 0 1 .071 0l4.8303 2.7913a4.4944 4.4944 0 0 1-.6765 8.1042v-5.6772a.79.79 0 0 0-.407-.667zm2.0107-3.0231l-.142-.0852-4.7735-2.7818a.7759.7759 0 0 0-.7854 0L9.409 9.2297V6.8974a.0662.0662 0 0 1 .0284-.0615l4.8303-2.7866a4.4992 4.4992 0 0 1 6.6802 4.66zM8.3065 12.863l-2.02-1.1638a.0804.0804 0 0 1-.038-.0567V6.0742a4.4992 4.4992 0 0 1 7.3757-3.4537l-.142.0805L8.704 5.459a.7948.7948 0 0 0-.3927.6813zm1.0976-2.3654l2.602-1.4998 2.6069 1.4998v2.9994l-2.5974 1.4997-2.6067-1.4997Z"/></svg>ChatGPT</span>
-      <span class="brand-pill bp-gemini"><svg style="width:14px;height:14px;display:block;flex-shrink:0;color:#fff"  viewBox="0 0 24 24" ><path fill="currentColor" d="M11.04 19.32Q12 21.51 12 24q0-2.49.93-4.68.96-2.19 2.58-3.81t3.81-2.55Q21.51 12 24 12q-2.49 0-4.68-.93a12.3 12.3 0 0 1-3.81-2.58 12.3 12.3 0 0 1-2.58-3.81Q12 2.49 12 0q0 2.49-.96 4.68-.93 2.19-2.55 3.81a12.3 12.3 0 0 1-3.81 2.58Q2.49 12 0 12q2.49 0 4.68.96 2.19.93 3.81 2.55t2.55 3.81"/></svg>Gemini</span>
-      <span class="brand-pill bp-grok"><svg style="width:14px;height:14px;display:block;flex-shrink:0;color:#FFD60A"  viewBox="0 0 24 24" ><path fill="currentColor" d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"/></svg>Grok</span>
-    </div>
-    <div class="next">
-      <div>
-        <div class="next-kicker">NEXT UP</div>
-        <div class="next-title" id="next-title">Claude Max · Nov 23, 2026</div>
-        <div class="next-sub" id="next-sub">$100/mo · ~2,558,000₫</div>
-      </div>
-      <span class="chip amber" id="next-chip"><span class="dot"></span>— days left</span>
-    </div>
-  </div></div></div>
-
-  <section class="section">
-    <h2>By renewal date</h2>
-    <p class="cap">Tap a row for card / sources. Chips: green &gt;14 days · amber ≤14 · red ≤3</p>
-    <div id="timeline"></div>
-  </section>
-
-  <section class="section" id="api-balances">
-    <h2>API balances</h2>
-    <p class="cap">Checked Nov 11, 2026 09:00</p>
-    <div class="bars">
-      <div class="bar">
-        <div class="bar-hdr hdr-claude"><div class="logo-wrap"><svg style="width:16px;height:16px;display:block;flex-shrink:0;color:#fff"  viewBox="0 0 24 24" ><path fill="currentColor" d="M17.3041 3.541h-3.6718l6.696 16.918H24Zm-10.6082 0L0 20.459h3.7442l1.3693-3.5527h7.0052l1.3693 3.5528h3.7442L10.5363 3.5409Zm-.3712 10.2232 2.2914-5.9456 2.2914 5.9456Z"/></svg></div><strong>Anthropic API</strong></div>
-        <div class="bar-body">
-          <div class="bar-top"><div class="bar-label">Promotional credit</div><div class="bar-val">$82.52 / $100</div></div>
-          <div class="track"><div class="fill" style="width:82.52%;background:var(--claude)"></div></div>
-          <div class="bar-detail">Purchased $0.00 · granted Oct 23, 2026 · <strong>EXPIRES Nov 26, 2026</strong> · billing page shows expiry Nov 26; no refill info yet (Max usually grants $100/mo) · Key on box expires Dec 2, 2026</div>
-          <div class="bar-meta">platform.claude.com billing, checked Nov 11, 2026 09:00</div>
-        </div>
-      </div>
-      <div class="bar">
-        <div class="bar-hdr hdr-openai"><div class="logo-wrap"><svg style="width:16px;height:16px;display:block;flex-shrink:0;color:#fff"  viewBox="0 0 24 24" ><path fill="currentColor" d="M22.2819 9.8211a5.9847 5.9847 0 0 0-.5157-4.9108 6.0462 6.0462 0 0 0-6.5098-2.9A6.0651 6.0651 0 0 0 4.9807 4.1818a5.9847 5.9847 0 0 0-3.9977 2.9 6.0462 6.0462 0 0 0 .7427 7.0966 5.98 5.98 0 0 0 .511 4.9107 6.051 6.051 0 0 0 6.5146 2.9001A5.9847 5.9847 0 0 0 13.2599 24a6.0557 6.0557 0 0 0 5.7718-4.2058 5.9894 5.9894 0 0 0 3.9977-2.9001 6.0557 6.0557 0 0 0-.7475-7.0729zm-9.022 12.6081a4.4755 4.4755 0 0 1-2.8764-1.0408l.1419-.0804 4.7783-2.7582a.7948.7948 0 0 0 .3927-.6813v-6.7369l2.02 1.1686a.071.071 0 0 1 .038.052v5.5826a4.504 4.504 0 0 1-4.4945 4.4944zm-9.6607-4.1254a4.4708 4.4708 0 0 1-.5346-3.0137l.142.0852 4.783 2.7582a.7712.7712 0 0 0 .7806 0l5.8428-3.3685v2.3324a.0804.0804 0 0 1-.0332.0615L9.74 19.9502a4.4992 4.4992 0 0 1-6.1408-1.6464zM2.3408 7.8956a4.485 4.485 0 0 1 2.3655-1.9728V11.6a.7664.7664 0 0 0 .3879.6765l5.8144 3.3543-2.0201 1.1685a.0757.0757 0 0 1-.071 0l-4.8303-2.7865A4.504 4.504 0 0 1 2.3408 7.872zm16.5963 3.8558L13.1038 8.364 15.1192 7.2a.0757.0757 0 0 1 .071 0l4.8303 2.7913a4.4944 4.4944 0 0 1-.6765 8.1042v-5.6772a.79.79 0 0 0-.407-.667zm2.0107-3.0231l-.142-.0852-4.7735-2.7818a.7759.7759 0 0 0-.7854 0L9.409 9.2297V6.8974a.0662.0662 0 0 1 .0284-.0615l4.8303-2.7866a4.4992 4.4992 0 0 1 6.6802 4.66zM8.3065 12.863l-2.02-1.1638a.0804.0804 0 0 1-.038-.0567V6.0742a4.4992 4.4992 0 0 1 7.3757-3.4537l-.142.0805L8.704 5.459a.7948.7948 0 0 0-.3927.6813zm1.0976-2.3654l2.602-1.4998 2.6069 1.4998v2.9994l-2.5974 1.4997-2.6067-1.4997Z"/></svg></div><strong>OpenAI API</strong></div>
-        <div class="bar-body">
-          <div class="bar-top"><div class="bar-label">org Personal</div><div class="bar-val">$68.97</div></div>
-          <div class="track"><div class="fill" style="width:68.97%;background:var(--openai)"></div></div>
-          <div class="bar-detail">Free trial · expires Dec 1, 2026 · no payment method · linked to ChatGPT subscription (Personal account)</div>
-          <div class="bar-meta">platform.openai.com billing, Nov 11, 2026 09:00</div>
-        </div>
-      </div>
-
-      <div class="api-group">
-        <div class="api-group-title"><div class="logo-wrap"><svg style="width:16px;height:16px;display:block;flex-shrink:0;color:#fff"  viewBox="0 0 24 24" ><path fill="currentColor" d="M11.04 19.32Q12 21.51 12 24q0-2.49.93-4.68.96-2.19 2.58-3.81t3.81-2.55Q21.51 12 24 12q-2.49 0-4.68-.93a12.3 12.3 0 0 1-3.81-2.58 12.3 12.3 0 0 1-2.58-3.81Q12 2.49 12 0q0 2.49-.96 4.68-.93 2.19-2.55 3.81a12.3 12.3 0 0 1-3.81 2.58Q2.49 12 0 12q2.49 0 4.68.96 2.19.93 3.81 2.55t2.55 3.81"/></svg></div>Google / Gemini</div>
-        <p class="api-group-cap">Billing account: My Billing Account · checked Nov 11, 2026 09:00</p>
-
-        <div class="bar nested">
-          <div class="bar-hdr hdr-gemini"><div class="logo-wrap"><svg style="width:16px;height:16px;display:block;flex-shrink:0;color:#fff"  viewBox="0 0 24 24" ><path fill="currentColor" d="M11.04 19.32Q12 21.51 12 24q0-2.49.93-4.68.96-2.19 2.58-3.81t3.81-2.55Q21.51 12 24 12q-2.49 0-4.68-.93a12.3 12.3 0 0 1-3.81-2.58 12.3 12.3 0 0 1-2.58-3.81Q12 2.49 12 0q0 2.49-.96 4.68-.93 2.19-2.55 3.81a12.3 12.3 0 0 1-3.81 2.58Q2.49 12 0 12q2.49 0 4.68.96 2.19.93 3.81 2.55t2.55 3.81"/></svg></div><strong>AI Studio prepaid</strong></div>
-          <div class="bar-body">
-            <div class="bar-top"><div class="bar-label">Credit prepaid (Gemini API key)</div><div class="bar-val">₫150,000</div></div>
-            <div class="bar-detail">Topped up Nov 2, 2026 · expires Dec 1, 2027 · auto-reload off · Tier: Paid 1</div>
-            <div class="bar-detail" style="margin-top:4px">Nov (1–10): cost ₫7.31K, savings ₫7.31K, total ₫0.00</div>
-            <div class="bar-meta">Used directly for Gemini API key · Google AI Studio, Nov 11, 2026 09:00</div>
-          </div>
-        </div>
-
-        <div class="bar nested">
-          <div class="bar-hdr hdr-gemini"><div class="logo-wrap"><svg style="width:16px;height:16px;display:block;flex-shrink:0;color:#fff"  viewBox="0 0 24 24" ><path fill="currentColor" d="M11.04 19.32Q12 21.51 12 24q0-2.49.93-4.68.96-2.19 2.58-3.81t3.81-2.55Q21.51 12 24 12q-2.49 0-4.68-.93a12.3 12.3 0 0 1-3.81-2.58 12.3 12.3 0 0 1-2.58-3.81Q12 2.49 12 0q0 2.49-.96 4.68-.93 2.19-2.55 3.81a12.3 12.3 0 0 1-3.81 2.58Q2.49 12 0 12q2.49 0 4.68.96 2.19.93 3.81 2.55t2.55 3.81"/></svg></div><strong>Developer Program</strong></div>
-          <div class="bar-body">
-            <div class="bar-top"><div class="bar-label">Premium benefit (AI Pro)</div><div class="bar-val">₫251,957.21 / ₫258,491</div></div>
-            <div class="track"><div class="fill" style="width:97.47%;background:linear-gradient(90deg,#4285F4,#9B72CB,#D96570)"></div></div>
-            <div class="bar-detail">~97% · started Nov 2, 2026 · expires Nov 3, 2027 · monthly AI Pro credit, applies across Google Cloud + Maps</div>
-            <div class="bar-meta">Google Developer Program, Nov 11, 2026 09:00</div>
-          </div>
-        </div>
-
-        <div class="bar nested">
-          <div class="bar-hdr hdr-gemini"><div class="logo-wrap"><svg style="width:16px;height:16px;display:block;flex-shrink:0;color:#fff"  viewBox="0 0 24 24" ><path fill="currentColor" d="M11.04 19.32Q12 21.51 12 24q0-2.49.93-4.68.96-2.19 2.58-3.81t3.81-2.55Q21.51 12 24 12q-2.49 0-4.68-.93a12.3 12.3 0 0 1-3.81-2.58 12.3 12.3 0 0 1-2.58-3.81Q12 2.49 12 0q0 2.49-.96 4.68-.93 2.19-2.55 3.81a12.3 12.3 0 0 1-3.81 2.58Q2.49 12 0 12q2.49 0 4.68.96 2.19.93 3.81 2.55t2.55 3.81"/></svg></div><strong>Cloud Free Trial</strong></div>
-          <div class="bar-body">
-            <div class="bar-top"><div class="bar-label">Free Trial</div><div class="bar-val">₫7,754,701 / ₫7,754,701</div></div>
-            <div class="track"><div class="fill" style="width:100%;background:linear-gradient(90deg,#4285F4,#9B72CB,#D96570)"></div></div>
-            <div class="bar-detail">100% · ~300 USD · Nov 3, 2026 → expires Feb 2, 2027 · only some Cloud services (per free-trial terms)</div>
-            <div class="bar-detail" style="margin-top:4px">Prior Free Trial expired Nov 3, 2026</div>
-            <div class="bar-meta">Google Cloud, Nov 11, 2026 09:00</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="bar">
-        <div class="bar-hdr hdr-bot"><div class="logo-wrap"><svg style="width:16px;height:16px;display:block;flex-shrink:0;color:#fff"  viewBox="0 0 24 24" ><path fill="currentColor" d="M12 2a4 4 0 0 1 4 4v1h1a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3h-1v1a4 4 0 0 1-8 0v-1H7a3 3 0 0 1-3-3V10a3 3 0 0 1 3-3h1V6a4 4 0 0 1 4-4zm-2 9a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm4 0a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zM9 17h6v1a2 2 0 0 1-6 0v-1z"/></svg></div><strong>Grok Bot – extra credit</strong><span style="margin-left:auto;font-weight:750">Week 5.5%</span></div>
-        <div class="bar-body">
-          <div class="subblock">
-            <div class="bar-top"><div class="bar-label">Weekly limit (Super plan)</div><div class="bar-val" style="color:#16A34A">5.5% used</div></div>
-            <div class="track"><div class="fill" style="width:5.5%;background:#16A34A"></div></div>
-            <div class="bar-detail" id="grok-reset-line">Resets Thu Nov 12, 2026 08:55 ICT · shared with other apps on the plan · early reset Nov 10</div>
-            <div class="bar-meta">Source: checked Nov 11, 2026 09:00 ICT</div>
-          </div>
-          <div class="subblock" style="margin-top:12px">
-            <div class="bar-label" style="margin-bottom:8px">Top-up history</div>
-            <div class="topup">
-              <div class="bar-top"><span class="pay-line">$50.00 · ≈1,279,000₫</span><span class="bar-meta">Nov 9, 2026</span></div>
-              <div class="bar-detail">Ref QCNL-JU4K-54BL</div>
-              <div class="bar-meta">Email SpaceXSI Nov 9, 2026 17:28 (Asia/Bangkok)</div>
-            </div>
-            <div class="topup">
-              <div class="bar-top"><span class="pay-line">$20.00 · ≈511,600₫</span><span class="bar-meta">Nov 9, 2026</span></div>
-              <div class="bar-detail">Ref FRL5-26EF-27FH</div>
-              <div class="bar-meta">Email SpaceXSI Nov 9, 2026 14:46 (Asia/Bangkok)</div>
-            </div>
-          </div>
-          <div class="bar-detail">Remaining $ balance is only visible in Grok Bot › Settings › Usage &amp; Billing — send a screenshot to update.</div>
-          <div class="bar-meta">Not the Super plan · total topped up (Gmail): $70.00 · Grok Bot logo: monogram (no official SVG)</div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <details class="sources">
-    <summary>Data sources</summary>
-    <ul>
-      <li>Claude billing screenshot Nov 9, 2026 — Max, renew Nov 23, Visa •••• 4771</li>
-      <li>ChatGPT billing screenshot Nov 9, 2026 — Pro 100, renew Dec 1, Visa •••• 4771</li>
-      <li>Google Wallet screenshot Nov 9, 2026 — Google AI Pro 5TB, renew Dec 3, Visa •••• 4771; 489,000₫</li>
-      <li>Gmail — X Subscription Nov 7, 2026, PDF FF3789F04A; SpaceXSI prepaid $20 FRL5-26EF-27FH + $50 QCNL-JU4K-54BL (Nov 9)</li>
-      <li>platform.claude.com billing Nov 11, 2026 09:00 — promotional credit $82.52/$100, expires Nov 26, 2026; purchased $0.00; granted Oct 23, 2026</li>
-      <li>platform.openai.com billing Nov 11, 2026 09:00 — credit $68.97 expires Dec 1, 2026; Free trial; no payment method; linked to ChatGPT subscription (Personal account)</li>
-      <li>Google AI Studio / Cloud / Developer Program Nov 11, 2026 09:00 — AI Studio prepaid ₫150,000 expires Dec 1, 2027; Dev Program ₫251,957.21/₫258,491; Free Trial ₫7,754,701 unused; billing account My Billing Account</li>
-      <li>USD→VND rate ~25,580 (Nov 9, 2026)</li>
-      <li>Grok Bot weekly 5.5% — checked Nov 11, 2026 09:00 ICT; resets 08:55 Thu Nov 12, 2026; shared with other apps on the plan</li>
-      <li>Logos: simple-icons Anthropic, OpenAI, Google Gemini, X; Grok Bot custom monogram</li>
-    </ul>
-  </details>
-</div>
+<div class="wrap" id="app">Loading…</div>
 <script>
-const logos={
-  claude:`<svg style="width:16px;height:16px;display:block;flex-shrink:0;color:#fff"  viewBox="0 0 24 24" ><path fill="currentColor" d="M17.3041 3.541h-3.6718l6.696 16.918H24Zm-10.6082 0L0 20.459h3.7442l1.3693-3.5527h7.0052l1.3693 3.5528h3.7442L10.5363 3.5409Zm-.3712 10.2232 2.2914-5.9456 2.2914 5.9456Z"/></svg>`,
-  chatgpt:`<svg style="width:16px;height:16px;display:block;flex-shrink:0;color:#fff"  viewBox="0 0 24 24" ><path fill="currentColor" d="M22.2819 9.8211a5.9847 5.9847 0 0 0-.5157-4.9108 6.0462 6.0462 0 0 0-6.5098-2.9A6.0651 6.0651 0 0 0 4.9807 4.1818a5.9847 5.9847 0 0 0-3.9977 2.9 6.0462 6.0462 0 0 0 .7427 7.0966 5.98 5.98 0 0 0 .511 4.9107 6.051 6.051 0 0 0 6.5146 2.9001A5.9847 5.9847 0 0 0 13.2599 24a6.0557 6.0557 0 0 0 5.7718-4.2058 5.9894 5.9894 0 0 0 3.9977-2.9001 6.0557 6.0557 0 0 0-.7475-7.0729zm-9.022 12.6081a4.4755 4.4755 0 0 1-2.8764-1.0408l.1419-.0804 4.7783-2.7582a.7948.7948 0 0 0 .3927-.6813v-6.7369l2.02 1.1686a.071.071 0 0 1 .038.052v5.5826a4.504 4.504 0 0 1-4.4945 4.4944zm-9.6607-4.1254a4.4708 4.4708 0 0 1-.5346-3.0137l.142.0852 4.783 2.7582a.7712.7712 0 0 0 .7806 0l5.8428-3.3685v2.3324a.0804.0804 0 0 1-.0332.0615L9.74 19.9502a4.4992 4.4992 0 0 1-6.1408-1.6464zM2.3408 7.8956a4.485 4.485 0 0 1 2.3655-1.9728V11.6a.7664.7664 0 0 0 .3879.6765l5.8144 3.3543-2.0201 1.1685a.0757.0757 0 0 1-.071 0l-4.8303-2.7865A4.504 4.504 0 0 1 2.3408 7.872zm16.5963 3.8558L13.1038 8.364 15.1192 7.2a.0757.0757 0 0 1 .071 0l4.8303 2.7913a4.4944 4.4944 0 0 1-.6765 8.1042v-5.6772a.79.79 0 0 0-.407-.667zm2.0107-3.0231l-.142-.0852-4.7735-2.7818a.7759.7759 0 0 0-.7854 0L9.409 9.2297V6.8974a.0662.0662 0 0 1 .0284-.0615l4.8303-2.7866a4.4992 4.4992 0 0 1 6.6802 4.66zM8.3065 12.863l-2.02-1.1638a.0804.0804 0 0 1-.038-.0567V6.0742a4.4992 4.4992 0 0 1 7.3757-3.4537l-.142.0805L8.704 5.459a.7948.7948 0 0 0-.3927.6813zm1.0976-2.3654l2.602-1.4998 2.6069 1.4998v2.9994l-2.5974 1.4997-2.6067-1.4997Z"/></svg>`,
-  gemini:`<svg style="width:16px;height:16px;display:block;flex-shrink:0;color:#fff"  viewBox="0 0 24 24" ><path fill="currentColor" d="M11.04 19.32Q12 21.51 12 24q0-2.49.93-4.68.96-2.19 2.58-3.81t3.81-2.55Q21.51 12 24 12q-2.49 0-4.68-.93a12.3 12.3 0 0 1-3.81-2.58 12.3 12.3 0 0 1-2.58-3.81Q12 2.49 12 0q0 2.49-.96 4.68-.93 2.19-2.55 3.81a12.3 12.3 0 0 1-3.81 2.58Q2.49 12 0 12q2.49 0 4.68.96 2.19.93 3.81 2.55t2.55 3.81"/></svg>`,
-  grok:`<svg style="width:16px;height:16px;display:block;flex-shrink:0;color:#FFD60A"  viewBox="0 0 24 24" ><path fill="currentColor" d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"/></svg>`,
-};
-const brand={
-  claude:{hdr:"hdr-claude",accent:"#D97757",soft:"rgba(217,119,87,.28)",logo:"claude"},
-  "anthropic-refill":{hdr:"hdr-claude",accent:"#D97757",soft:"rgba(217,119,87,.28)",logo:"claude"},
-  chatgpt:{hdr:"hdr-openai",accent:"#10A37F",soft:"rgba(16,163,127,.28)",logo:"chatgpt"},
-  "openai-credit":{hdr:"hdr-openai",accent:"#10A37F",soft:"rgba(16,163,127,.28)",logo:"chatgpt"},
-  gemini:{hdr:"hdr-gemini",accent:"#9B72CB",soft:"rgba(155,114,203,.28)",logo:"gemini"},
-  grok:{hdr:"hdr-grok",accent:"#A16207",soft:"rgba(234,179,8,.35)",logo:"grok"},
-};
-const entries=[
-  {id:"claude",kind:"sub",name:"Claude Max",plan:"Claude Max (5x Pro usage / 5h & / week)",dateLabel:"Nov 23, 2026",date:new Date(2026,10,23),priceMain:"$100/mo",priceSub:"~2,558,000₫ · no invoice in Gmail — figures from billing page Nov 9, 2026",payment:"Visa •••• 4771 (default, exp 12/2031)",detailLines:["Auto-renews","Org API linked to Max since Oct 8, 2026","Same Visa •••• 4771 as ChatGPT / Gemini / Grok","Source: Claude billing screenshot Nov 9, 2026"]},
-  {id:"anthropic-refill",kind:"api",name:"Anthropic API credit",dateLabel:"Nov 26, 2026",date:new Date(2026,10,26),priceMain:"$82.52 / $100 expires",priceSub:"Promotional credit · purchased $0.00 · granted Oct 23, 2026",detailLines:["Billing page shows expiry Nov 26; no refill info yet (Max usually grants $100/mo)","Key on box expires Dec 2, 2026","Source: platform.claude.com billing, Nov 11, 2026 09:00"]},
-  {id:"chatgpt",kind:"sub",name:"ChatGPT Pro 100",plan:"ChatGPT Pro 100",dateLabel:"Dec 1, 2026",date:new Date(2026,11,1),priceMain:"$100/mo",priceSub:"~2,558,000₫ · no invoice in Gmail — figures from billing page Nov 9, 2026",payment:"Visa •••• 4771",detailLines:["Auto-renews","Payment: Visa •••• 4771 (same card as Claude / Gemini / Grok)","Source: ChatGPT billing screenshot Nov 9, 2026; price help.openai.com Pro tiers; Visa •••• 4771 per user confirm Nov 9, 2026"]},
-  {id:"openai-credit",kind:"api",name:"OpenAI API credit",dateLabel:"Dec 1, 2026",date:new Date(2026,11,1),priceMain:"$68.97 expires",priceSub:"org Personal · Free trial · no payment method",detailLines:["Credit $68.97 expires Dec 1, 2026","Linked to ChatGPT subscription (Personal account)","Source: platform.openai.com billing, Nov 11, 2026 09:00"]},
-  {id:"gemini",kind:"sub",name:"Google AI Pro (5 TB)",plan:"Google One — Google AI Pro (5 TB)",dateLabel:"Dec 3, 2026",date:new Date(2026,11,3),priceMain:"489,000₫/mo",priceSub:"no invoice in Gmail — figures from billing page Nov 9, 2026",payment:"Google Wallet Visa •••• 4771",detailLines:["Auto-renews","Same Visa •••• 4771 as Claude / ChatGPT / Grok","Source: Google Wallet screenshot Nov 9, 2026; price one.google.com / gemini.google/vn"]},
-  {id:"grok",kind:"sub",name:"Grok Super",plan:"Super (monthly)",dateLabel:"Dec 7, 2026",date:new Date(2026,11,7),priceMain:"2,749,000₫",priceSub:"next charge · Nov 7 charge: 2,643,323₫ paid",payment:"Visa •••• 4771",detailLines:["Period Nov 7–Dec 7, 2026","Invoice PDF FF3789F04A","Same Visa •••• 4771 as Claude / ChatGPT / Gemini","Source: X Subscription email Nov 7, 2026"]}
-];
-function vnTodayParts(){
-  const parts=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Ho_Chi_Minh',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date());
-  const get=t=>parts.find(p=>p.type===t).value;
-  return {y:+get('year'),m:+get('month'),d:+get('day')};
-}
-function daysUntil(d){
-  const t=vnTodayParts();
-  const a=Date.UTC(t.y,t.m-1,t.d);
-  const b=Date.UTC(d.getFullYear(),d.getMonth(),d.getDate());
-  return Math.round((b-a)/86400000);
-}
-function chipClass(days){
-  if(days<0)return"red";
-  if(days<=3)return"red";
-  if(days<=14)return"amber";
-  return"ok";
-}
-function chipLabel(days){
-  if(days<0)return"Past";
-  if(days===0)return"Today";
-  return days+" days left";
-}
-function formatGrokResetLine(){
-  const target=Date.parse('2026-11-12T01:55:00.000Z'); // Nov 12, 2026 08:55 ICT
-  const diff=target-Date.now();
-  const base="Resets Thu Nov 12, 2026 08:55 ICT · shared with other apps on the plan · early reset Nov 10";
-  if(diff<=0)return base+" · Reset milestone passed";
-  const days=Math.floor(diff/86400000);
-  const hours=Math.floor((diff%86400000)/3600000);
-  const mins=Math.floor((diff%3600000)/60000);
-  if(days>0)return base+" · "+days+"d "+hours+"h until reset";
-  return base+" · "+hours+"h "+mins+"m until reset";
-}
-function updateHeroNext(){
-  const upcoming=entries
-    .map(e=>({e,days:daysUntil(e.date)}))
-    .filter(x=>x.days>=0)
-    .sort((a,b)=>a.days-b.days||a.e.date-b.e.date);
-  const pick=upcoming[0]||{e:entries[0],days:daysUntil(entries[0].date)};
-  const title=document.getElementById('next-title');
-  const sub=document.getElementById('next-sub');
-  const chip=document.getElementById('next-chip');
-  if(title)title.textContent=pick.e.name+" · "+pick.e.dateLabel;
-  if(sub){
-    const priceBit=pick.e.priceMain;
-    const vnd=(pick.e.priceSub||"").split(" · ")[0]||"";
-    sub.textContent=vnd?priceBit+" · "+vnd:priceBit;
-  }
-  if(chip){
-    chip.className="chip "+chipClass(pick.days);
-    chip.innerHTML='<span class="dot"></span>'+chipLabel(pick.days);
-  }
-}
-const root=document.getElementById("timeline");
-let openId="claude";
-function render(){
-  root.innerHTML="";
-  entries.forEach((e,i)=>{
-    const days=daysUntil(e.date),tone=chipClass(days),last=i===entries.length-1,open=openId===e.id,b=brand[e.id];
-    const row=document.createElement("div");
-    row.className="row";
-    row.innerHTML=`<div class="rail"><div class="dot" style="background:${b.accent};box-shadow:0 0 0 3px ${b.soft}"></div>${last?"":'<div class="line"></div>'}</div>
-      <div class="card ${open?"open":""} ${last?"last":""}">
-        <div class="card-head-bar ${b.hdr}"><div class="logo-wrap">${logos[b.logo]}</div><span style="font-weight:750">${e.name}</span>${e.kind==="api"?'<span class="tag-api">API</span>':""}</div>
-        <div class="card-head" role="button" tabindex="0">
-          <div class="card-top"><div class="card-meta"><span class="date" style="color:${b.accent}">${e.dateLabel}</span></div>
-          <span class="chip ${tone}"><span class="dot"></span>${chipLabel(days)}</span></div>
-          <div class="price-row"><span class="price-main">${e.priceMain}</span>${e.priceSub?`<span class="price-sub">${e.priceSub}</span>`:""}</div>
-          ${e.kind==="sub"&&e.payment?`<div class="pay-line">Payment: ${e.payment}</div>`:""}
-          <div class="hint">${open?"Hide details ▴":"Show card / sources ▾"}${days<0?"":(tone==="amber"||tone==="red"?" · due soon":"")}</div>
-        </div>
-        <div class="details">
-          ${e.plan?`<div class="dl"><span class="k">Plan</span><span class="v">${e.plan}</span></div>`:""}
-          ${e.payment?`<div class="dl"><span class="k">Payment</span><span class="v">${e.payment}</span></div>`:""}
-          ${e.detailLines.map(l=>`<div class="bullet">· ${l}</div>`).join("")}
-        </div>
-      </div>`;
-    root.appendChild(row);
-    row.querySelector(".card-head").addEventListener("click",()=>{openId=openId===e.id?null:e.id;render();});
-  });
-}
-render();
-updateHeroNext();
-(function(){
-  const el=document.getElementById('grok-reset-line');
-  if(el) el.textContent=formatGrokResetLine();
-})();
+/* All numbers live in DATA below. The refresh routine edits ONLY the block between DATA:START and DATA:END
+   (byte-identical to the Canvas page). Totals, countdowns, sorting and colors are derived in code. */
+const DATA = /* DATA:START */ {
+  "updatedAt": "2026-11-11T09:00:00+07:00",
+  "refreshSchedule": "06 · 09 · 12 · 15 · 18 ICT",
+  "fx": { "usdVnd": 25580, "asOf": "Nov 9, 2026" },
+  "card": "Visa •••• 4771 (default · exp 12/2031)",
+  "subscriptions": [
+    { "id": "claude", "name": "Claude Max", "logo": "anthropic", "renews": "2026-11-23", "usd": 100, "vnd": 2558000, "priceNote": "$100/mo", "payTag": "",
+      "details": ["Plan: Claude Max (5x Pro usage / 5h & / week)", "Auto-renews", "Org API linked to Max since Oct 8, 2026", "Payment: Visa •••• 4771 (default, exp 12/2031)", "No invoice in Gmail — figures from billing page Nov 9, 2026", "Source: Claude billing screenshot Nov 9, 2026"] },
+    { "id": "chatgpt", "name": "ChatGPT Pro 100", "logo": "openai", "renews": "2026-12-01", "usd": 100, "vnd": 2558000, "priceNote": "$100/mo", "payTag": "",
+      "details": ["Plan: ChatGPT Pro 100", "Auto-renews", "Payment: Visa •••• 4771 (same card as Claude / Gemini / Grok)", "No invoice in Gmail — figures from billing page Nov 9, 2026", "Source: ChatGPT billing screenshot Nov 9, 2026; price help.openai.com Pro tiers; Visa •••• 4771 per user confirm Nov 9, 2026"] },
+    { "id": "gemini", "name": "Google AI Pro (5 TB)", "logo": "gemini", "renews": "2026-12-03", "usd": null, "vnd": 489000, "priceNote": "489,000₫/mo", "payTag": "via Google Wallet",
+      "details": ["Plan: Google One — Google AI Pro (5 TB)", "Auto-renews", "Payment: Google Wallet Visa •••• 4771", "No invoice in Gmail — figures from billing page Nov 9, 2026", "Source: Google Wallet screenshot Nov 9, 2026; price one.google.com / gemini.google/vn"] },
+    { "id": "grok", "name": "Grok Super", "logo": "x", "renews": "2026-12-07", "usd": null, "vnd": 2749000, "priceNote": "next charge", "payTag": "",
+      "details": ["Plan: Super (monthly)", "Next charge 2,749,000₫ on Dec 7, 2026", "Nov 7 charge: 2,643,323₫ paid", "Period Nov 7–Dec 7, 2026", "Invoice PDF FF3789F04A", "Payment: Visa •••• 4771", "Source: X Subscription email Nov 7, 2026"] }
+  ],
+  "credits": [
+    { "id": "anthropic", "name": "Anthropic API", "logo": "anthropic", "currency": "USD", "left": 82.52, "cap": 100, "expires": "2026-11-26", "sub": "Promotional credit",
+      "details": ["Purchased $0.00 · granted Oct 23, 2026", "Billing page shows expiry Nov 26; no refill info yet (Max usually grants $100/mo)", "API key on box expires Dec 2, 2026 (separate from credit expiry)", "Source: platform.claude.com billing, Nov 11, 2026 09:00"] },
+    { "id": "openai", "name": "OpenAI API", "logo": "openai", "currency": "USD", "left": 68.97, "cap": null, "expires": "2026-12-01", "sub": "org Personal · Free trial",
+      "details": ["Free trial · no payment method", "Linked to ChatGPT subscription (Personal account)", "Source: platform.openai.com billing, Nov 11, 2026 09:00"] },
+    { "id": "aistudio", "name": "Google · AI Studio prepaid", "logo": "gemini", "currency": "VND", "left": 150000, "cap": null, "expires": "2027-12-01", "sub": "Prepaid credit (Gemini API key)",
+      "details": ["Topped up Nov 2, 2026 · auto-reload off · Tier: Paid 1", "Nov (1–10): cost ₫7.31K, savings ₫7.31K, total ₫0.00", "Used directly for Gemini API key", "Billing account: My Billing Account", "Source: Google AI Studio, Nov 11, 2026 09:00"] },
+    { "id": "devprogram", "name": "Google · Developer Program", "logo": "gemini", "currency": "VND", "left": 251957.21, "cap": 258491, "expires": "2027-11-03", "sub": "Premium benefit (AI Pro)",
+      "details": ["Started Nov 2, 2026", "Monthly AI Pro credit, applies across Google Cloud + Maps", "Source: Google Developer Program, Nov 11, 2026 09:00"] },
+    { "id": "cloudtrial", "name": "Google · Cloud Free Trial", "logo": "gemini", "currency": "VND", "left": 7754701, "cap": 7754701, "expires": "2027-02-02", "sub": "~300 USD · unused",
+      "details": ["Started Nov 3, 2026", "Only some Cloud services (per free-trial terms)", "Prior Free Trial expired Nov 3, 2026", "Billing account: My Billing Account", "Source: Google Cloud, Nov 11, 2026 09:00"] }
+  ],
+  "grokBot": {
+    "usedPct": 5.5,
+    "resetsAt": "2026-11-12T08:55:00+07:00",
+    "resetNote": "Shared with other apps on the plan · early reset Nov 10",
+    "checked": "Nov 11, 2026 09:00 ICT",
+    "topUps": [
+      { "date": "Nov 9, 2026", "usd": "$50.00", "vnd": "≈1,279,000₫", "ref": "QCNL-JU4K-54BL", "source": "Email SpaceXSI Nov 9, 2026 17:28 (Asia/Bangkok)" },
+      { "date": "Nov 9, 2026", "usd": "$20.00", "vnd": "≈511,600₫", "ref": "FRL5-26EF-27FH", "source": "Email SpaceXSI Nov 9, 2026 14:46 (Asia/Bangkok)" }
+    ],
+    "notes": ["Remaining $ balance is only visible in Grok Bot › Settings › Usage & Billing — send a screenshot to update.", "Extra credit is separate from the Super plan · total topped up (Gmail): $70.00", "Grok Bot logo: monogram (no official SVG)"]
+  },
+  "sources": [
+    "Claude billing screenshot Nov 9, 2026 — Max, renew Nov 23, Visa •••• 4771",
+    "ChatGPT billing screenshot Nov 9, 2026 — Pro 100, renew Dec 1, Visa •••• 4771",
+    "Google Wallet screenshot Nov 9, 2026 — Google AI Pro 5TB, renew Dec 3, Visa •••• 4771; 489,000₫",
+    "Gmail — X Subscription Nov 7, 2026, PDF FF3789F04A; SpaceXSI prepaid $20 FRL5-26EF-27FH + $50 QCNL-JU4K-54BL (Nov 9)",
+    "platform.claude.com billing Nov 11, 2026 09:00 — promotional credit $82.52/$100, expires Nov 26, 2026; purchased $0.00; granted Oct 23, 2026",
+    "platform.openai.com billing Nov 11, 2026 09:00 — credit $68.97 expires Dec 1, 2026; Free trial; no payment method; linked to ChatGPT subscription (Personal account)",
+    "Google AI Studio / Cloud / Developer Program Nov 11, 2026 09:00 — AI Studio prepaid ₫150,000 expires Dec 1, 2027; Dev Program ₫251,957.21/₫258,491; Free Trial ₫7,754,701 unused; billing account My Billing Account",
+    "Grok Bot weekly 5.5% — checked Nov 11, 2026 09:00 ICT; resets 08:55 Thu Nov 12, 2026; shared with other apps on the plan",
+    "USD→VND rate ~25,580 (Nov 9, 2026)",
+    "Logos: simple-icons Anthropic, OpenAI, Google Gemini, X; Grok Bot custom monogram",
+    "Layout: redesign Nov 11, 2026 from proposals by Claude (claude-fable-5-2), GPT (gpt-6-astra), Gemini (gemini-4-carbon)"
+  ]
+} /* DATA:END */;
 </script>
-
 <script>
 (function(){
-  function fmtVn(d){
-    try{
-      return new Intl.DateTimeFormat('en-US',{
-        timeZone:'Asia/Ho_Chi_Minh',
-        month:'short', day:'numeric',
-        hour:'2-digit', minute:'2-digit', hour12:false
-      }).format(d);
-    }catch(e){
-      var months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-      return months[d.getMonth()]+' '+d.getDate()+', '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
-    }
-  }
-  var t = fmtVn(new Date());
-  document.querySelectorAll('.js-vn-time').forEach(function(el){ el.textContent = t; });
+const LOGO={
+  anthropic:{bg:"#D97757",fg:"#fff",d:"M17.3041 3.541h-3.6718l6.696 16.918H24Zm-10.6082 0L0 20.459h3.7442l1.3693-3.5527h7.0052l1.3693 3.5528h3.7442L10.5363 3.5409Zm-.3712 10.2232 2.2914-5.9456 2.2914 5.9456Z"},
+  openai:{bg:"#10A37F",fg:"#fff",d:"M22.2819 9.8211a5.9847 5.9847 0 0 0-.5157-4.9108 6.0462 6.0462 0 0 0-6.5098-2.9A6.0651 6.0651 0 0 0 4.9807 4.1818a5.9847 5.9847 0 0 0-3.9977 2.9 6.0462 6.0462 0 0 0 .7427 7.0966 5.98 5.98 0 0 0 .511 4.9107 6.051 6.051 0 0 0 6.5146 2.9001A5.9847 5.9847 0 0 0 13.2599 24a6.0557 6.0557 0 0 0 5.7718-4.2058 5.9894 5.9894 0 0 0 3.9977-2.9001 6.0557 6.0557 0 0 0-.7475-7.0729zm-9.022 12.6081a4.4755 4.4755 0 0 1-2.8764-1.0408l.1419-.0804 4.7783-2.7582a.7948.7948 0 0 0 .3927-.6813v-6.7369l2.02 1.1686a.071.071 0 0 1 .038.052v5.5826a4.504 4.504 0 0 1-4.4945 4.4944zm-9.6607-4.1254a4.4708 4.4708 0 0 1-.5346-3.0137l.142.0852 4.783 2.7582a.7712.7712 0 0 0 .7806 0l5.8428-3.3685v2.3324a.0804.0804 0 0 1-.0332.0615L9.74 19.9502a4.4992 4.4992 0 0 1-6.1408-1.6464zM2.3408 7.8956a4.485 4.485 0 0 1 2.3655-1.9728V11.6a.7664.7664 0 0 0 .3879.6765l5.8144 3.3543-2.0201 1.1685a.0757.0757 0 0 1-.071 0l-4.8303-2.7865A4.504 4.504 0 0 1 2.3408 7.872zm16.5963 3.8558L13.1038 8.364 15.1192 7.2a.0757.0757 0 0 1 .071 0l4.8303 2.7913a4.4944 4.4944 0 0 1-.6765 8.1042v-5.6772a.79.79 0 0 0-.407-.667zm2.0107-3.0231l-.142-.0852-4.7735-2.7818a.7759.7759 0 0 0-.7854 0L9.409 9.2297V6.8974a.0662.0662 0 0 1 .0284-.0615l4.8303-2.7866a4.4992 4.4992 0 0 1 6.6802 4.66zM8.3065 12.863l-2.02-1.1638a.0804.0804 0 0 1-.038-.0567V6.0742a4.4992 4.4992 0 0 1 7.3757-3.4537l-.142.0805L8.704 5.459a.7948.7948 0 0 0-.3927.6813zm1.0976-2.3654l2.602-1.4998 2.6069 1.4998v2.9994l-2.5974 1.4997-2.6067-1.4997Z"},
+  gemini:{bg:"#4285F4",fg:"#fff",d:"M11.04 19.32Q12 21.51 12 24q0-2.49.93-4.68.96-2.19 2.58-3.81t3.81-2.55Q21.51 12 24 12q-2.49 0-4.68-.93a12.3 12.3 0 0 1-3.81-2.58 12.3 12.3 0 0 1-2.58-3.81Q12 2.49 12 0q0 2.49-.96 4.68-.93 2.19-2.55 3.81a12.3 12.3 0 0 1-3.81 2.58Q2.49 12 0 12q2.49 0 4.68.96 2.19.93 3.81 2.55t2.55 3.81"},
+  x:{bg:"#000000",fg:"#fff",d:"M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"},
+  grokbot:{bg:"#FF5C8A",fg:"#fff",d:"M12 2a4 4 0 0 1 4 4v1h1a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3h-1v1a4 4 0 0 1-8 0v-1H7a3 3 0 0 1-3-3V10a3 3 0 0 1 3-3h1V6a4 4 0 0 1 4-4zm-2 9a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm4 0a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zM9 17h6v1a2 2 0 0 1-6 0v-1z"}
+};
+const MON=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const DOW=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+const ICT=7*3600000;
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
+function ictParts(ms){const d=new Date(ms+ICT);return{y:d.getUTCFullYear(),m:d.getUTCMonth(),d:d.getUTCDate(),h:d.getUTCHours(),mi:d.getUTCMinutes(),w:d.getUTCDay()};}
+function pad(n){return String(n).padStart(2,"0");}
+function fmtStamp(iso){const p=ictParts(Date.parse(iso));return MON[p.m]+" "+p.d+", "+p.y+" · "+pad(p.h)+":"+pad(p.mi)+" ICT";}
+function fmtDate(ymd,withYear){const [y,m,d]=ymd.split("-").map(Number);return MON[m-1]+" "+d+(withYear?", "+y:"");}
+function daysUntil(ymd){const t=ictParts(Date.now());const [y,m,d]=ymd.split("-").map(Number);return Math.round((Date.UTC(y,m-1,d)-Date.UTC(t.y,t.m,t.d))/86400000);}
+function vnd(n){return n.toLocaleString("en-US",{maximumFractionDigits:2})+"₫";}
+function usd(n){return "$"+n.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});}
+function money(c){return c.currency==="USD"?usd(c.left):vnd(c.left);}
+function tone(days){if(days<0)return"past";if(days<=3)return"red";if(days<=14)return"amber";return"neutral";}
+function countLabel(days,kind){if(days<0)return kind==="sub"?"Renewal unverified":"Expired";if(days===0)return"Today";if(days===1)return"Tomorrow";return days+" days";}
+function chip(days,kind){const t=tone(days);const cls=t==="past"?"neutral":t;if(t==="neutral")return '<span class="faint">'+countLabel(days,kind)+'</span>';return '<span class="tag '+cls+'">'+countLabel(days,kind)+'</span>';}
+function logo(k){const L=LOGO[k];return '<span class="logo '+k+'" style="background:'+L.bg+'"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="'+L.fg+'" d="'+L.d+'"/></svg></span>';}
+const D=DATA, fx=D.fx.usdVnd;
+const subs=D.subscriptions.slice().sort((a,b)=>a.renews.localeCompare(b.renews));
+const credits=D.credits.slice().sort((a,b)=>a.expires.localeCompare(b.expires));
+const monthly=subs.reduce((s,x)=>s+x.vnd,0);
+const live=credits.filter(c=>daysUntil(c.expires)>=0&&c.left>0);
+const usdLeft=live.filter(c=>c.currency==="USD").reduce((s,c)=>s+c.left,0);
+const vndLeft=live.filter(c=>c.currency==="VND").reduce((s,c)=>s+c.left,0);
+const creditTotal=Math.round((usdLeft*fx+vndLeft)/1000)*1000;
+const trial=live.find(c=>c.id==="cloudtrial");
+const nextSub=subs.find(s=>daysUntil(s.renews)>=0);
+const nextCredit=live[0];
+const ageH=(Date.now()-Date.parse(D.updatedAt))/3600000;
+const att=[];
+subs.forEach(s=>{const d=daysUntil(s.renews);if(d<=3)att.push(s.name+" — "+(d<0?"renewal date "+fmtDate(s.renews)+" passed, unverified":"renews "+fmtDate(s.renews)+" ("+countLabel(d,"sub").toLowerCase()+")"));});
+live.forEach(c=>{const d=daysUntil(c.expires);if(d<=3)att.push(c.name+" — "+money(c)+" expires "+fmtDate(c.expires)+" ("+countLabel(d,"credit").toLowerCase()+")");});
+const G=D.grokBot;const resetMs=Date.parse(G.resetsAt)-Date.now();
+function resetLine(){const rp=ictParts(Date.parse(G.resetsAt));const base="Resets "+DOW[rp.w]+" "+MON[rp.m]+" "+rp.d+", "+pad(rp.h)+":"+pad(rp.mi)+" ICT";if(resetMs<=0)return base+" · reset since last update";const dd=Math.floor(resetMs/86400000),hh=Math.floor(resetMs%86400000/3600000),mm=Math.floor(resetMs%3600000/60000);return base+" · in "+(dd>0?dd+"d "+hh+"h":hh+"h "+mm+"m");}
+let h="";
+h+='<h1>AI Subscription</h1>';
+h+='<p class="lede">4 AI plans, API credits and usage limits. Updated '+fmtStamp(D.updatedAt)+'.</p>';
+if(att.length)h+='<div class="attention" role="alert"><b>Needs attention · within 3 days</b>'+att.map(esc).join("<br>")+'</div>';
+h+='<div class="card summary"><div class="updated">Updated '+fmtStamp(D.updatedAt)+(ageH>13?' <span class="tag amber">Stale</span>':'')+' <span class="faint">· refreshes '+esc(D.refreshSchedule)+'</span></div><div class="k">Monthly subscription cost</div><div class="big">'+vnd(monthly)+'</div><div class="muted">≈ $'+Math.round(monthly/fx)+' · '+subs.length+' plans · API credits not included</div><div class="sgrid">';
+if(nextSub){const d=daysUntil(nextSub.renews);h+='<div><div class="k">Next renewal</div><div class="mid">'+esc(nextSub.name)+' '+chip(d,"sub")+'</div><div class="muted">'+fmtDate(nextSub.renews,true)+' · '+(nextSub.usd?usd(nextSub.usd)+' ≈ ':'')+vnd(nextSub.vnd)+'</div></div>';}
+h+='<div><div class="k">API credit left</div><div class="mid">≈ '+vnd(creditTotal)+'</div><div class="muted">'+usd(usdLeft)+' + '+vnd(vndLeft)+(trial?' · incl. '+vnd(trial.left)+' Cloud trial':'')+'</div></div>';
+if(nextCredit){const d=daysUntil(nextCredit.expires);h+='<div><div class="k">Next credit expiry</div><div class="mid">'+esc(nextCredit.name)+' '+chip(d,"credit")+'</div><div class="muted">'+money(nextCredit)+' · expires '+fmtDate(nextCredit.expires,true)+'</div></div>';}
+h+='</div></div>';
+h+='<h2>Subscriptions</h2><p class="cap">All paid with '+esc(D.card)+' · sorted by renewal · tap a row for details</p><div class="card list">';
+subs.forEach(s=>{const d=daysUntil(s.renews);h+='<div class="item" data-id="'+s.id+'"><button class="row" aria-expanded="false">'+logo(s.logo)+'<div class="main"><div class="l1"><span class="name">'+esc(s.name)+'</span><span class="amt">'+(s.usd?usd(s.usd):vnd(s.vnd))+'</span></div><div class="l2"><span class="left">Renews '+fmtDate(s.renews,true)+' '+chip(d,"sub")+(s.payTag?' <span class="tag neutral">'+esc(s.payTag)+'</span>':'')+'</span><span>'+(s.usd?'≈ '+vnd(s.vnd)+'/mo':esc(s.priceNote))+'</span></div></div><span class="chev">›</span></button><div class="det">'+s.details.map(x=>'<div>'+esc(x)+'</div>').join("")+'</div></div>';});
+h+='</div>';
+h+='<h2>API credits</h2><p class="cap">Balances as of '+fmtStamp(D.updatedAt)+' · sorted by expiry · bars show remaining</p><div class="card list">';
+credits.forEach(c=>{const d=daysUntil(c.expires);const pct=c.cap?Math.max(0,Math.min(100,c.left/c.cap*100)):null;h+='<div class="item" data-id="'+c.id+'"><button class="row" aria-expanded="false">'+logo(c.logo)+'<div class="main"><div class="l1"><span class="name">'+esc(c.name)+'</span><span class="amt">'+money(c)+'</span></div><div class="l2"><span class="left">Expires '+fmtDate(c.expires,true)+' '+chip(d,"credit")+'</span><span>'+(c.cap?'of '+(c.currency==="USD"?usd(c.cap):vnd(c.cap))+' · '+Math.round(pct)+'% left':esc(c.sub))+'</span></div>'+(pct!==null?'<div class="bar" aria-label="'+Math.round(pct)+'% remaining"><i style="width:'+pct.toFixed(2)+'%"></i></div>':'')+'</div><span class="chev">›</span></button><div class="det"><div>'+esc(c.sub)+'</div>'+c.details.map(x=>'<div>'+esc(x)+'</div>').join("")+'</div></div>';});
+h+='</div>';
+const left=Math.max(0,100-G.usedPct);
+h+='<h2>Usage limits</h2><p class="cap">Checked '+esc(G.checked)+'</p><div class="card list"><div class="item" data-id="grokbot"><button class="row" aria-expanded="false">'+logo("grokbot")+'<div class="main"><div class="l1"><span class="name">Grok Bot · weekly limit</span><span class="amt">'+(+left.toFixed(1))+'% left</span></div><div class="l2"><span class="left">'+G.usedPct+'% used · '+esc(resetLine())+'</span></div><div class="bar" aria-label="'+left+'% remaining"><i style="width:'+left+'%;'+(resetMs<=0?'opacity:.4':'')+'"></i></div><div class="l2"><span class="left">Extra credit top-ups $70.00 · balance in app only</span></div></div><span class="chev">›</span></button><div class="det"><div>Weekly limit (Super plan) · '+esc(G.resetNote)+'</div>'+G.topUps.map(t=>'<div class="topup"><b>'+esc(t.usd)+' · '+esc(t.vnd)+'</b> · '+esc(t.date)+'<br>Ref '+esc(t.ref)+'<br><span class="faint">'+esc(t.source)+'</span></div>').join("")+G.notes.map(x=>'<div>'+esc(x)+'</div>').join("")+'</div></div></div>';
+h+='<details class="src"><summary>Data sources ('+D.sources.length+')</summary><ul>'+D.sources.map(s=>'<li>'+esc(s)+'</li>').join("")+'</ul><div class="foot">1 USD ≈ '+fx.toLocaleString("en-US")+'₫ (indicative, '+esc(D.fx.asOf)+') · countdowns in ICT calendar days · amber ≤ 14 days · red ≤ 3 days</div></details>';
+const app=document.getElementById("app");app.innerHTML=h;
+app.querySelectorAll(".item").forEach(it=>{const b=it.querySelector(".row");b.addEventListener("click",()=>{const o=it.classList.toggle("open");b.setAttribute("aria-expanded",o?"true":"false");});});
 })();
 </script>
 </body>
