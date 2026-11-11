@@ -6,8 +6,8 @@
 <title>AI Subscription</title>
 <meta name="description" content="Personal AI subscriptions, expiring credits, usage and deadlines.">
 <meta name="color-scheme" content="light dark">
-<meta name="theme-color" media="(prefers-color-scheme: light)" content="#f5f5f1">
-<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#111613">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#f7f5ef">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0c0d14">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="AI Subscription">
@@ -16,44 +16,50 @@
 <style>
 :root {
   color-scheme: light dark;
-  --bg: #f5f5f1;
+  --bg: #f7f5ef;
   --surface: #fff;
-  --soft: #eef1eb;
-  --text: #1b2720;
-  --muted: #58645c;
-  --line: #dce1d8;
-  --accent: #246b49;
-  --accent-bg: #e7f2e9;
-  --hero: #193e2c;
-  --hero-text: #f5fff7;
-  --hero-muted: #cadfce;
+  --soft: #f2efe6;
+  --text: #0b1033;
+  --muted: #5a5d70;
+  --line: #e3decf;
+  --accent: #070c4a;
+  --accent-bg: #e9eaf3;
+  --hero: #070c4a;
+  --hero-text: #ffffff;
+  --hero-muted: #d6cb9c;
+  --hero-label: #b2a163;
+  --hero-border: #070c4a;
+  --bar: #8c7b3f;
   --warn: #81500c;
   --warn-bg: #fff2d9;
   --bad: #a33528;
   --bad-bg: #ffebe6;
-  --track: #dce4d9;
-  --focus: #246bb4;
+  --track: #e6e1d2;
+  --focus: #3446c8;
   --font: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #111613;
-    --surface: #1c221e;
-    --soft: #252d27;
-    --text: #ecf0eb;
-    --muted: #b1bcb2;
-    --line: #374139;
-    --accent: #a0ddb5;
-    --accent-bg: #263d2e;
-    --hero: #244b36;
-    --hero-text: #f5fff7;
-    --hero-muted: #d0e3d3;
+    --bg: #0c0d14;
+    --surface: #161823;
+    --soft: #20232f;
+    --text: #eceef5;
+    --muted: #b3b6c6;
+    --line: #2c3040;
+    --accent: #cbbd84;
+    --accent-bg: #2a2818;
+    --hero: #070c4a;
+    --hero-text: #ffffff;
+    --hero-muted: #d6cb9c;
+    --hero-label: #b2a163;
+    --hero-border: #8c7b3f;
+    --bar: #b2a163;
     --warn: #f0c881;
     --warn-bg: #392e1b;
     --bad: #ffb7a9;
     --bad-bg: #3d2721;
-    --track: #3b473e;
-    --focus: #9acaff;
+    --track: #2e3242;
+    --focus: #cbbd84;
   }
 }
 * { box-sizing: border-box; }
@@ -163,8 +169,9 @@ li + li { margin-top: 6px; }
   border-radius: 14px;
   background: var(--hero);
   color: var(--hero-text);
+  border: 1px solid var(--hero-border);
 }
-.payment-label { color: var(--hero-muted); font-size: 11px; letter-spacing: .09em; font-weight: 700; text-transform: uppercase; }
+.payment-label { color: var(--hero-label); font-size: 11px; letter-spacing: .09em; font-weight: 700; text-transform: uppercase; }
 .payment-main { display: flex; align-items: baseline; justify-content: space-between; gap: 14px; margin-top: 8px; }
 .payment-name { min-width: 0; font-size: 17px; font-weight: 700; letter-spacing: -.02em; }
 .payment-amount { font-size: 27px; line-height: 1.15; flex: none; }
@@ -195,7 +202,7 @@ li + li { margin-top: 6px; }
 .usage-amount { font-size: 21px; font-weight: 750; letter-spacing: -.03em; white-space: nowrap; }
 .usage-amount span { font-size: 12px; font-weight: 500; letter-spacing: 0; color: var(--muted); }
 .track { height: 5px; border-radius: 999px; background: var(--track); overflow: hidden; }
-.track > i { display: block; height: 100%; border-radius: inherit; background: var(--accent); }
+.track > i { display: block; height: 100%; border-radius: inherit; background: var(--bar); }
 .track.warning > i { background: var(--warn); }
 .track.passed > i { background: var(--muted); }
 .usage .track { margin: 10px 0 7px; }
@@ -1799,6 +1806,30 @@ summary::-webkit-details-marker { display: none; }
       .find(a => a.getAttribute("href") === identity.key);
     if (target) target.focus({ preventScroll: true });
   }
+  /* Patch only changed nodes (minute ticks change a few text nodes), so a
+     tick never rebuilds the page while it is being scrolled. */
+  function morphNode(cur, next) {
+    if (cur.nodeType !== next.nodeType || cur.nodeName !== next.nodeName) { cur.replaceWith(next); return; }
+    if (cur.nodeType === 3 || cur.nodeType === 8) { if (cur.nodeValue !== next.nodeValue) cur.nodeValue = next.nodeValue; return; }
+    if (cur.isEqualNode(next)) return;
+    const wasOpen = cur.nodeName === "DETAILS" ? cur.open : null;
+    for (const a of Array.from(cur.attributes)) if (!next.hasAttribute(a.name) && a.name !== "open") cur.removeAttribute(a.name);
+    for (const a of Array.from(next.attributes)) if (cur.getAttribute(a.name) !== a.value) cur.setAttribute(a.name, a.value);
+    if (wasOpen !== null && !next.hasAttribute("open")) cur.open = wasOpen;
+    morphList(cur, next);
+  }
+  function morphList(cur, next) {
+    const a = Array.from(cur.childNodes), b = Array.from(next.childNodes);
+    for (let i = 0; i < b.length; i++) {
+      if (i < a.length) morphNode(a[i], b[i]); else cur.appendChild(b[i]);
+    }
+    for (let i = b.length; i < a.length; i++) a[i].remove();
+  }
+  function morphChildren(root, markupText) {
+    const tpl = document.createElement("template");
+    tpl.innerHTML = markupText;
+    morphList(root, tpl.content);
+  }
   function render() {
     if (location.hash === "#selftest") {
       if (!diagnosticHash) {
@@ -1830,7 +1861,8 @@ summary::-webkit-details-marker { display: none; }
     if (nextMarkup !== lastMarkup) {
       const audit = app.querySelector(".audit-scroll");
       const scroll = audit ? audit.scrollTop : 0;
-      app.innerHTML = nextMarkup;
+      if (lastMarkup && app.firstChild) morphChildren(app, nextMarkup);
+      else app.innerHTML = nextMarkup;
       lastMarkup = nextMarkup;
       const nextAudit = app.querySelector(".audit-scroll");
       if (nextAudit) nextAudit.scrollTop = scroll;
