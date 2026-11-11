@@ -4,151 +4,357 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>AI Subscription</title>
-<meta name="description" content="Tracker for AI plans, API credits and usage limits.">
+<meta name="description" content="Personal AI subscriptions, expiring credits, usage and deadlines.">
 <meta name="color-scheme" content="light dark">
-<meta name="theme-color" media="(prefers-color-scheme: light)" content="#f4f4f1">
-<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0e0e10">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#f5f5f1">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#111613">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="AI Subscription">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="AI Sub">
 <meta name="format-detection" content="telephone=no,date=no,address=no">
 <style>
-/* Theme tokens: the React canvas uses the same table as a plain object (light / dark). */
 :root {
-  --bg: #f4f4f1; --surface: #ffffff; --sunken: #f3f3ef;
-  --text: #16161a; --text2: #4d4d57; --text3: #6b6b75;
-  --line: #e3e3de; --track: #dcdcd6; --fill: #3f3f46; --press: rgba(0, 0, 0, 0.04); --ring: rgba(0, 0, 0, 0.06);
-  --ok: #126b33; --ok-bg: #def5e5; --ok-solid: #1f9d55;
-  --warn: #874805; --warn-bg: #fdf0c9; --warn-solid: #d9860b;
-  --bad: #ad241c; --bad-bg: #fde4e1; --bad-solid: #d92d20; --on-solid: #ffffff;
-  --link: #1d4ed8;
-  --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  color-scheme: light dark;
+  --bg: #f5f5f1;
+  --surface: #fff;
+  --soft: #eef1eb;
+  --text: #1b2720;
+  --muted: #58645c;
+  --line: #dce1d8;
+  --accent: #246b49;
+  --accent-bg: #e7f2e9;
+  --hero: #193e2c;
+  --hero-text: #f5fff7;
+  --hero-muted: #cadfce;
+  --warn: #81500c;
+  --warn-bg: #fff2d9;
+  --bad: #a33528;
+  --bad-bg: #ffebe6;
+  --track: #dce4d9;
+  --focus: #246bb4;
+  --font: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #0e0e10; --surface: #19191d; --sunken: #121215;
-    --text: #f3f3f4; --text2: #c6c6ce; --text3: #9c9ca8;
-    --line: #2c2c33; --track: #34343c; --fill: #d0d0d8; --press: rgba(255, 255, 255, 0.05); --ring: rgba(255, 255, 255, 0.14);
-    --ok: #7ee0a3; --ok-bg: #12301f; --ok-solid: #3ecf7a;
-    --warn: #f9d06c; --warn-bg: #36280b; --warn-solid: #eda521;
-    --bad: #ffada6; --bad-bg: #3c1715; --bad-solid: #f26d63; --on-solid: #190605;
-    --link: #8ab4ff;
+    --bg: #111613;
+    --surface: #1c221e;
+    --soft: #252d27;
+    --text: #ecf0eb;
+    --muted: #b1bcb2;
+    --line: #374139;
+    --accent: #a0ddb5;
+    --accent-bg: #263d2e;
+    --hero: #244b36;
+    --hero-text: #f5fff7;
+    --hero-muted: #d0e3d3;
+    --warn: #f0c881;
+    --warn-bg: #392e1b;
+    --bad: #ffb7a9;
+    --bad-bg: #3d2721;
+    --track: #3b473e;
+    --focus: #9acaff;
   }
 }
 * { box-sizing: border-box; }
-html { -webkit-text-size-adjust: 100%; }
-body { margin: 0; background: var(--bg); color: var(--text); font: 400 1rem/1.4 var(--font); font-variant-numeric: tabular-nums; -webkit-font-smoothing: antialiased; }
-.wrap { max-width: 680px; margin: 0 auto; padding: calc(16px + env(safe-area-inset-top)) calc(16px + env(safe-area-inset-right)) calc(44px + env(safe-area-inset-bottom)) calc(16px + env(safe-area-inset-left)); }
-h1 { margin: 0; font-size: 1.75rem; line-height: 1.15; font-weight: 700; letter-spacing: -0.02em; }
-h2 { margin: 0; font-size: 1.1875rem; font-weight: 700; letter-spacing: -0.01em; }
-.nw { white-space: nowrap; }
-
-/* freshness */
-.status { display: flex; align-items: flex-start; gap: 8px; margin-top: 6px; font-size: 0.875rem; color: var(--text2); }
-.dot { flex: none; width: 8px; height: 8px; margin-top: 6px; border-radius: 50%; background: var(--ok-solid); }
-.dot.late { background: var(--warn-solid); }
-.status-2 { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 4px 12px; margin: 2px 0 0 16px; font-size: 0.875rem; font-weight: 600; color: var(--warn); }
-.stale { margin-top: 12px; padding: 12px 14px; border-radius: 14px; background: var(--warn-bg); color: var(--warn); font-size: 0.875rem; }
-.stale b { display: block; font-size: 1rem; color: var(--text); }
-.stale-row { display: flex; margin-top: 10px; }
-.net { margin-top: 6px; font-size: 0.875rem; color: var(--text3); }
-.btn { all: unset; box-sizing: border-box; display: inline-flex; align-items: center; min-height: 44px; padding: 0 14px; border-radius: 11px; border: 1px solid var(--line); background: var(--surface); color: var(--text); font-size: 0.875rem; font-weight: 600; cursor: pointer; }
-.link { all: unset; cursor: pointer; color: var(--link); font-weight: 600; white-space: nowrap; padding: 12px 4px; margin: -12px -4px; }
-.btn[aria-busy="true"], .link[aria-busy="true"] { opacity: 0.6; }
-.btn:focus-visible, .link:focus-visible, .more:focus-visible { outline: 2px solid var(--link); outline-offset: 2px; border-radius: 8px; }
-
-/* attention + errors */
-.alert, .error { margin-top: 12px; padding: 11px 14px; border-radius: 14px; background: var(--bad-bg); color: var(--bad); font-size: 0.875rem; }
-.alert ul { margin: 4px 0 0; padding: 0; list-style: none; }
-.alert li { margin-top: 4px; }
-.cap { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--text3); }
-.alert .cap { color: var(--bad); }
-
-/* headline tiles */
-.tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; }
-.tile { min-width: 0; padding: 12px 14px 13px; border-radius: 16px; border: 1px solid var(--line); background: var(--surface); }
-.tile.amber { background: var(--warn-bg); border-color: transparent; }
-.tile.red { background: var(--bad-bg); border-color: transparent; }
-.tile.amber .cap, .tile.amber .t-sub { color: var(--warn); }
-.tile.red .cap, .tile.red .t-sub { color: var(--bad); }
-.big { margin-top: 3px; font-size: 1.375rem; line-height: 1.25; font-weight: 700; letter-spacing: -0.02em; overflow-wrap: anywhere; }
-.est { margin-left: 5px; font-size: 0.8125rem; font-weight: 600; letter-spacing: 0; }
-.t-sub { margin-top: 1px; font-size: 0.875rem; color: var(--text2); }
-@media (max-width: 21.5em) { .tiles { grid-template-columns: 1fr; } }
-
-/* sections, cards, rows */
-.sec-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 2px 12px; margin: 28px 2px 8px; }
-.sec-total { font-size: 0.875rem; color: var(--text2); white-space: nowrap; }
-.card { border: 1px solid var(--line); border-radius: 16px; background: var(--surface); overflow: hidden; }
-.item { border-top: 1px solid var(--line); }
-.item.first { border-top: 0; }
-.group { padding: 8px 14px 7px; border-top: 1px solid var(--line); background: var(--sunken); }
-.row { all: unset; box-sizing: border-box; display: flex; align-items: flex-start; gap: 12px; width: 100%; min-height: 60px; padding: 12px 12px 12px 14px; cursor: pointer; -webkit-tap-highlight-color: transparent; }
-.row:active, .btn:active { background: var(--press); }
-.row:focus-visible { outline: 2px solid var(--link); outline-offset: -2px; border-radius: 14px; }
-.logo { flex: none; display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; margin-top: 2px; border-radius: 9px; box-shadow: inset 0 0 0 1px var(--ring); color: #fff; font-size: 0.875rem; font-weight: 700; }
-.logo svg { display: block; width: 18px; height: 18px; }
-.main { display: block; flex: 1; min-width: 0; }
-.l1, .l2, .l3 { display: flex; flex-wrap: wrap; justify-content: space-between; column-gap: 10px; }
-.l1 { align-items: baseline; }
-.name { font-weight: 600; }
-.amt { margin-left: auto; font-weight: 600; white-space: nowrap; }
-.item.muted .amt { color: var(--text2); }
-.l2, .l3 { align-items: center; margin-top: 2px; font-size: 0.875rem; color: var(--text2); }
-.l3 { margin-top: 6px; }
-.when { display: flex; flex-wrap: wrap; align-items: center; gap: 3px 6px; }
-.sec { margin-left: auto; white-space: nowrap; }
-.chev { flex: none; width: 10px; margin-top: 3px; color: var(--text3); font-size: 1.125rem; line-height: 1.2; text-align: center; transition: transform 0.15s; }
-.chev.open { transform: rotate(90deg); }
-.chip { display: inline-flex; align-items: center; padding: 1px 8px; border-radius: 999px; font-size: 0.8125rem; font-weight: 600; line-height: 1.5; white-space: nowrap; }
-.chip.red { background: var(--bad-solid); color: var(--on-solid); }
-.chip.amber { background: var(--warn-bg); color: var(--warn); }
-.chip.ok { background: var(--ok-bg); color: var(--ok); }
-.chip.watch { box-shadow: inset 0 0 0 1px var(--text3); color: var(--text2); }
-.chip.plain { box-shadow: inset 0 0 0 1px var(--line); color: var(--text3); }
-
-/* usage meter: filled part = share of the limit used */
-.meter, .gauge { display: block; height: 6px; margin-top: 8px; border-radius: 999px; background: var(--track); overflow: hidden; }
-.meter i, .gauge i { display: block; height: 100%; border-radius: 999px; background: var(--fill); }
-.meter.soft i { opacity: 0.35; }
-
-/* pace panel: recent spend vs the spend needed to finish before expiry */
-.pace { margin: 0 12px 12px; padding: 10px 12px 11px; border-radius: 12px; background: var(--sunken); }
-.pace-stats { display: flex; justify-content: space-between; gap: 12px; }
-.pace-stats .r { text-align: right; }
-.num { font-size: 1.125rem; font-weight: 700; letter-spacing: -0.01em; }
-.gauge.amber i { background: var(--warn-solid); }
-.gauge.red i { background: var(--bad-solid); }
-.gauge.ok i { background: var(--ok-solid); }
-.verdict { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; margin-top: 9px; font-size: 0.875rem; color: var(--text2); }
-
-/* expandable details */
-.details { display: none; padding: 0 14px 14px 58px; font-size: 0.875rem; color: var(--text2); }
-.details.open { display: block; }
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-padding-top: calc(16px + env(safe-area-inset-top));
+}
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 14px/1.45 var(--font);
+  font-variant-numeric: tabular-nums;
+  -webkit-font-smoothing: antialiased;
+}
+button, summary, a { -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+button { font: inherit; cursor: pointer; }
+button, summary, a { border-radius: 6px; }
+button:focus-visible, summary:focus-visible, a:focus-visible, [tabindex]:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+}
+button:disabled { opacity: .6; cursor: wait; }
+a { color: var(--accent); text-underline-offset: 3px; }
+h1, h2, h3, p { margin: 0; }
+h1 { font-size: 27px; line-height: 1.15; font-weight: 750; letter-spacing: -.045em; }
+h2 { font-size: 19px; line-height: 1.3; letter-spacing: -.025em; }
+h3 { font-size: 15px; line-height: 1.35; }
+ul { margin: 8px 0 0; padding-left: 18px; }
+li + li { margin-top: 6px; }
+.shell {
+  max-width: 940px;
+  margin: auto;
+  padding:
+    calc(16px + env(safe-area-inset-top))
+    calc(16px + env(safe-area-inset-right))
+    calc(28px + env(safe-area-inset-bottom))
+    calc(16px + env(safe-area-inset-left));
+}
+.header { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 44px; }
+.refresh-button {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--text);
+}
+.refresh-button svg { width: 19px; height: 19px; }
+.sync { margin: 4px 0 14px; font-size: 12px; color: var(--muted); }
+.sync-line { display: flex; align-items: baseline; gap: 5px 10px; flex-wrap: wrap; }
+.sync-line + .sync-line { margin-top: 3px; }
+.reading-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  color: var(--muted);
+  white-space: nowrap;
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-underline-offset: 3px;
+}
+.sync-state { display: inline-flex; align-items: center; gap: 5px; font-weight: 650; }
+.dot { display: inline-block; flex: none; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.good { color: var(--accent); }
+.warn { color: var(--warn); }
+.bad { color: var(--bad); }
+.muted { color: var(--muted); }
+.small { font-size: 12px; }
+.strong { font-weight: 700; }
+.row { display: flex; gap: 10px; align-items: center; }
+.between { justify-content: space-between; }
+.wrap { flex-wrap: wrap; }
+.grow { flex: 1; min-width: 0; }
+.money { font-weight: 750; letter-spacing: -.025em; }
+.nowrap { white-space: nowrap; }
+.mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+.overview, .operational, .credit-grid, .lower-grid { display: grid; gap: 10px; }
+.overview > *, .operational > *, .lower-grid > * { min-width: 0; }
+.metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 10px; }
+.metric {
+  display: block;
+  min-width: 0;
+  padding: 9px 0 11px;
+  border-bottom: 1px solid var(--line);
+  border-radius: 0;
+  color: inherit;
+  text-decoration: none;
+}
+.metric-label { display: block; color: var(--muted); font-size: 12px; }
+.metric-value {
+  display: block;
+  margin-top: 3px;
+  font-size: clamp(16px, 4.7vw, 21px);
+  line-height: 1.2;
+  letter-spacing: -.035em;
+  font-weight: 750;
+  overflow-wrap: anywhere;
+}
+.metric-hint { display: block; margin-top: 3px; color: var(--muted); font-size: 12px; }
+.payment {
+  padding: 15px 16px;
+  border-radius: 14px;
+  background: var(--hero);
+  color: var(--hero-text);
+}
+.payment-label { color: var(--hero-muted); font-size: 11px; letter-spacing: .09em; font-weight: 700; text-transform: uppercase; }
+.payment-main { display: flex; align-items: baseline; justify-content: space-between; gap: 14px; margin-top: 8px; }
+.payment-name { min-width: 0; font-size: 17px; font-weight: 700; letter-spacing: -.02em; }
+.payment-amount { font-size: 27px; line-height: 1.15; flex: none; }
+.payment-meta { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 3px 12px; margin-top: 8px; font-size: 12px; color: var(--hero-muted); }
+.payment a { color: var(--hero-text); }
+.signal {
+  display: block;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  background: var(--surface);
+  text-decoration: none;
+  color: var(--text);
+}
+.signal.warning { border-left: 3px solid var(--warn); padding-left: 12px; }
+.signal.danger { border-left: 3px solid var(--bad); padding-left: 12px; }
+.signal-title { display: flex; align-items: baseline; justify-content: space-between; gap: 9px; font-size: 14px; font-weight: 700; }
+.signal-copy { margin-top: 3px; color: var(--muted); font-size: 12px; }
+.signal-arrow { color: var(--muted); }
+.usage {
+  padding: 12px 14px 0;
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  background: var(--surface);
+}
+.usage-head { display: flex; align-items: center; gap: 9px; }
+.usage-name { font-size: 14px; font-weight: 700; }
+.usage-amount { font-size: 21px; font-weight: 750; letter-spacing: -.03em; white-space: nowrap; }
+.usage-amount span { font-size: 12px; font-weight: 500; letter-spacing: 0; color: var(--muted); }
+.track { height: 5px; border-radius: 999px; background: var(--track); overflow: hidden; }
+.track > i { display: block; height: 100%; border-radius: inherit; background: var(--accent); }
+.track.warning > i { background: var(--warn); }
+.track.passed > i { background: var(--muted); }
+.usage .track { margin: 10px 0 7px; }
+.usage-meta { display: flex; align-items: baseline; justify-content: space-between; gap: 4px 10px; flex-wrap: wrap; font-size: 12px; color: var(--muted); }
+.usage .fold { margin-top: 8px; }
+.notice { margin-top: 10px; background: var(--bad-bg); color: var(--bad); border-radius: 10px; padding: 0 13px; }
+.notice > summary { min-height: 44px; display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 13px; font-weight: 700; }
+.notice a { color: inherit; }
+.notice ul { padding-bottom: 12px; margin-top: 0; font-size: 12px; }
+.section { margin-top: 24px; min-width: 0; }
+.section-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
+.section-heading > span, .section-heading > a { font-size: 12px; color: var(--muted); }
+.section-note { margin-top: 8px; color: var(--muted); font-size: 12px; }
+.credit {
+  min-width: 0;
+  padding: 13px 14px 0;
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  background: var(--surface);
+}
+.credit.warning { border-left: 3px solid var(--warn); padding-left: 12px; }
+.credit.danger { border-left: 3px solid var(--bad); padding-left: 12px; }
+.credit.restricted { background: transparent; border-style: dashed; }
+.credit-head { display: flex; align-items: center; gap: 9px; }
+.credit-name { min-width: 0; flex: 1; }
+.credit-name h3 { font-size: 15px; font-weight: 700; }
+.credit-amount { flex: none; font-size: 19px; text-align: right; white-space: nowrap; }
+.credit-meta { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 3px 9px; margin-top: 8px; font-size: 12px; color: var(--muted); }
+.credit-type { color: var(--muted); font-size: 12px; margin-top: 1px; }
+.mark { display: inline-flex; align-items: center; justify-content: center; flex: none; width: 28px; height: 28px; border: 1px solid var(--line); background: var(--soft); border-radius: 8px; color: var(--text); }
+.mark svg { display: block; width: 17px; height: 17px; }
+.pace-strip { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 11px; padding: 9px 10px; border-radius: 7px; background: var(--soft); }
+.pace-strip span { display: block; font-size: 12px; color: var(--muted); }
+.pace-strip b { display: block; margin-top: 1px; font-size: 15px; line-height: 1.3; }
+.forecast-line { margin-top: 7px; font-size: 12px; }
+.forecast-line b { font-weight: 650; }
+.confidence { color: var(--muted); }
+.reading-hint { color: var(--muted); font-size: 12px; font-weight: 400; text-align: right; }
+.group-heading { margin: 16px 0 8px; font-size: 13px; font-weight: 650; color: var(--muted); }
+details { min-width: 0; }
+summary { list-style: none; cursor: pointer; }
+summary::-webkit-details-marker { display: none; }
+.fold { margin-top: 9px; border-top: 1px solid var(--line); }
+.fold > summary {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  font-size: 12px;
+  color: var(--muted);
+}
+.fold > summary .summary-label { flex: 1; min-width: 0; }
+.fold > summary::after, .plan > summary::after, .deadline > summary::after, .notice > summary::after {
+  content: "+";
+  color: var(--muted);
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 1;
+  flex: none;
+}
+.fold[open] > summary::after, .plan[open] > summary::after, .deadline[open] > summary::after, .notice[open] > summary::after { content: "−"; }
+.fold-content { padding: 2px 0 13px; color: var(--muted); font-size: 12px; overflow-wrap: anywhere; }
+.fold-content p + p { margin-top: 8px; }
 .kv { margin: 0; }
-.kv-row { display: grid; grid-template-columns: 72px 1fr; gap: 8px; padding: 2px 0; }
-.kv-row.foot { margin-top: 6px; padding-top: 8px; border-top: 1px dashed var(--line); color: var(--text3); }
-.kv dt { color: var(--text3); }
-.kv dd { margin: 0; min-width: 0; overflow-wrap: anywhere; }
-.ln { display: block; margin-top: 3px; }
-.ln.first { margin-top: 0; }
-.note { margin: 8px 4px 0; font-size: 0.8125rem; color: var(--text3); }
-
-/* sources & legend */
-.more { all: unset; box-sizing: border-box; display: flex; align-items: center; gap: 8px; min-height: 44px; margin-top: 22px; color: var(--text2); font-weight: 600; cursor: pointer; }
-.src { display: none; font-size: 0.875rem; color: var(--text2); }
-.src.open { display: block; }
-.src ul { margin: 4px 0 0; padding-left: 18px; }
-.src li { margin: 4px 0; }
-.legend { margin-top: 12px; color: var(--text3); }
-.legend p { margin: 6px 0 0; }
-.selftest { margin-top: 16px; font: 13px/1.5 ui-monospace, Menlo, monospace; white-space: pre-wrap; }
-@media (prefers-reduced-motion: reduce) { .chev { transition: none; } }
+.kv > div { display: grid; grid-template-columns: 79px minmax(0,1fr); gap: 9px; padding: 5px 0; }
+.kv dt { color: var(--muted); }
+.kv dd { margin: 0; color: var(--text); overflow-wrap: anywhere; }
+.history, .audit-table, .checks { width: 100%; border-collapse: collapse; }
+.history th, .history td, .checks th, .checks td { padding: 8px 0; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; font-size: 12px; }
+.history th, .checks th { font-weight: 500; color: var(--muted); }
+.history td:last-child, .history th:last-child, .checks td:last-child, .checks th:last-child { text-align: right; padding-left: 10px; }
+.table-label { margin: 12px 0 2px; font-weight: 700; color: var(--text); }
+.notes { margin-top: 8px; }
+.source { margin-top: 10px; padding-top: 9px; border-top: 1px dashed var(--line); color: var(--muted); overflow-wrap: anywhere; }
+.ledger { border-top: 1px solid var(--line); }
+.plan, .deadline { border-bottom: 1px solid var(--line); }
+.ledger + .fold { margin-top: 0; border-top: 0; }
+.plan > summary {
+  display: grid;
+  grid-template-columns: 31px minmax(0,1fr) auto 11px;
+  gap: 9px;
+  align-items: center;
+  min-height: 72px;
+  padding: 11px 0;
+}
+.plan-date { text-align: center; }
+.plan-date b { display: block; font-size: 22px; line-height: 1.1; letter-spacing: -.04em; }
+.plan-date span { display: block; margin-top: 2px; font-size: 10px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
+.plan-name { display: block; font-size: 14px; font-weight: 700; }
+.plan-sub { display: block; margin-top: 3px; font-size: 12px; color: var(--muted); }
+.plan-price { font-size: 14px; font-weight: 700; text-align: right; white-space: nowrap; }
+.plan-price small { display: block; margin-top: 2px; color: var(--muted); font-size: 12px; font-weight: 400; }
+.plan-content { padding: 0 0 14px 40px; color: var(--muted); font-size: 12px; }
+.plan-content .mark { margin-bottom: 6px; }
+.deadline > summary { display: flex; align-items: center; gap: 9px; padding: 12px 0; min-height: 64px; }
+.records { margin-top: 26px; padding-top: 14px; border-top: 1px solid var(--line); }
+.records h2 { margin-bottom: 7px; font-size: 17px; }
+.records > .fold { margin-top: 0; }
+.records > .fold > summary { font-size: 13px; min-height: 48px; color: var(--text); }
+.audit-scroll { max-height: 400px; overflow: auto; margin-top: 10px; padding: 0 9px; border: 1px solid var(--line); border-radius: 7px; }
+.audit-table { table-layout: fixed; font: 11px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace; }
+.audit-table th, .audit-table td { padding: 7px 0; border-bottom: 1px solid var(--line); vertical-align: top; text-align: left; overflow-wrap: anywhere; white-space: pre-wrap; }
+.audit-table th { width: 47%; padding-right: 10px; font-weight: 400; color: var(--muted); }
+.footer { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 14px; color: var(--muted); font-size: 12px; }
+.footer a { display: inline-flex; min-height: 44px; align-items: center; }
+.network { margin: 0 0 12px; padding: 10px 12px; border-radius: 8px; background: var(--soft); font-size: 12px; color: var(--muted); }
+.network.error { background: var(--bad-bg); color: var(--bad); }
+.error-card { margin-top: 16px; padding: 17px; border-radius: 12px; background: var(--bad-bg); color: var(--bad); }
+.error-card h2 { margin-bottom: 8px; }
+.error-card button { margin-top: 12px; padding: 10px 13px; min-height: 44px; border: 1px solid currentColor; background: transparent; color: inherit; border-radius: 8px; }
+.empty { padding: 10px 0; color: var(--muted); font-size: 13px; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+.selftest { margin: 0; padding: 16px; white-space: pre-wrap; font: 13px/1.6 ui-monospace, SFMono-Regular, Menlo, monospace; }
+@media (min-width: 640px) {
+  .credit-grid { grid-template-columns: repeat(2, minmax(0,1fr)); align-items: start; gap: 12px; }
+  .shell { padding-top: calc(22px + env(safe-area-inset-top)); }
+  h1 { font-size: 30px; }
+}
+@media (min-width: 720px) {
+  .overview { grid-template-columns: minmax(0,1.08fr) minmax(0,1fr); gap: 18px; align-items: start; }
+  .metrics { margin-bottom: 14px; }
+  .metric-value { font-size: 20px; }
+  .payment { padding: 18px; }
+  .payment-main { margin-top: 12px; }
+  .payment-meta { margin-top: 12px; }
+  .sync { margin-bottom: 18px; }
+  .section { margin-top: 28px; }
+}
+@media (min-width: 820px) {
+  .lower-grid { grid-template-columns: minmax(0,1.6fr) minmax(0,1fr); gap: 26px; }
+}
+@media (max-width: 350px) {
+  .shell { padding-left: 12px; padding-right: 12px; }
+  h1 { font-size: 25px; }
+  .credit-head { gap: 7px; }
+  .credit-name h3 { font-size: 14px; }
+  .credit-amount { font-size: 17px; }
+  .plan > summary { gap: 6px; grid-template-columns: 28px minmax(0,1fr) auto 10px; }
+  .plan-price { font-size: 13px; }
+  .plan-name { font-size: 13px; }
+  .plan-price small { font-size: 11px; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  html { scroll-behavior: smooth; }
+}
+@media print {
+  [data-check], .network, .footer { display: none; }
+  .shell { max-width: none; }
+  .credit, .usage, .payment { break-inside: avoid; }
+}
 </style>
 </head>
 <body>
-<div class="wrap" id="app">Loading…</div>
+<div id="app" class="shell">
+  <h1>AI Subscription</h1>
+  <p class="small muted">Reading the local snapshot…</p>
+</div>
+<noscript><p class="shell">JavaScript is required to calculate this dashboard.</p></noscript>
+
 <script>var DATA = /* DATA:START */ {
   "updatedAt": "2026-11-11T18:00:00+07:00",
   "timezone": {"offsetHours": 7, "label": "ICT"},
@@ -178,477 +384,1573 @@ h2 { margin: 0; font-size: 1.1875rem; font-weight: 700; letter-spacing: -0.01em;
   ],
   "extraSources": ["Logos: simple-icons Anthropic, OpenAI, Google Gemini, X; Grok Bot custom monogram"]
 } /* DATA:END */;</script>
-<script>
-/* Everything on the page is derived from the DATA block above:
-   validateData(data) -> errors, buildModel(data, now) -> display-ready view model (both pure),
-   pageView(model, ui) -> markup. The refresh routine edits only the DATA block; open app.html#selftest to verify. */
+
+<script id="app-logic">
 (function () {
   "use strict";
-  var app = document.getElementById("app");
 
-  /* ---------- brand marks ---------- */
-  const STAR = "M11.04 19.32Q12 21.51 12 24q0-2.49.93-4.68.96-2.19 2.58-3.81t3.81-2.55Q21.51 12 24 12q-2.49 0-4.68-.93a12.3 12.3 0 0 1-3.81-2.58 12.3 12.3 0 0 1-2.58-3.81Q12 2.49 12 0q0 2.49-.96 4.68-.93 2.19-2.55 3.81a12.3 12.3 0 0 1-3.81 2.58Q2.49 12 0 12q2.49 0 4.68.96 2.19.93 3.81 2.55t2.55 3.81";
-  const LOGO = {
-    anthropic: { bg: "#D97757", fg: "#fff", d: "M17.3041 3.541h-3.6718l6.696 16.918H24Zm-10.6082 0L0 20.459h3.7442l1.3693-3.5527h7.0052l1.3693 3.5528h3.7442L10.5363 3.5409Zm-.3712 10.2232 2.2914-5.9456 2.2914 5.9456Z" },
-    openai: { bg: "#10A37F", fg: "#fff", d: "M22.2819 9.8211a5.9847 5.9847 0 0 0-.5157-4.9108 6.0462 6.0462 0 0 0-6.5098-2.9A6.0651 6.0651 0 0 0 4.9807 4.1818a5.9847 5.9847 0 0 0-3.9977 2.9 6.0462 6.0462 0 0 0 .7427 7.0966 5.98 5.98 0 0 0 .511 4.9107 6.051 6.051 0 0 0 6.5146 2.9001A5.9847 5.9847 0 0 0 13.2599 24a6.0557 6.0557 0 0 0 5.7718-4.2058 5.9894 5.9894 0 0 0 3.9977-2.9001 6.0557 6.0557 0 0 0-.7475-7.0729zm-9.022 12.6081a4.4755 4.4755 0 0 1-2.8764-1.0408l.1419-.0804 4.7783-2.7582a.7948.7948 0 0 0 .3927-.6813v-6.7369l2.02 1.1686a.071.071 0 0 1 .038.052v5.5826a4.504 4.504 0 0 1-4.4945 4.4944zm-9.6607-4.1254a4.4708 4.4708 0 0 1-.5346-3.0137l.142.0852 4.783 2.7582a.7712.7712 0 0 0 .7806 0l5.8428-3.3685v2.3324a.0804.0804 0 0 1-.0332.0615L9.74 19.9502a4.4992 4.4992 0 0 1-6.1408-1.6464zM2.3408 7.8956a4.485 4.485 0 0 1 2.3655-1.9728V11.6a.7664.7664 0 0 0 .3879.6765l5.8144 3.3543-2.0201 1.1685a.0757.0757 0 0 1-.071 0l-4.8303-2.7865A4.504 4.504 0 0 1 2.3408 7.872zm16.5963 3.8558L13.1038 8.364 15.1192 7.2a.0757.0757 0 0 1 .071 0l4.8303 2.7913a4.4944 4.4944 0 0 1-.6765 8.1042v-5.6772a.79.79 0 0 0-.407-.667zm2.0107-3.0231l-.142-.0852-4.7735-2.7818a.7759.7759 0 0 0-.7854 0L9.409 9.2297V6.8974a.0662.0662 0 0 1 .0284-.0615l4.8303-2.7866a4.4992 4.4992 0 0 1 6.6802 4.66zM8.3065 12.863l-2.02-1.1638a.0804.0804 0 0 1-.038-.0567V6.0742a4.4992 4.4992 0 0 1 7.3757-3.4537l-.142.0805L8.704 5.459a.7948.7948 0 0 0-.3927.6813zm1.0976-2.3654l2.602-1.4998 2.6069 1.4998v2.9994l-2.5974 1.4997-2.6067-1.4997Z" },
-    gemini: { bg: "#4285F4", fg: "#fff", d: STAR },
-    x: { bg: "#000000", fg: "#fff", d: "M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z" },
-    aistudio: { bg: "#202124", fg: "#8AB4F8", d: STAR },
-    googledev: { bg: "#188038", fg: "#fff", d: "M8.6 6.2 2.8 12l5.8 5.8 1.6-1.6L6 12l4.2-4.2zm6.8 0-1.6 1.6L18 12l-4.2 4.2 1.6 1.6 5.8-5.8z" },
-    googlecloud: { bg: "#E8F0FE", fg: "#1A73E8", d: "M19.35 10.04A7.49 7.49 0 0 0 12 4C9.11 4 6.6 5.64 5.35 8.04A5.994 5.994 0 0 0 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96z" },
-    grokbot: { bg: "#FF5C8A", fg: "#fff", d: "M12 2a4 4 0 0 1 4 4v1h1a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3h-1v1a4 4 0 0 1-8 0v-1H7a3 3 0 0 1-3-3V10a3 3 0 0 1 3-3h1V6a4 4 0 0 1 4-4zm-2 9a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm4 0a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zM9 17h6v1a2 2 0 0 1-6 0v-1z" },
+  /*
+    Pure model:
+      validateData(data)
+      buildModel(data, nowMilliseconds)
+      pageView(model, ui)
+
+    Unit conversions, display thresholds and test cases below are
+    implementation policies, not stored account values.
+  */
+
+  const MINUTE = 60 * 1000;
+  const HOUR = 60 * MINUTE;
+  const DAY = 24 * HOUR;
+  const MIN_PACE_SPAN = DAY / 2;
+  const LOW_CONFIDENCE_SPAN = 3 * DAY;
+  const NEAR_LIMIT_PCT = 90;
+  const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+
+  const LOGOS = {
+    anthropic:
+      '<path d="M17.3 3.54h-3.67l6.7 16.92H24ZM6.7 3.54 0 20.46h3.74l1.37-3.55h7.01l1.37 3.55h3.74L10.54 3.54Zm-.37 10.22 2.29-5.95 2.29 5.95Z"/>',
+    openai:
+      '<path d="M22.2819 9.8211a5.9847 5.9847 0 0 0-.5157-4.9108 6.0462 6.0462 0 0 0-6.5098-2.9A6.0651 6.0651 0 0 0 4.9807 4.1818a5.9847 5.9847 0 0 0-3.9977 2.9 6.0462 6.0462 0 0 0 .7427 7.0966 5.98 5.98 0 0 0 .511 4.9107 6.051 6.051 0 0 0 6.5146 2.9001A5.9847 5.9847 0 0 0 13.2599 24a6.0557 6.0557 0 0 0 5.7718-4.2058 5.9894 5.9894 0 0 0 3.9977-2.9001 6.0557 6.0557 0 0 0-.7475-7.0729zm-9.022 12.6081a4.4755 4.4755 0 0 1-2.8764-1.0408l.1419-.0804 4.7783-2.7582a.7948.7948 0 0 0 .3927-.6813v-6.7369l2.02 1.1686a.071.071 0 0 1 .038.052v5.5826a4.504 4.504 0 0 1-4.4945 4.4944zm-9.6607-4.1254a4.4708 4.4708 0 0 1-.5346-3.0137l.142.0852 4.783 2.7582a.7712.7712 0 0 0 .7806 0l5.8428-3.3685v2.3324a.0804.0804 0 0 1-.0332.0615L9.74 19.9502a4.4992 4.4992 0 0 1-6.1408-1.6464zM2.3408 7.8956a4.485 4.485 0 0 1 2.3655-1.9728V11.6a.7664.7664 0 0 1-.3879.6765l5.8144 3.3543-2.0201 1.1685a.0757.0757 0 0 1-.071 0l-4.8303-2.7865A4.504 4.504 0 0 1 2.3408 7.872zm16.5963 3.8558L13.1038 8.364 15.1192 7.2a.0757.0757 0 0 1 .071 0l4.8303 2.7913a4.4944 4.4944 0 0 1-.6765 8.1042v-5.6772a.79.79 0 0 0-.407-.667zm2.0107-3.0231l-.142-.0852-4.7735-2.7818a.7759.7759 0 0 0-.7854 0L9.409 9.2297V6.8974a.0662.0662 0 0 1 .0284-.0615l4.8303-2.7866a4.4992 4.4992 0 0 1 6.6802 4.66zM8.3065 12.863l-2.02-1.1638a.0804.0804 0 0 1-.038-.0567V6.0742a4.4992 4.4992 0 0 1 7.3757-3.4537l-.142.0805L8.704 5.459a.7948.7948 0 0 0-.3927.6813zm1.0976-2.3654l2.602-1.4998 2.6069 1.4998v2.9994l-2.5974 1.4997-2.6067-1.4997Z"/>',
+    gemini:
+      '<path d="M12 1C12 7.5 7.5 12 1 12c6.5 0 11 4.5 11 11 0-6.5 4.5-11 11-11C16.5 12 12 7.5 12 1Z"/>',
+    x:
+      '<path d="M18.9 1.15h3.68l-8.04 9.19L24 22.85h-7.4l-5.8-7.59-6.64 7.59H.47l8.6-9.83L0 1.15h7.6l5.24 6.94ZM17.61 20.64h2.04L6.49 3.24H4.3Z"/>',
+    grokbot:
+      '<path fill-rule="evenodd" d="M11 2h2v3h4a4 4 0 0 1 4 4v8a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V9a4 4 0 0 1 4-4h4Zm-3 8a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm8 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4ZM8 17v2h8v-2Z"/>',
+    aistudio:
+      '<path fill="none" stroke="currentColor" stroke-width="1.5" d="M4 3h16a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z"/><path d="M12 5c0 4-3 7-7 7 4 0 7 3 7 7 0-4 3-7 7-7-4 0-7-3-7-7Z"/>',
+    googledev:
+      '<path d="m8 5-7 7 7 7 2-2-5-5 5-5Zm8 0-2 2 5 5-5 5 2 2 7-7Z"/>',
+    googlecloud:
+      '<path d="M19.35 10.04A7.49 7.49 0 0 0 12 4 7.47 7.47 0 0 0 5.35 8.04 5.99 5.99 0 0 0 0 14c0 3.31 2.69 6 6 6h13a5 5 0 0 0 .35-9.96Z"/>'
   };
 
-  /* ---------- safe templating: html`…${value}…` escapes every value ---------- */
-  const TRUSTED = Symbol("trusted");
-  const trusted = (m) => ({ [TRUSTED]: String(m) });
-  const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
-  const toMarkup = (v) => v == null || v === false ? "" : Array.isArray(v) ? v.map(toMarkup).join("") : typeof v === "object" && TRUSTED in v ? v[TRUSTED] : esc(v);
-  const html = (parts, ...vals) => trusted(parts.reduce((acc, p, i) => acc + p + (i < vals.length ? toMarkup(vals[i]) : ""), ""));
-
-  /* ---------- pure: schema validation ---------- */
-  function validateData(data) {
-    try { return collectErrors(data); } catch (e) { return ["unreadable DATA (" + e.message + ")"]; }
+  /* Every data interpolation is escaped. */
+  const TRUST = Symbol("trusted-markup");
+  const raw = value => ({ [TRUST]: String(value) });
+  const escapeHTML = value => String(value).replace(/[&<>"']/g, c => ({
+    "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;"
+  })[c]);
+  function markup(value) {
+    if (value == null || value === false) return "";
+    if (Array.isArray(value)) return value.map(markup).join("");
+    if (typeof value === "object" && TRUST in value) return value[TRUST];
+    return escapeHTML(value);
   }
-  function collectErrors(data) {
-    const errors = [], isText = (x) => typeof x === "string" && x.length > 0, isNum = (x) => typeof x === "number" && isFinite(x),
-      isAmt = (x) => isNum(x) && x >= 0, isCur = (x) => x === "USD" || x === "VND";
-    const isDay = (x) => {
-      if (typeof x !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(x)) return false;
-      const [y, m, d] = x.split("-").map(Number), u = new Date(Date.UTC(y, m - 1, d));
-      return u.getUTCFullYear() === y && u.getUTCMonth() === m - 1 && u.getUTCDate() === d;
-    };
-    const isStamp = (x) => isText(x) && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2})?([+-]\d{2}:\d{2}|Z)$/.test(x) && !isNaN(Date.parse(x)) && isDay(x.slice(0, 10));
-    const isNotes = (x) => Array.isArray(x) && x.every(isText);
-    if (!data || typeof data !== "object") return ["DATA missing"];
-    if (!isStamp(data.updatedAt)) errors.push("updatedAt");
-    if (!data.timezone || !isNum(data.timezone.offsetHours) || !isText(data.timezone.label)) errors.push("timezone");
-    if (!Array.isArray(data.refreshHours) || !data.refreshHours.length || !data.refreshHours.every((h) => Number.isInteger(h) && h >= 0 && h < 24)) errors.push("refreshHours");
-    const rules = data.rules || {};
-    if (!["staleGraceMinutes", "renewalAlertDays", "creditUrgentDays", "creditWarnDays", "creditRiskDays", "hideCountdownAfterDays", "paceWindowDays"].every((k) => isAmt(rules[k])) ||
-      !(rules.creditUrgentDays <= rules.creditWarnDays && rules.creditWarnDays <= rules.creditRiskDays)) errors.push("rules");
-    if (!data.fx || !isNum(data.fx.usdVnd) || !(data.fx.usdVnd > 0) || !isText(data.fx.asOf)) errors.push("fx");
-    if (!data.card || !isText(data.card.name)) errors.push("card");
-    const classes = data.creditClasses;
-    if (!classes || typeof classes !== "object" || !Object.keys(classes).length || !Object.values(classes).every((k) => k && isText(k.title) && typeof k.counted === "boolean")) errors.push("creditClasses");
-    const seen = new Set(), unique = (id, where) => { if (seen.has(id)) errors.push("duplicate id " + id + " in " + where); seen.add(id); };
-    const list = (key) => {
-      if (!Array.isArray(data[key])) { errors.push(key); return []; }
-      return data[key].filter((x, i) => (x && typeof x === "object" ? true : (errors.push(key + "[" + i + "]"), false)));
-    };
-    list("subscriptions").forEach((s, i) => {
-      unique(s.id, "subscriptions");
-      if (!isText(s.id) || !isText(s.name) || !isDay(s.renews) || !s.price || !isCur(s.price.currency) || !isAmt(s.price.amount) || !isText(s.plan) || !isText(s.logo) ||
-        !isText(s.source) || typeof s.autoRenew !== "boolean" || !(s.via == null || typeof s.via === "string") || !isNotes(s.notes)) errors.push("subscriptions[" + i + "]");
-    });
-    list("credits").forEach((c, i) => {
-      unique(c.id, "credits");
-      if (!isText(c.id) || !isText(c.name) || !isCur(c.currency) || !isAmt(c.left) || !(c.cap === null || (isAmt(c.cap) && c.cap >= c.left)) || !isDay(c.expires) ||
-        !(classes && Object.prototype.hasOwnProperty.call(classes, c.class) && classes[c.class]) || !isText(c.label) || !isText(c.logo) || !isText(c.source) || !isStamp(c.checkedAt) ||
-        !(c.history == null || Array.isArray(c.history)) || !(c.history || []).every((h) => h && isStamp(h.at) && isAmt(h.left) && Date.parse(h.at) < Date.parse(c.checkedAt)) || !isNotes(c.notes)) errors.push("credits[" + i + "]");
-    });
-    list("usageLimits").forEach((u, i) => {
-      unique(u.id, "usageLimits");
-      if (!isText(u.id) || !(isNum(u.usedPct) && u.usedPct >= 0 && u.usedPct <= 100) || !isStamp(u.resetsAt) || !isStamp(u.checkedAt) || !isText(u.name) || !isText(u.logo) || !isText(u.source) || !isNotes(u.notes) ||
-        !(u.topUps == null || Array.isArray(u.topUps)) || !(u.topUps || []).every((x) => x && isAmt(x.usd) && isDay(x.date) && isText(x.ref) && isText(x.source))) errors.push("usageLimits[" + i + "]");
-    });
-    if (data.deadlines != null && !Array.isArray(data.deadlines)) errors.push("deadlines");
-    (Array.isArray(data.deadlines) ? list("deadlines") : []).forEach((d, i) => {
-      unique(d.id, "deadlines");
-      if (!isText(d.id) || !isText(d.name) || !isDay(d.date) || !isText(d.source) || !(d.note == null || typeof d.note === "string")) errors.push("deadlines[" + i + "]");
-    });
-    return errors;
+  const html = (strings, ...values) => raw(strings.reduce(
+    (result, part, i) => result + part + (i < values.length ? markup(values[i]) : ""), ""
+  ));
+
+  const own = (o, key) => Object.prototype.hasOwnProperty.call(o, key);
+  const isObject = x => !!x && typeof x === "object" && !Array.isArray(x);
+  const finite = x => typeof x === "number" && Number.isFinite(x);
+  const amount = x => finite(x) && x >= 0;
+  const text = x => typeof x === "string" && x.trim().length > 0;
+  const string = x => typeof x === "string";
+  const currency = x => x === "USD" || x === "VND";
+  const strings = x => Array.isArray(x) && x.every(text);
+  const sum = (items, f) => items.reduce((total, item) => total + f(item), 0);
+  const clone = value => JSON.parse(JSON.stringify(value));
+  const close = (a, b) => Math.abs(a - b) <= Math.max(1, Math.abs(a), Math.abs(b)) * 1e-9;
+  const pad = n => String(n).padStart(2, "0");
+  const number = (n, decimals = 0) => n.toLocaleString("en-US", {
+    minimumFractionDigits: decimals, maximumFractionDigits: decimals
+  });
+  const money = (cur, n, precise = false) => cur === "USD"
+    ? "$" + number(n, 2)
+    : number(n, precise && !Number.isInteger(n) ? 2 : 0) + "₫";
+  const vnd = n => money("VND", n);
+  const roundedVnd = n => "≈ " + vnd(Math.round(n / 1000) * 1000);
+  const approximate = (cur, n) => cur === "USD"
+    ? (n > 0 && n < 1 ? "< $1" : "≈ $" + number(n))
+    : n > 0 && n < 1000 ? "< 1,000₫" : roundedVnd(n);
+  const converted = (cur, n, d) => cur === "USD" ? n * d.fx.usdVnd : n;
+
+  function validDay(value) {
+    if (typeof value !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+    const [year, month, day] = value.split("-").map(Number);
+    if (year < 1000) return false;
+    const date = new Date(Date.UTC(year, month - 1, day));
+    return date.getUTCFullYear() === year &&
+      date.getUTCMonth() === month - 1 && date.getUTCDate() === day;
   }
-
-  /* ---------- formatting ---------- */
-  const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"], WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-  const two = (n) => String(n).padStart(2, "0");
-  const fmtInt = (n) => Math.round(n).toLocaleString("en-US");
-  const fmtVnd = (n) => fmtInt(n) + "₫";
-  const fmtUsd = (n) => "$" + n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-  const roundK = (n) => Math.round(n / 1000) * 1000;
-  const sum = (xs, f) => xs.reduce((a, x) => a + f(x), 0);
-
-  /* ---------- pure: DATA + now -> display-ready view model ---------- */
-  function buildModel(data, now) {
-    const rules = data.rules, fx = data.fx.usdVnd, offsetMs = data.timezone.offsetHours * 3600000, tz = data.timezone.label;
-    const parts = (ms) => { const d = new Date(ms + offsetMs); return { y: d.getUTCFullYear(), mo: d.getUTCMonth(), d: d.getUTCDate(), h: d.getUTCHours(), mi: d.getUTCMinutes(), wd: d.getUTCDay() }; };
-    const today = parts(now);
-    const money = (cur, n) => (cur === "USD" ? fmtUsd(n) : fmtVnd(n));
-    const rough = (cur, n) => "≈ " + (cur === "USD" ? "$" + fmtInt(n) : fmtVnd(roundK(n)));
-    const toVnd = (cur, n) => (cur === "USD" ? n * fx : n);
-    const inVnd = (cur, n) => (cur === "USD" ? "≈ " + fmtVnd(roundK(n * fx)) : "");
-    const daysUntil = (ymd) => { const [y, m, d] = ymd.split("-").map(Number); return Math.round((Date.UTC(y, m - 1, d) - Date.UTC(today.y, today.mo, today.d)) / 86400000); };
-    const dayText = (p) => MONTHS[p.mo] + " " + p.d + (p.y !== today.y ? ", " + p.y : "");
-    const shortDate = (ymd) => { const [y, m, d] = ymd.split("-").map(Number); return dayText({ y: y, mo: m - 1, d: d }); };
-    const clock = (p) => two(p.h) + ":" + two(p.mi);
-    const stampMs = (ms, omitToday) => { const p = parts(ms), isToday = p.y === today.y && p.mo === today.mo && p.d === today.d; return (omitToday && isToday ? "" : dayText(p) + " · ") + clock(p) + " " + tz; };
-    const stamp = (iso, omitToday) => stampMs(Date.parse(iso), omitToday);
-    const countdown = (days, kind) => days < 0 ? (kind === "renewal" ? "Renewal unconfirmed" : "Passed") : days === 0 ? "Today" : days === 1 ? "Tomorrow" : days > rules.hideCountdownAfterDays ? "" : days + " days";
-    const chipFor = (tone, text) => (text && tone !== "none" ? [{ tone: tone, text: text }] : []);
-    const quietCount = (tone, text) => (text && tone === "none" ? " · " + text : "");
-    const stalePill = (iso) => (Date.parse(iso) < updatedMs ? [{ tone: "plain", text: "not re-checked" }] : []);
-
-    /* freshness: a scheduled refresh is missed once its grace period has passed without a newer updatedAt */
-    const updatedMs = Date.parse(data.updatedAt), up = parts(updatedMs), hours = data.refreshHours.slice().sort((a, b) => a - b), graceMs = rules.staleGraceMinutes * 60000;
-    const missed = []; let nextMs = null;
-    for (let k = 0; k < 8; k++) for (const h of hours) {
-      const ms = Date.UTC(up.y, up.mo, up.d + k, h) - offsetMs;
-      if (ms <= updatedMs + 60000) continue;
-      if (ms + graceMs < now) missed.push(ms); else if (nextMs === null) nextMs = ms;
-    }
-    const stale = missed.length > 0, ageMin = Math.max(0, Math.floor((now - updatedMs) / 60000));
-    const live = { age: ageMin < 60 ? ageMin + " min ago" : ageMin < 2880 ? Math.floor(ageMin / 60) + "h " + (ageMin % 60) + "m ago" : Math.floor(ageMin / 1440) + " days ago" };
-    const fresh = {
-      level: missed.length === 0 ? "ok" : missed.length === 1 ? "late" : "stale",
-      updated: "Updated " + stamp(data.updatedAt, true),
-      next: nextMs === null ? "" : "next " + clock(parts(nextMs)),
-      missed: !stale ? "" : missed.length === 1 ? two(parts(missed[0]).h) + ":00 refresh missed" : missed.length + " refreshes missed since " + stampMs(missed[0], true),
-    };
-
-    /* subscriptions */
-    const payment = (s) => data.card.name + (s.via ? " via " + s.via : "") + (data.card.note ? " (" + data.card.note + ")" : "");
-    const subs = data.subscriptions.slice().sort((a, b) => a.renews.localeCompare(b.renews)).map((s) => {
-      const days = daysUntil(s.renews), when = shortDate(s.renews), cur = s.price.currency, amount = money(cur, s.price.amount);
-      const tone = days <= rules.renewalAlertDays ? "red" : "none", cd = countdown(days, "renewal");
-      return {
-        id: s.id, logo: s.logo, name: s.name, amount: amount, days: days, tone: tone, cd: cd, whenShort: when, currency: cur, price: s.price.amount, vnd: toVnd(cur, s.price.amount),
-        when: (days < 0 ? "Was due " : "Renews ") + when + quietCount(tone, cd), chips: chipFor(tone, cd), secondary: inVnd(cur, s.price.amount),
-        details: [
-          ["Renewal", (s.autoRenew ? "Auto-renews monthly on " : "Renews ") + when + " · " + amount + (cur === "USD" ? " (≈ " + fmtVnd(toVnd(cur, s.price.amount)) + ")" : "")],
-          ["Plan", s.plan], ["Payment", payment(s)], ["Notes", s.notes], ["Source", s.source],
-        ],
-      };
-    });
-
-    /* credits: pace = spend between the oldest reading inside the window and the latest one */
-    const classKeys = Object.keys(data.creditClasses);
-    const credits = data.credits.slice().sort((a, b) => classKeys.indexOf(a.class) - classKeys.indexOf(b.class) || a.expires.localeCompare(b.expires)).map((c) => {
-      const cls = data.creditClasses[c.class], days = daysUntil(c.expires), expired = days < 0, when = shortDate(c.expires), m = (n) => money(c.currency, n), checkedMs = Date.parse(c.checkedAt);
-      const all = (c.history || []).concat([{ at: c.checkedAt, left: c.left }]).sort((a, b) => Date.parse(a.at) - Date.parse(b.at));
-      const readings = all.filter((r) => Date.parse(r.at) >= checkedMs - rules.paceWindowDays * 86400000);
-      const oldest = readings.length > 1 ? readings[0] : null, refilled = readings.some((r, i) => i > 0 && r.left > readings[i - 1].left);
-      const span = oldest ? (checkedMs - Date.parse(oldest.at)) / 86400000 : 0;
-      const pace = oldest && span >= 0.5 && !refilled ? (oldest.left - c.left) / span : null;
-      const isLive = cls.counted && !expired && c.left > 0;
-      const needed = isLive ? c.left / Math.max(days, 1) : null;
-      const loss = pace === null || !isLive ? null : Math.max(0, c.left - pace * days);
-      const onPace = isLive && pace !== null && c.left - pace * Math.max(days, 1) <= 0;
-      const base = !isLive ? "none" : days <= rules.creditUrgentDays ? "red" : days <= rules.creditWarnDays ? "amber" : days <= rules.creditRiskDays ? "watch" : "none";
-      const tone = onPace ? { red: "amber", amber: "watch", watch: "none", none: "none" }[base] : base;
-      const soon = isLive && days <= rules.creditRiskDays;
-      const runOut = pace > 0 ? dayText(parts(checkedMs + (c.left / pace) * 86400000)) : "";
-      const cd = cls.counted && !expired ? countdown(days, "credit") : "";
-      let panel = null;
-      if (soon) {
-        const flag = { tone: tone === "red" || tone === "amber" ? tone : "watch", text: pace > 0 ? "Behind pace" : "Unused lately" };
-        const verdict = pace === null ? { chip: null, text: refilled ? "Balance rose between readings — no recent pace" : "No recent pace yet — needs more balance readings" }
-          : onPace ? { chip: { tone: "ok", text: "On pace" }, text: "used up ≈ " + runOut + " · est." }
-          : pace > 0 ? { chip: flag, text: rough(c.currency, loss) + " would expire unused · est." }
-          : { chip: flag, text: "all " + m(c.left) + " would expire unused · est." };
-        const pct = pace > 0 ? Math.min(100, (pace / needed) * 100) : 0;
-        panel = {
-          needed: "≈ " + m(needed), recent: pace === null ? "—" : "≈ " + m(pace), pct: pct.toFixed(1), tone: onPace ? "ok" : tone === "red" || tone === "amber" ? tone : "",
-          label: pace === null ? "Recent pace unknown" : "Recent pace is " + Math.round(pace / needed * 100) + "% of the pace needed", chip: verdict.chip, text: verdict.text,
-        };
-      }
-      return {
-        id: c.id, logo: c.logo, name: c.name, amount: m(c.left), muted: !cls.counted || expired, classKey: c.class, counted: cls.counted,
-        days: days, expired: expired, live: isLive, soon: soon, tone: tone, pace: pace, span: span, loss: loss, onPace: onPace, left: c.left, currency: c.currency,
-        risk: !soon ? 0 : loss === null ? c.left : loss, vnd: toVnd(c.currency, c.left), whenShort: when,
-        when: (expired ? "Expired " : "Expires ") + when + quietCount(tone, cd), chips: chipFor(tone, cd).concat(stalePill(c.checkedAt)), secondary: inVnd(c.currency, c.left), panel: panel,
-        details: [
-          ["Status", expired ? (c.left > 0 ? "Excluded — expiry passed; last known balance" : "Expired") : cls.counted ? "Counted as usable API credit" : "Not counted · " + cls.title],
-          ["Balance", m(c.left) + (c.cap ? " of " + m(c.cap) + " · " + Math.round((c.left / c.cap) * 100) + "% left" : " · original amount unknown")],
-          ["Type", c.label],
-          ["Pace", isLive ? (pace !== null ? "Recent ≈ " + m(pace) + "/day over " + span.toFixed(1) + " days of readings. " : "") + "Using it all by " + when + " needs ≈ " + m(needed) + "/day." : ""],
-          ["Forecast", loss === null ? "" : (onPace ? "On pace" + (runOut ? " — used up ≈ " + runOut : "") : rough(c.currency, loss) + " expires unused at the recent pace") + " (estimate)"],
-          ["Readings", all.slice().reverse().map((r) => stamp(r.at) + " — " + m(r.left))],
-          ["Notes", c.notes], ["Source", c.source + " · checked " + stamp(c.checkedAt)],
-        ],
-      };
-    });
-    const usable = credits.filter((c) => c.live), soon = usable.filter((c) => c.soon).sort((a, b) => a.days - b.days);
-    const usableVnd = sum(usable, (c) => c.vnd);
-    const range = !soon.length ? "" : soon[0].whenShort === soon[soon.length - 1].whenShort ? soon[0].whenShort : soon[0].whenShort + "–" + soon[soon.length - 1].whenShort;
-    const riskTile = (() => {
-      if (!soon.length) return { cap: "Credit at risk", tone: "none", big: "None", est: "", sub: "No usable credit expires within " + rules.creditRiskDays + " days" };
-      const same = soon.every((c) => c.currency === soon[0].currency), cur = same ? soon[0].currency : "VND", conv = (c, n) => (same ? n : toVnd(c.currency, n));
-      const total = sum(soon, (c) => conv(c, c.left)), risk = sum(soon, (c) => conv(c, c.risk)), hit = soon.filter((c) => c.risk > 0);
-      if (risk < (cur === "USD" ? 0.5 : 500)) return { cap: "Credit at risk", tone: "none", big: "On pace", est: "est.", sub: money(cur, total) + " expiring " + range };
-      return {
-        cap: "Credit at risk", tone: hit.some((c) => c.tone === "red") ? "red" : hit.some((c) => c.tone === "amber") ? "amber" : "none", big: rough(cur, risk), est: "est.",
-        sub: hit.length === 1 ? hit[0].name + " · expires " + hit[0].whenShort : hit.length + " credits · " + range,
-      };
-    })();
-    const spans = soon.filter((c) => c.pace !== null).map((c) => c.span), basis = spans.length ? Math.min.apply(null, spans) : 0;
-    const uncounted = classKeys.filter((k) => !data.creditClasses[k].counted && credits.some((c) => c.classKey === k)).map((k) => "“" + data.creditClasses[k].title + "”");
-    const creditNote = (spans.length ? "Estimates (≈ … est.) use " + basis.toFixed(1) + " days of balance readings" + (basis < 3 ? " — low confidence" : "") + (stale ? ", on data from " + stamp(data.updatedAt, true) : "") + ". " : "") +
-      (uncounted.length ? "Credit under " + uncounted.join(", ") + " is excluded from totals." : "");
-    const groups = classKeys.map((k, i) => ({ title: data.creditClasses[k].title, showTitle: i > 0 || !data.creditClasses[k].counted, rows: credits.filter((c) => c.classKey === k) })).filter((g) => g.rows.length);
-
-    /* next charge + monthly total */
-    const next = subs.find((s) => s.days >= 0);
-    const chargeTile = next ? { cap: "Next charge", tone: next.tone, big: next.amount, est: "", sub: next.name + " · " + next.whenShort + (next.cd ? " · " + next.cd : "") } : { cap: "Next charge", tone: "none", big: "None due", est: "", sub: "" };
-    const usdSubs = subs.filter((s) => s.currency === "USD"), vndSubs = subs.filter((s) => s.currency === "VND");
-    const split = [usdSubs.length ? fmtUsd(sum(usdSubs, (s) => s.price)) : "", vndSubs.length ? fmtVnd(sum(vndSubs, (s) => s.price)) : ""].filter(Boolean).join(" + ");
-    const fxText = "1 USD ≈ " + fmtInt(fx) + "₫ (" + data.fx.asOf + ")";
-
-    /* usage limits */
-    const usage = data.usageLimits.map((u) => {
-      const resetMs = Date.parse(u.resetsAt), ms = resetMs - now, r = parts(resetMs), at = WEEKDAYS[r.wd] + " " + clock(r), passed = ms <= 0;
-      const d = Math.floor(ms / 86400000), h = Math.floor((ms % 86400000) / 3600000), mi = Math.floor((ms % 3600000) / 60000);
-      const tops = u.topUps || [], topTotal = sum(tops, (x) => x.usd), left = Math.max(0, 100 - u.usedPct);
-      if (!passed) live["reset-" + u.id] = "in " + (d > 0 ? d + "d " + h + "h" : h + "h " + mi + "m");
-      return {
-        id: u.id, logo: u.logo, name: u.name, amount: (passed ? "last " : "") + +u.usedPct + "% used", muted: passed, resetPassed: passed,
-        when: passed ? "Reset " + at + " passed — awaiting refresh" : "Resets " + at, chips: stalePill(u.checkedAt), secondary: "", liveKey: passed ? "" : "reset-" + u.id,
-        meter: { pct: Math.min(100, Math.max(0, u.usedPct)).toFixed(1), soft: passed, label: +u.usedPct + "% of the limit used" },
-        foot: [+left.toFixed(1) + "% left", tops.length ? "Top-ups: " + fmtUsd(topTotal) + " (" + tops.length + ")" : ""],
-        details: [
-          ["Checked", stamp(u.checkedAt)],
-          ["Top-ups", tops.length ? ["Total " + fmtUsd(topTotal) + " extra credit bought"].concat(tops.map((x) => fmtUsd(x.usd) + " · ≈ " + fmtVnd(x.usd * fx) + " · " + shortDate(x.date) + " · ref " + x.ref)) : ""],
-          ["Notes", u.notes], ["Source", u.source],
-        ],
-      };
-    });
-
-    /* other dates */
-    const deadlines = (data.deadlines || []).slice().sort((a, b) => a.date.localeCompare(b.date)).map((d) => {
-      const days = daysUntil(d.date), when = shortDate(d.date), tone = days <= rules.renewalAlertDays ? "red" : "none", cd = countdown(days, "deadline");
-      return { id: d.id, logo: d.logo, name: d.name, amount: "", days: days, whenShort: when, when: (days < 0 ? "Expired " : "Expires ") + when + quietCount(tone, cd), chips: chipFor(tone, cd), secondary: "", details: [["Note", d.note || ""], ["Source", d.source]] };
-    });
-
-    const attention = [];
-    subs.forEach((s) => {
-      if (s.days < 0) attention.push(s.name + ": renewal date " + s.whenShort + " passed — confirm the charge");
-      else if (s.days <= rules.renewalAlertDays) attention.push(s.name + " renews " + s.whenShort + " (" + s.cd.toLowerCase() + ") · " + s.amount);
-    });
-    deadlines.filter((d) => d.days <= rules.renewalAlertDays).forEach((d) => attention.push(d.name + (d.days < 0 ? " expired " : " expires ") + d.whenShort));
-    credits.filter((c) => c.expired && c.left > 0).forEach((c) => attention.push(c.name + ": expiry " + c.whenShort + " passed · last known balance " + c.amount + " — check & update"));
-
-    const sources = [].concat(
-      data.subscriptions.map((s) => s.name + " — " + s.source),
-      data.credits.map((c) => c.name + " — " + c.source + ", checked " + stamp(c.checkedAt)),
-      data.usageLimits.map((u) => u.name + " — " + u.source + ", checked " + stamp(u.checkedAt)),
-      data.usageLimits.reduce((acc, u) => acc.concat((u.topUps || []).map((x) => u.name + " top-up " + fmtUsd(x.usd) + " (ref " + x.ref + ") — " + x.source)), []),
-      ["USD→VND rate " + fmtInt(fx) + " — " + data.fx.asOf],
-      (data.deadlines || []).map((d) => d.name + " — " + d.source),
-      data.extraSources || []
+  function validStamp(value, offsetHours) {
+    if (typeof value !== "string") return false;
+    const match = value.match(
+      /^(\d{4}-\d{2}-\d{2})T(\d{2}):(\d{2})(?::(\d{2}))?(Z|([+-])(\d{2}):(\d{2}))$/
     );
-    const legend = [
-      "Each item is shown in the currency it is billed in, with ≈ ₫ beside USD items; totals are in ₫ at " + fxText + ". Countdowns use " + tz + " calendar days.",
-      "Renewals and other dates turn red ≤ " + rules.renewalAlertDays + " days. Usable API credit: outlined ≤ " + rules.creditRiskDays + " days before expiry, amber ≤ " + rules.creditWarnDays + ", red ≤ " + rules.creditUrgentDays + " — one step calmer when the recent pace would use it up in time.",
-      "“Recent per day” is the spend between the oldest balance reading of the last " + rules.paceWindowDays + " days and the latest one (needs ≥ 12 h of readings; any balance rise cancels it). “Needed per day” is the even daily spend that uses the balance before it expires. “Credit at risk” is the estimated leftover at the recent pace (the full balance when no pace is known); it is credit value, not cash.",
-      "Credit that is not counted cannot be used for the AI APIs and is left out of every total. The usage bar fills as the limit is used. Data refreshes at " + hours.map(two).join(" · ") + " " + tz + "; a refresh more than " + rules.staleGraceMinutes + " min late is flagged.",
+    if (!match || !validDay(match[1])) return false;
+    if (+match[2] > 23 || +match[3] > 59 || +(match[4] || 0) > 59) return false;
+    let offset = 0;
+    if (match[5] !== "Z") {
+      const h = +match[7], m = +match[8];
+      if (h > 14 || m > 59 || (h === 14 && m !== 0)) return false;
+      offset = (h * 60 + m) * (match[6] === "-" ? -1 : 1);
+    }
+    return offset === offsetHours * 60 && Number.isFinite(Date.parse(value));
+  }
+  function secretLike(value) {
+    const serialized = typeof value === "string" ? value : JSON.stringify(value);
+    const patterns = [
+      new RegExp("\\b" + "sk" + "-(?:[A-Za-z]+-)?[A-Za-z0-9_-]{20,}"),
+      new RegExp("\\b" + "AK" + "IA[A-Z0-9]{16}\\b"),
+      new RegExp("\\b" + "gh" + "p_[A-Za-z0-9]{30,}"),
+      new RegExp("\\b" + "AI" + "za[A-Za-z0-9_-]{30,}"),
+      new RegExp("-----BEGIN " + "(?:RSA |EC |OPENSSH )?PRIVATE" + " KEY-----"),
+      new RegExp("\\bBearer" + "\\s+[A-Za-z0-9_.-]{24,}", "i"),
+      new RegExp('"[A-Za-z_]*(?:password|private_key|api_key|access_token|secret_key)"\\s*:\\s*"[^"]+"', "i")
     ];
-    return {
-      fresh: fresh, live: live, stale: stale, missedCount: missed.length, attention: attention, tiles: [chargeTile, riskTile],
-      credits: { total: "≈ " + fmtVnd(roundK(usableVnd)) + " usable", groups: groups, note: creditNote }, creditRows: credits, usableVnd: usableVnd, usableCount: usable.length,
-      subs: { total: (usdSubs.length ? "≈ " : "") + fmtVnd(sum(subs, (s) => s.vnd)) + " / month", rows: subs, note: split + " per month" + (usdSubs.length ? " · " + fxText : "") },
-      usage: usage, deadlines: deadlines, sources: sources, legend: legend,
-    };
+    return patterns.some(pattern => pattern.test(serialized || ""));
   }
 
-  /* ---------- view: model -> markup (maps 1:1 to React components) ---------- */
-  const chipView = (c) => html`<span class="chip ${c.tone}">${c.text}</span>`;
-  const logoView = (key) => {
-    const L = Object.prototype.hasOwnProperty.call(LOGO, key) ? LOGO[key] : null;
-    return L
-      ? html`<span class="logo" style="background:${L.bg}"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="${L.fg}" d="${L.d}"></path></svg></span>`
-      : html`<span class="logo" style="background:#71717a">${String(key || "?").charAt(0).toUpperCase()}</span>`;
-  };
-  const detailsView = (pairs) => html`<dl class="kv">${pairs.filter((p) => p[1] && p[1].length).map((p) =>
-    html`<div class="kv-row${p[0] === "Source" ? " foot" : ""}"><dt>${p[0]}</dt><dd>${Array.isArray(p[1]) ? p[1].map((t, i) => html`<span class="ln${i ? "" : " first"}">${t}</span>`) : p[1]}</dd></div>`)}</dl>`;
-  const paceView = (p) => html`<div class="pace">
-    <div class="pace-stats">
-      <div><div class="cap">Needed per day</div><div class="num">${p.needed}</div></div>
-      <div class="r"><div class="cap">Recent per day</div><div class="num">${p.recent}</div></div>
-    </div>
-    <div class="gauge ${p.tone}" role="img" aria-label="${p.label}"><i style="width:${p.pct}%"></i></div>
-    <div class="verdict">${p.chip ? chipView(p.chip) : ""}<span>${p.text}</span></div>
-  </div>`;
-  const rowView = (r, ui, first) => {
-    const open = !!ui.open[r.id];
-    return html`<div class="item${first ? " first" : ""}${r.muted ? " muted" : ""}">
-      <button class="row" data-toggle="${r.id}" aria-expanded="${open ? "true" : "false"}" aria-controls="d-${r.id}">
-        ${logoView(r.logo)}
-        <span class="main">
-          <span class="l1"><span class="name">${r.name}</span><span class="amt">${r.amount}</span></span>
-          <span class="l2"><span class="when"><span>${r.when}</span>${r.chips.map(chipView)}</span><span class="sec" data-live="${r.liveKey || ""}">${r.liveKey ? "" : r.secondary}</span></span>
-          ${r.meter ? html`<span class="meter${r.meter.soft ? " soft" : ""}" role="img" aria-label="${r.meter.label}"><i style="width:${r.meter.pct}%"></i></span>` : ""}
-          ${r.foot ? html`<span class="l3"><span>${r.foot[0]}</span><span class="sec">${r.foot[1]}</span></span>` : ""}
-        </span>
-        <span class="chev${open ? " open" : ""}" aria-hidden="true">›</span>
-      </button>
-      ${r.panel ? paceView(r.panel) : ""}
-      <div class="details${open ? " open" : ""}" id="d-${r.id}">${detailsView(r.details)}</div>
-    </div>`;
-  };
-  const cardView = (rows, ui) => html`<div class="card">${rows.map((r, i) => rowView(r, ui, i === 0))}</div>`;
-  const creditsCard = (groups, ui) => {
-    let n = 0;
-    return html`<div class="card">${groups.map((g) => html`${g.showTitle ? html`<div class="group cap">${g.title}</div>` : ""}${g.rows.map((r) => rowView(r, ui, n++ === 0))}`)}</div>`;
-  };
-  const sectionView = (title, total, body, note) => html`<div class="sec-head"><h2>${title}</h2>${total ? html`<span class="sec-total">${total}</span>` : ""}</div>${body}${note ? html`<p class="note">${note}</p>` : ""}`;
-  const checkBtn = (cls, net) => html`<button class="${cls}" data-action="check" aria-busy="${net.busy ? "true" : "false"}">${net.busy ? "Checking…" : "Check for updates"}</button>`;
-  const statusView = (f, net) => html`${f.level === "stale"
-    ? html`<div class="stale" role="status"><b>Data may be out of date</b>${f.updated} · <span class="nw" data-live="age"></span> · ${f.missed}<div class="stale-row">${checkBtn("btn", net)}</div></div>`
-    : html`<div class="status"><span class="dot${f.level === "late" ? " late" : ""}" aria-hidden="true"></span><span>${f.updated} · <span class="nw" data-live="age"></span>${f.level === "ok" && f.next ? " · " + f.next : ""}</span></div>
-      ${f.level === "late" ? html`<div class="status-2"><span role="status">${f.missed}</span>${checkBtn("link", net)}</div>` : ""}`}
-    ${net.message ? html`<div class="net" role="status">${net.message}</div>` : ""}`;
-  const tileView = (t) => html`<div class="tile ${t.tone}"><div class="cap">${t.cap}</div><div class="big">${t.big}${t.est ? html`<span class="est">${t.est}</span>` : ""}</div>${t.sub ? html`<div class="t-sub">${t.sub}</div>` : ""}</div>`;
-  const pageView = (m, ui) => html`<h1>AI Subscription</h1>
-    ${statusView(m.fresh, ui.net)}
-    ${m.attention.length ? html`<div class="alert" role="alert"><div class="cap">Needs attention</div><ul>${m.attention.map((a) => html`<li>${a}</li>`)}</ul></div>` : ""}
-    <div class="tiles">${m.tiles.map(tileView)}</div>
-    ${sectionView("API credits", m.credits.total, creditsCard(m.credits.groups, ui), m.credits.note)}
-    ${sectionView("Subscriptions", m.subs.total, cardView(m.subs.rows, ui), m.subs.note)}
-    ${m.usage.length ? sectionView("Usage limits", "", cardView(m.usage, ui), "") : ""}
-    ${m.deadlines.length ? sectionView("Other dates", "", cardView(m.deadlines, ui), "") : ""}
-    <button class="more" data-toggle="__sources" aria-expanded="${ui.open.__sources ? "true" : "false"}" aria-controls="src"><span>Data sources &amp; legend</span><span class="chev${ui.open.__sources ? " open" : ""}" aria-hidden="true">›</span></button>
-    <div class="src${ui.open.__sources ? " open" : ""}" id="src"><ul>${m.sources.map((s) => html`<li>${s}</li>`)}</ul><div class="legend">${m.legend.map((p) => html`<p>${p}</p>`)}</div></div>`;
+  function validateData(d) {
+    try {
+      const errors = [];
+      const fail = (ok, path) => { if (!ok) errors.push(path); };
+      if (!isObject(d)) return ["DATA is missing or is not an object."];
+      if (secretLike(d)) return ["DATA contains a secret-like value. Remove it before displaying this page."];
 
-  /* ---------- self-tests on a frozen fixture: open app.html#selftest ---------- */
-  function runSelfTests() {
-    const out = [], check = (name, ok) => out.push((ok ? "PASS " : "FAIL ") + name), at = (s) => Date.parse(s), clone = (x) => JSON.parse(JSON.stringify(x));
-    const T = "2026-11-11T09:00:00+07:00";
-    const FIX = {
-      updatedAt: T, timezone: { offsetHours: 7, label: "ICT" }, refreshHours: [6, 9, 12, 15, 18],
-      rules: { staleGraceMinutes: 45, renewalAlertDays: 3, creditUrgentDays: 7, creditWarnDays: 15, creditRiskDays: 30, hideCountdownAfterDays: 90, paceWindowDays: 7 },
-      fx: { usdVnd: 25000, asOf: "fixture" }, card: { name: "Card" },
-      creditClasses: { api: { title: "Usable", counted: true }, restricted: { title: "Restricted", counted: false } },
-      subscriptions: [{ id: "s1", name: "Plan", logo: "x", plan: "p", renews: "2026-11-20", price: { currency: "USD", amount: 10 }, autoRenew: true, notes: [], source: "f" }],
-      credits: [
-        { id: "c1", name: "Credit", logo: "x", class: "api", label: "l", currency: "USD", left: 10, cap: 20, expires: "2026-11-15", checkedAt: T, notes: [], source: "f" },
-        { id: "c2", name: "Trial", logo: "x", class: "restricted", label: "l", currency: "VND", left: 1000, cap: null, expires: "2026-11-12", checkedAt: T, notes: [], source: "f" },
-      ],
-      usageLimits: [{ id: "u1", name: "Limit", logo: "x", usedPct: 10, resetsAt: "2026-11-12T08:55:00+07:00", checkedAt: T, notes: [], source: "f" }],
+      fail(isObject(d.timezone) && finite(d.timezone.offsetHours) &&
+        Math.abs(d.timezone.offsetHours) <= 14 &&
+        Number.isInteger(d.timezone.offsetHours * 60) &&
+        text(d.timezone.label), "timezone");
+      const offset = d.timezone && d.timezone.offsetHours;
+      const stamp = value => validStamp(value, offset);
+      fail(stamp(d.updatedAt), "updatedAt");
+
+      fail(Array.isArray(d.refreshHours) && d.refreshHours.length > 0 &&
+        d.refreshHours.every(h => Number.isInteger(h) && h >= 0 && h < 24) &&
+        new Set(d.refreshHours).size === d.refreshHours.length, "refreshHours");
+
+      const r = d.rules || {};
+      const ruleKeys = [
+        "staleGraceMinutes", "renewalAlertDays", "creditUrgentDays",
+        "creditWarnDays", "creditRiskDays", "hideCountdownAfterDays", "paceWindowDays"
+      ];
+      fail(ruleKeys.every(k => amount(r[k])) && r.paceWindowDays > 0 &&
+        r.creditUrgentDays <= r.creditWarnDays &&
+        r.creditWarnDays <= r.creditRiskDays, "rules");
+
+      fail(isObject(d.fx) && finite(d.fx.usdVnd) && d.fx.usdVnd > 0 && text(d.fx.asOf), "fx");
+      fail(isObject(d.card) && text(d.card.name) && string(d.card.note), "card");
+      fail(isObject(d.creditClasses) && own(d.creditClasses, "api") &&
+        own(d.creditClasses, "restricted") &&
+        Object.values(d.creditClasses).every(c =>
+          isObject(c) && text(c.title) && typeof c.counted === "boolean") &&
+        d.creditClasses.api.counted === true &&
+        d.creditClasses.restricted.counted === false, "creditClasses");
+      fail(strings(d.extraSources), "extraSources");
+
+      const ids = new Set();
+      function common(item, path) {
+        if (!isObject(item)) { errors.push(path); return false; }
+        fail(text(item.id) && /^[a-zA-Z0-9][a-zA-Z0-9_-]*$/.test(item.id), path + ".id");
+        fail(!ids.has(item.id), path + ".id is duplicated");
+        ids.add(item.id);
+        fail(text(item.name), path + ".name");
+        fail(text(item.logo) && own(LOGOS, item.logo), path + ".logo");
+        fail(text(item.source), path + ".source");
+        return true;
+      }
+      function list(key, fn) {
+        if (!Array.isArray(d[key])) { errors.push(key); return; }
+        d[key].forEach((item, i) => fn(item, key + "[" + i + "]"));
+      }
+
+      list("subscriptions", (s, p) => {
+        if (!common(s, p)) return;
+        fail(text(s.plan), p + ".plan");
+        fail(validDay(s.renews), p + ".renews");
+        fail(isObject(s.price) && currency(s.price.currency) && amount(s.price.amount), p + ".price");
+        fail(typeof s.autoRenew === "boolean", p + ".autoRenew");
+        fail(string(s.via), p + ".via");
+        fail(strings(s.notes), p + ".notes");
+      });
+      list("credits", (c, p) => {
+        if (!common(c, p)) return;
+        fail((c.class === "api" || c.class === "restricted") &&
+          isObject(d.creditClasses) && own(d.creditClasses, c.class), p + ".class");
+        fail(text(c.label), p + ".label");
+        fail(currency(c.currency), p + ".currency");
+        fail(amount(c.left), p + ".left");
+        fail(c.cap === null || (amount(c.cap) && c.cap >= c.left), p + ".cap");
+        fail(validDay(c.expires), p + ".expires");
+        fail(stamp(c.checkedAt), p + ".checkedAt");
+        fail(strings(c.notes), p + ".notes");
+        if (!Array.isArray(c.history)) { errors.push(p + ".history"); return; }
+
+        const times = new Set();
+        c.history.forEach((reading, i) => {
+          const hp = p + ".history[" + i + "]";
+          if (!isObject(reading)) { errors.push(hp); return; }
+          const at = Date.parse(reading.at), checked = Date.parse(c.checkedAt);
+          fail(stamp(reading.at), hp + ".at");
+          fail(amount(reading.left), hp + ".left");
+          fail(at < checked, hp + ".at must precede checkedAt");
+          fail(!times.has(at), hp + ".at is duplicated");
+          fail(at >= checked - r.paceWindowDays * DAY, hp + ".at is outside paceWindowDays");
+          times.add(at);
+        });
+      });
+      list("usageLimits", (u, p) => {
+        if (!common(u, p)) return;
+        fail(amount(u.usedPct) && u.usedPct <= 100, p + ".usedPct");
+        fail(stamp(u.resetsAt), p + ".resetsAt");
+        fail(stamp(u.checkedAt), p + ".checkedAt");
+        fail(strings(u.notes), p + ".notes");
+        if (!Array.isArray(u.topUps)) { errors.push(p + ".topUps"); return; }
+        const refs = new Set();
+        u.topUps.forEach((t, i) => {
+          const tp = p + ".topUps[" + i + "]";
+          if (!isObject(t)) { errors.push(tp); return; }
+          fail(validDay(t.date) && amount(t.usd) && text(t.ref) && text(t.source), tp);
+          fail(!refs.has(t.ref), tp + ".ref is duplicated");
+          refs.add(t.ref);
+        });
+      });
+      list("deadlines", (item, p) => {
+        if (!common(item, p)) return;
+        fail(validDay(item.date), p + ".date");
+        fail(string(item.note), p + ".note");
+      });
+
+      if (!errors.length) {
+        fail(finite(sum(d.subscriptions, s => converted(s.price.currency, s.price.amount, d))),
+          "Subscription total exceeds supported numeric range");
+        fail(finite(sum(d.credits, c => converted(c.currency, c.left, d))),
+          "Credit total exceeds supported numeric range");
+        fail(d.usageLimits.every(u =>
+          finite(sum(u.topUps, t => t.usd) * d.fx.usdVnd)),
+          "Top-up total exceeds supported numeric range");
+      }
+      return errors;
+    } catch (_) {
+      return ["DATA could not be validated."];
+    }
+  }
+
+  /* Date calculations never use the device timezone. */
+  const offsetMs = d => d.timezone.offsetHours * HOUR;
+  function localParts(ms, d) {
+    const date = new Date(ms + offsetMs(d));
+    return {
+      y: date.getUTCFullYear(), m: date.getUTCMonth(), day: date.getUTCDate(),
+      h: date.getUTCHours(), min: date.getUTCMinutes(), sec: date.getUTCSeconds()
     };
-    const NOW = at("2026-11-11T10:00:00+07:00");
-    const bad = (fn) => { const f = clone(FIX); fn(f); return validateData(f).length > 0; };
-    const c1 = (fn, now) => { const f = clone(FIX); if (fn) fn(f.credits[0], f); return buildModel(f, now || NOW).creditRows.find((c) => c.id === "c1"); };
-    const hist = (left) => (c) => { c.history = [{ at: "2026-11-09T09:00:00+07:00", left: left }]; };
-    check("live DATA passes validation", validateData(window.DATA).length === 0);
-    check("fixture passes validation", validateData(FIX).length === 0);
-    check("rejects impossible date", bad((f) => (f.credits[0].expires = "2026-02-30")));
-    check("rejects negative balance", bad((f) => (f.credits[0].left = -1)));
-    check("rejects balance above cap", bad((f) => (f.credits[0].left = 30)));
-    check("rejects duplicate ids", bad((f) => (f.credits[1].id = "c1")));
-    check("rejects unordered thresholds", bad((f) => (f.rules.creditUrgentDays = 40)));
-    check("rejects usage over 100%", bad((f) => (f.usageLimits[0].usedPct = 120)));
-    check("rejects missing source text", bad((f) => delete f.subscriptions[0].source));
-    check("rejects unknown credit class", bad((f) => (f.credits[0].class = "toString")));
-    check("rejects history reading after the current one", bad((f) => (f.credits[0].history = [{ at: "2026-11-12T09:00:00+07:00", left: 12 }])));
-    check("rejects deadline without a valid date", bad((f) => (f.deadlines = [{ id: "d1", name: "Key", date: "2026-13-01", source: "f" }])));
-    check("pace and projected loss from history", (() => { const c = c1(hist(14)); return Math.abs(c.pace - 2) < 1e-9 && Math.abs(c.loss - 2) < 1e-9; })());
-    check("readings older than the pace window are ignored", c1((c) => (c.history = [{ at: "2026-10-01T09:00:00+07:00", left: 20 }])).pace === null);
-    check("a balance rise inside the window gives no pace", c1(hist(5)).pace === null);
-    check("4 days out and behind pace is red", c1(hist(14)).tone === "red");
-    check("4 days out but on pace drops to amber", c1(hist(16)).tone === "amber");
-    check("20 days out without pace is outlined", c1((c) => (c.expires = "2026-12-01")).tone === "watch");
-    check("20 days out and on pace is neutral", c1((c) => { c.expires = "2026-12-01"; hist(12)(c); }).tone === "none");
-    check("risk tile shows the estimated leftover", (() => { const f = clone(FIX); hist(14)(f.credits[0]); return buildModel(f, NOW).tiles[1].big === "≈ $2"; })());
-    check("risk tile counts the full balance when no pace is known", buildModel(FIX, NOW).tiles[1].big === "≈ $10");
-    check("expires today counts as 0 days, not expired", (() => { const c = c1(null, at("2026-11-15T23:59:00+07:00")); return c.days === 0 && !c.expired; })());
-    check("expired the next local day", c1(null, at("2026-11-16T00:01:00+07:00")).expired);
-    check("expired credit with balance flagged and excluded", (() => { const m = buildModel(FIX, at("2026-11-16T10:00:00+07:00")); return m.usableCount === 0 && m.attention.some((a) => a.indexOf("expiry") >= 0); })());
-    check("restricted credit never coloured or counted", (() => { const m = buildModel(FIX, NOW); return m.creditRows.find((c) => c.id === "c2").tone === "none" && m.usableVnd === 250000; })());
-    check("not stale within grace (12:30)", !buildModel(FIX, at("2026-11-11T12:30:00+07:00")).stale);
-    check("stale after grace (12:50)", buildModel(FIX, at("2026-11-11T12:50:00+07:00")).stale);
-    check("counts every missed refresh", buildModel(FIX, at("2026-11-11T15:50:00+07:00")).missedCount === 2);
-    check("next refresh shown", buildModel(FIX, NOW).fresh.next === "next 12:00");
-    const eve = clone(FIX); eve.updatedAt = "2026-11-11T18:00:00+07:00";
-    check("overnight gap not stale at 05:00", !buildModel(eve, at("2026-11-12T05:00:00+07:00")).stale);
-    check("overnight stale at 06:50", buildModel(eve, at("2026-11-12T06:50:00+07:00")).stale);
-    check("renewal 9 days out stays neutral", buildModel(FIX, NOW).subs.rows[0].tone === "none");
-    check("renewal 3 days out turns red", buildModel(FIX, at("2026-11-17T10:00:00+07:00")).subs.rows[0].tone === "red");
-    check("passed renewal flagged unconfirmed", buildModel(FIX, at("2026-11-21T10:00:00+07:00")).subs.rows[0].cd === "Renewal unconfirmed");
-    check("usage reset passed shows awaiting refresh", buildModel(FIX, at("2026-11-12T09:00:00+07:00")).usage[0].resetPassed);
-    check("page renders the fixture", toMarkup(pageView(buildModel(FIX, NOW), { open: {}, net: { busy: false, message: "" } })).indexOf("Credit at risk") > 0);
+  }
+  function localYmd(ms, d) {
+    const p = localParts(ms, d);
+    return p.y + "-" + pad(p.m + 1) + "-" + pad(p.day);
+  }
+  function localISO(ms, d) {
+    const p = localParts(ms, d), minutes = Math.abs(d.timezone.offsetHours * 60);
+    return localYmd(ms, d) + "T" + pad(p.h) + ":" + pad(p.min) + ":" + pad(p.sec) +
+      (d.timezone.offsetHours < 0 ? "-" : "+") +
+      pad(Math.floor(minutes / 60)) + ":" + pad(minutes % 60);
+  }
+  const localOrdinal = (ms, d) => Math.floor((ms + offsetMs(d)) / DAY);
+  const dateOrdinal = value => Date.parse(value + "T00:00:00Z") / DAY;
+  const daysUntil = (date, now, d) => dateOrdinal(date) - localOrdinal(now, d);
+
+  function dateLabel(value, now, d, full = false) {
+    const [year, month, day] = value.split("-").map(Number);
+    return day + " " + MONTHS[month - 1] +
+      (full || year !== localParts(now, d).y ? " " + year : "");
+  }
+  function clockLabel(ms, d, includeZone = true) {
+    const p = localParts(ms, d);
+    return pad(p.h) + ":" + pad(p.min) + (includeZone ? " " + d.timezone.label : "");
+  }
+  function stampLabel(ms, d) {
+    const p = localParts(ms, d);
+    return p.day + " " + MONTHS[p.m] + " " + p.y + " · " + clockLabel(ms, d);
+  }
+  function shortStamp(ms, now, d) {
+    return (localYmd(ms, d) === localYmd(now, d) ? "" :
+      dateLabel(localYmd(ms, d), now, d) + " · ") + clockLabel(ms, d);
+  }
+  function relative(ms) {
+    if (ms < MINUTE) return "< 1m";
+    const minutes = Math.floor(ms / MINUTE);
+    if (minutes < 60) return minutes + "m";
+    const hours = Math.floor(minutes / 60);
+    if (hours < 24) return hours + "h " + minutes % 60 + "m";
+    return Math.floor(hours / 24) + "d " + hours % 24 + "h";
+  }
+  function countdown(days, d) {
+    if (days < 0) return "Date passed";
+    if (days === 0) return "Today";
+    if (days === 1) return "Tomorrow";
+    if (days > d.rules.hideCountdownAfterDays) return "";
+    return "In " + days + " days";
+  }
+  function nextSlot(after, d) {
+    const base = localOrdinal(after, d) * DAY - offsetMs(d);
+    const hours = d.refreshHours.slice().sort((a, b) => a - b);
+    for (const h of hours) {
+      const slot = base + h * HOUR;
+      if (slot > after) return slot;
+    }
+    return base + DAY + hours[0] * HOUR;
+  }
+  function missedSlots(updated, now, d) {
+    const end = now - d.rules.staleGraceMinutes * MINUTE;
+    if (end <= updated) return 0;
+    return sum(d.refreshHours, hour => {
+      const shift = offsetMs(d) - hour * HOUR;
+      return Math.max(0,
+        Math.ceil((end + shift) / DAY) -
+        Math.floor((updated + shift) / DAY) - 1
+      );
+    });
+  }
+  function freshness(d, now) {
+    const updated = Date.parse(d.updatedAt);
+    const expected = nextSlot(updated, d);
+    const missed = missedSlots(updated, now, d);
+    const future = updated > now;
+    return {
+      updated, expected, next: nextSlot(now, d), missed, future,
+      stale: missed > 0,
+      due: !future && !missed && now >= expected,
+      title: future ? "Check device clock" :
+        missed ? "Refresh missed" : now >= expected ? "Refresh due" : "Snapshot current",
+      tone: future || missed ? "warn" : "good"
+    };
+  }
+  function recentPace(c, rules) {
+    const checked = Date.parse(c.checkedAt);
+    const all = c.history.concat([{ at: c.checkedAt, left: c.left }])
+      .slice().sort((a, b) => Date.parse(a.at) - Date.parse(b.at));
+    const readings = all.filter(row =>
+      Date.parse(row.at) >= checked - rules.paceWindowDays * DAY &&
+      Date.parse(row.at) <= checked
+    );
+    const spanMs = readings.length > 1 ? checked - Date.parse(readings[0].at) : 0;
+    const rose = readings.some((row, i) => i > 0 && row.left > readings[i - 1].left);
+    let reason = "";
+    if (readings.length < 2) reason = "More balance readings are needed.";
+    else if (rose) reason = "The balance increased; spending cannot be isolated.";
+    else if (spanMs < MIN_PACE_SPAN) reason = "The readings span less than 12 hours.";
+    let rate = reason ? null : Math.max(0, (readings[0].left - c.left) / (spanMs / DAY));
+    if (rate !== null && !finite(rate)) {
+      rate = null;
+      reason = "The rate exceeds the supported numeric range.";
+    }
+    return {
+      rate, spanMs, spanDays: spanMs / DAY, reason, all, readings,
+      lowConfidence: rate !== null && spanMs < LOW_CONFIDENCE_SPAN
+    };
+  }
+  function flattenData(value, path = "DATA", out = []) {
+    if (Array.isArray(value) && value.length) {
+      value.forEach((item, i) => flattenData(item, path + "[" + i + "]", out));
+    } else if (isObject(value) && Object.keys(value).length) {
+      Object.keys(value).forEach(key => flattenData(value[key], path + "." + key, out));
+    } else {
+      out.push({ path, value: JSON.stringify(value) });
+    }
     return out;
   }
 
-  /* ---------- controller: change-only render, live slots, last-good fallback ---------- */
-  let data = window.DATA, lastMarkup = "";
-  const ui = { open: {}, net: { busy: false, message: "" } };
-  const GOOD_KEY = "ai-subscription:last-good";
-  function lastGood() {
-    try { const s = JSON.parse(localStorage.getItem(GOOD_KEY) || "null"); return s && !validateData(s).length ? s : null; } catch (e) { return null; }
+  function buildModel(d, now) {
+    const fresh = freshness(d, now);
+    const updated = Date.parse(d.updatedAt);
+    const subscriptions = d.subscriptions.map(s => {
+      const days = daysUntil(s.renews, now, d);
+      return {
+        ...s, days, vnd: converted(s.price.currency, s.price.amount, d),
+        date: dateLabel(s.renews, now, d),
+        countdown: countdown(days, d),
+        status: days < 0 ? "Recorded date passed — unconfirmed" :
+          s.autoRenew ? "Auto-renewal enabled" : "Auto-renewal off",
+        urgent: days <= d.rules.renewalAlertDays
+      };
+    }).sort((a, b) => a.renews.localeCompare(b.renews) || a.id.localeCompare(b.id));
+
+    const futureCharges = subscriptions.filter(s => s.autoRenew && s.days >= 0);
+    const nextCharges = futureCharges.length
+      ? futureCharges.filter(s => s.renews === futureCharges[0].renews) : [];
+    const monthlyVnd = sum(subscriptions, s => s.vnd);
+    const monthlyUsd = sum(subscriptions.filter(s => s.price.currency === "USD"), s => s.price.amount);
+    const monthlyNativeVnd = sum(subscriptions.filter(s => s.price.currency === "VND"), s => s.price.amount);
+
+    const credits = d.credits.map(c => {
+      const cls = d.creditClasses[c.class];
+      const days = daysUntil(c.expires, now, d);
+      const expired = days < 0;
+      const live = cls.counted && !expired && c.left > 0;
+      const pace = recentPace(c, d.rules);
+      const budgetDays = Math.max(1, days);
+      const old = Date.parse(c.checkedAt) < updated;
+      const ahead = Date.parse(c.checkedAt) > now;
+      const clockProblem = fresh.future || ahead;
+      const needed = live && !clockProblem ? c.left / budgetDays : null;
+      const loss = needed !== null && pace.rate !== null
+        ? Math.max(0, c.left - pace.rate * budgetDays) : null;
+      const soon = live && days <= d.rules.creditRiskDays;
+      const onPace = loss === 0 && live && pace.rate !== null;
+      let tone = "";
+      if (cls.counted && c.left > 0) {
+        if (expired) tone = "danger";
+        else if (soon && !onPace && !clockProblem) {
+          tone = days <= d.rules.creditUrgentDays ? "danger" :
+            days <= d.rules.creditWarnDays ? "warning" : "";
+        }
+      }
+      const finishMs = live && !clockProblem && pace.rate > 0
+        ? now + c.left / pace.rate * DAY : null;
+      const estimatedFinish = finishMs !== null &&
+        Number.isFinite(finishMs) && Number.isFinite(new Date(finishMs).getTime())
+        ? localYmd(finishMs, d) : null;
+      return {
+        ...c, days, expired, live, soon, onPace, tone, old, ahead, clockProblem,
+        counted: cls.counted, classTitle: cls.title,
+        date: dateLabel(c.expires, now, d),
+        countdown: countdown(days, d),
+        pace, needed, loss, budgetDays,
+        vnd: converted(c.currency, c.left, d),
+        lossVnd: loss === null ? null : converted(c.currency, loss, d),
+        estimatedFinish
+      };
+    }).sort((a, b) =>
+      Number(b.counted) - Number(a.counted) ||
+      Number(b.soon) - Number(a.soon) ||
+      a.expires.localeCompare(b.expires) || a.id.localeCompare(b.id)
+    );
+
+    const soon = credits.filter(c => c.soon);
+    const risks = soon.filter(c => c.loss === null || c.loss > 0)
+      .sort((a, b) => a.days - b.days || (b.lossVnd || 0) - (a.lossVnd || 0));
+    const knownRisks = soon.filter(c => c.loss !== null && c.loss > 0);
+    const unknownRisk = soon.filter(c => c.loss === null);
+    const riskVnd = sum(knownRisks, c => c.lossVnd);
+    const riskCurrency = knownRisks.length &&
+      knownRisks.every(c => c.currency === knownRisks[0].currency)
+      ? knownRisks[0].currency : "VND";
+    const riskAmount = sum(knownRisks, c =>
+      riskCurrency === c.currency ? c.loss : c.lossVnd);
+    const usableVnd = sum(credits.filter(c => c.live), c => c.vnd);
+
+    const usage = d.usageLimits.map(u => ({
+      ...u,
+      resetMs: Date.parse(u.resetsAt),
+      resetPassed: now >= Date.parse(u.resetsAt),
+      near: u.usedPct >= NEAR_LIMIT_PCT,
+      remainingPct: Math.max(0, 100 - u.usedPct),
+      old: Date.parse(u.checkedAt) < updated,
+      ahead: Date.parse(u.checkedAt) > now,
+      topUpTotal: sum(u.topUps, t => t.usd)
+    }));
+
+    const readings = d.credits.concat(d.usageLimits).map(item => ({
+      id: item.id, name: item.name, checkedAt: item.checkedAt,
+      old: Date.parse(item.checkedAt) < updated,
+      ahead: Date.parse(item.checkedAt) > now
+    }));
+    const olderReadings = readings.filter(r => r.old).length;
+
+    const deadlines = d.deadlines.map(item => {
+      const days = daysUntil(item.date, now, d);
+      return {
+        ...item, days, displayDate: dateLabel(item.date, now, d),
+        countdown: countdown(days, d),
+        urgent: days <= d.rules.renewalAlertDays
+      };
+    }).sort((a, b) => a.date.localeCompare(b.date));
+
+    const attention = [];
+    subscriptions.filter(s => s.days < 0).forEach(s => attention.push({
+      title: s.autoRenew ? "Confirm " + s.name + " renewal" : "Review " + s.name,
+      copy: "Recorded date " + s.date + " passed. No new charge is assumed.",
+      href: "#plan-" + s.id
+    }));
+    subscriptions.filter(s =>
+      s.autoRenew && s.days >= 0 && s.days <= d.rules.renewalAlertDays &&
+      !nextCharges.some(n => n.id === s.id)
+    ).forEach(s => attention.push({
+      title: s.name + " · " + money(s.price.currency, s.price.amount),
+      copy: "Renews " + s.date + " · " + s.countdown,
+      href: "#plan-" + s.id
+    }));
+    credits.filter(c => c.counted && c.expired && c.left > 0).forEach(c => attention.push({
+      title: "Recheck " + c.name,
+      copy: "Expiry " + c.date + " passed. Its recorded balance is excluded.",
+      href: "#credit-" + c.id
+    }));
+    deadlines.filter(item => item.urgent).forEach(item => attention.push({
+      title: item.name,
+      copy: (item.days < 0 ? "Deadline passed " : "Expires ") + item.displayDate +
+        (item.days >= 0 ? " · " + item.countdown : ""),
+      href: "#deadline-" + item.id
+    }));
+
+    const sources = [
+      ...subscriptions.map(s => ({ name: s.name, text: s.source })),
+      ...credits.map(c => ({
+        name: c.name,
+        text: c.source + " · checked " + stampLabel(Date.parse(c.checkedAt), d)
+      })),
+      ...usage.map(u => ({
+        name: u.name,
+        text: u.source + " · checked " + stampLabel(Date.parse(u.checkedAt), d)
+      })),
+      ...usage.flatMap(u => u.topUps.map(t => ({
+        name: u.name + " · " + money("USD", t.usd) + " top-up · " + t.ref,
+        text: t.source
+      }))),
+      ...deadlines.map(item => ({ name: item.name, text: item.source })),
+      { name: "USD / VND", text: "1 USD = " + vnd(d.fx.usdVnd) + " · " + d.fx.asOf },
+      ...d.extraSources.map(value => ({ name: "Snapshot attribution", text: value }))
+    ];
+
+    return {
+      data: d, now, fresh, subscriptions, nextCharges,
+      monthlyVnd, monthlyUsd, monthlyNativeVnd,
+      credits, soon, usableVnd, risks, knownRisks, riskVnd, riskCurrency, riskAmount,
+      unknownRisk, usage, deadlines, attention, sources, readings, olderReadings,
+      lowConfidence: soon.some(c => c.pace.lowConfidence),
+      olderForecasts: soon.some(c => c.old),
+      fields: flattenData(d)
+    };
   }
-  function rememberGood(d) {
-    try { const s = lastGood(); if (!s || Date.parse(d.updatedAt) >= Date.parse(s.updatedAt)) localStorage.setItem(GOOD_KEY, JSON.stringify(d)); } catch (e) { /* storage unavailable */ }
+
+  /* Pure view helpers. */
+  const logoView = key => html`<span class="mark" aria-hidden="true">
+    <svg viewBox="0 0 24 24" fill="currentColor" focusable="false">${raw(LOGOS[key])}</svg>
+  </span>`;
+  const notesView = notes => notes.length
+    ? html`<ul class="notes">${notes.map(note => html`<li>${note}</li>`)}</ul>` : "";
+  const kv = pairs => html`<dl class="kv">${pairs.map(([label, value]) =>
+    html`<div><dt>${label}</dt><dd>${value}</dd></div>`)}</dl>`;
+  const openAttr = (ui, key) => ui.open.has(key) ? raw("open") : "";
+
+  function fold(key, title, body, ui, hint = "", id = "") {
+    return html`<details class="fold" data-key="${key}" ${id ? html`id="${id}"` : ""} ${openAttr(ui, key)}>
+      <summary><span class="summary-label">${title}</span>
+        ${hint ? html`<span class="reading-hint">${hint}</span>` : ""}
+      </summary>
+      <div class="fold-content">${body}</div>
+    </details>`;
+  }
+  function refreshButton(ui) {
+    return html`<button class="refresh-button" type="button" data-check
+      aria-label="${ui.busy ? "Checking for an updated snapshot" : "Check for an updated snapshot"}"
+      title="Check for an updated snapshot" aria-busy="${ui.busy}" ${ui.busy ? raw("disabled") : ""}>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+        <path d="M20 7v5h-5M4 17v-5h5" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M6.1 6.2A8 8 0 0 1 20 12M4 12a8 8 0 0 0 13.9 5.8" stroke-linecap="round"/>
+      </svg>
+    </button>`;
+  }
+  function freshnessView(m) {
+    const d = m.data, f = m.fresh;
+    const nextDays = localOrdinal(f.next, d) - localOrdinal(m.now, d);
+    const nextDate = nextDays === 0 ? "" : nextDays === 1 ? "tomorrow " :
+      dateLabel(localYmd(f.next, d), m.now, d) + " ";
+    return html`<div class="sync">
+      <div class="sync-line">
+        <span>Updated ${shortStamp(f.updated, m.now, d)}</span>
+        <span class="sync-state ${f.tone}"><i class="dot" aria-hidden="true"></i>${f.title}</span>
+      </div>
+      <div class="sync-line">
+        <span>${f.future ? "Snapshot is ahead of this clock" : relative(m.now - f.updated) + " ago"} · Next ${nextDate}${clockLabel(f.next, d, false)}</span>
+        ${m.olderReadings ? html`<a class="reading-link" href="#reading-status" aria-label="View ${m.olderReadings} readings not re-checked in this snapshot"><span aria-hidden="true">·&nbsp;</span>${m.olderReadings} older reading${m.olderReadings === 1 ? "" : "s"}</a>` : ""}
+      </div>
+      ${f.stale ? html`<div class="sync-line warn">
+        ${f.missed} missed · first ${shortStamp(f.expected, m.now, d)}
+      </div>` : ""}
+      ${f.due ? html`<div class="sync-line">Within the ${d.rules.staleGraceMinutes} min refresh grace period.</div>` : ""}
+    </div>`;
+  }
+  function metricsView(m) {
+    return html`<div class="metrics">
+      <a class="metric" href="#plans">
+        <span class="metric-label">Monthly plans ↓</span>
+        <span class="metric-value">${m.monthlyUsd ? roundedVnd(m.monthlyVnd) : vnd(m.monthlyVnd)}</span>
+        <span class="metric-hint">${m.subscriptions.length} listed · API spend separate</span>
+      </a>
+      <a class="metric" href="#credits">
+        <span class="metric-label">Usable API credit ↓</span>
+        <span class="metric-value">${roundedVnd(m.usableVnd)}</span>
+        <span class="metric-hint">Recorded · excludes Cloud-only</span>
+      </a>
+    </div>`;
+  }
+  function paymentView(m) {
+    const next = m.nextCharges, first = next[0];
+    const same = first && next.every(s => s.price.currency === first.price.currency);
+    const charge = !first ? "" : same
+      ? money(first.price.currency, sum(next, s => s.price.amount))
+      : roundedVnd(sum(next, s => s.vnd));
+    return html`<section class="payment" aria-labelledby="next-heading">
+      <div class="row between">
+        <span class="payment-label">Next charge${next.length > 1 ? "s" : ""}</span>
+        ${first && first.days <= m.data.rules.renewalAlertDays
+          ? html`<b class="small">${first.countdown}</b>` : ""}
+      </div>
+      ${first ? html`<div class="payment-main">
+        <h2 class="payment-name" id="next-heading">${next.map(s => s.name).join(" + ")}</h2>
+        <div class="payment-amount money">${charge}</div>
+      </div>
+      <div class="payment-meta">
+        <span>${first.date} · ${first.countdown || "Auto-renewal"}</span>
+        <span>${same && first.price.currency === "USD"
+          ? roundedVnd(sum(next, s => s.vnd)) : m.data.card.name}</span>
+      </div>` : html`<div class="payment-main">
+        <h2 class="payment-name" id="next-heading">No future auto-charge recorded</h2>
+      </div><p class="payment-meta">Passed dates are not advanced automatically.</p>`}
+    </section>`;
+  }
+  function riskView(m) {
+    let title, copy, tone = "", href = "#credits";
+    if (m.fresh.future || m.soon.some(c => c.clockProblem)) {
+      title = "Check the clock before using forecasts";
+      copy = "A snapshot or balance reading is in the future.";
+      tone = "warning";
+    } else if (m.knownRisks.length) {
+      const first = m.knownRisks[0];
+      title = approximate(m.riskCurrency, m.riskAmount) + " may expire unused · est.";
+      copy = first.name + ": need ≈ " + money(first.currency, first.needed) +
+        "/day by " + first.date;
+      if (m.knownRisks.length > 1) copy += " · " + (m.knownRisks.length - 1) + " more";
+      if (m.unknownRisk.length) copy += " · " + m.unknownRisk.length + " unknown forecast(s)";
+      if (m.lowConfidence) copy += " · low confidence";
+      if (m.fresh.stale) copy += " · snapshot overdue";
+      tone = m.knownRisks.some(c => c.tone === "danger") ? "danger" : "warning";
+      href = "#credit-" + first.id;
+    } else if (m.unknownRisk.length) {
+      const first = m.unknownRisk[0];
+      title = "Expiring credit needs more readings";
+      copy = first.name + " · " + money(first.currency, first.left) +
+        " expires " + first.date + ". No loss estimate.";
+      tone = first.tone || "warning";
+      href = "#credit-" + first.id;
+    } else if (m.soon.length) {
+      title = "Expiring credits on pace · estimate";
+      const qualifiers = [];
+      if (m.lowConfidence) qualifiers.push("Low confidence");
+      if (m.olderForecasts) qualifiers.push("some readings are older");
+      if (m.fresh.stale) qualifiers.push("snapshot overdue");
+      copy = qualifiers.length
+        ? qualifiers.join(" · ") + "."
+        : "At the recorded spending pace; not a guarantee.";
+    } else {
+      title = "No usable credit expires soon";
+      copy = "Nothing within " + m.data.rules.creditRiskDays + " days.";
+    }
+    return html`<a class="signal ${tone}" href="${href}">
+      <div class="signal-title"><span>${title}</span><span class="signal-arrow" aria-hidden="true">↓</span></div>
+      <p class="signal-copy">${copy}</p>
+    </a>`;
+  }
+  function usageView(u, m, ui) {
+    const d = m.data;
+    return html`<article class="usage" id="usage-${u.id}">
+      <div class="usage-head">
+        ${logoView(u.logo)}
+        <h3 class="usage-name grow">${u.name}</h3>
+        <div class="usage-amount">${number(u.usedPct, 1)}% <span>${u.resetPassed ? "last used" : "used"}</span></div>
+      </div>
+      <div class="track ${u.resetPassed ? "passed" : u.near ? "warning" : ""}"
+        role="progressbar" aria-label="${u.name}: recorded percentage used"
+        aria-valuemin="0" aria-valuemax="100" aria-valuenow="${u.usedPct}"
+        aria-valuetext="${number(u.usedPct, 1)}% used${u.resetPassed ? "; reset time passed, awaiting a new reading" : ""}">
+        <i style="width:${u.usedPct}%"></i>
+      </div>
+      <div class="usage-meta">
+        <span>${u.resetPassed ? "Reset time passed" : number(u.remainingPct, 1) + "% left at last check"}</span>
+        <b class="${u.resetPassed || u.near ? "warn" : ""}">
+          ${u.resetPassed ? "Awaiting new reading" :
+            u.near ? "Near limit · reset in " + relative(u.resetMs - m.now) :
+            "Reset in " + relative(u.resetMs - m.now)}
+        </b>
+      </div>
+      ${fold("usage-details-" + u.id,
+        "Details · " + money("USD", u.topUpTotal) + " in " + u.topUps.length + " top-ups",
+        html`
+          ${kv([
+            ["Checked", stampLabel(Date.parse(u.checkedAt), d)],
+            ["Reading", u.old ? "Not re-checked in this snapshot" : "Checked for this snapshot"],
+            ["Reset", stampLabel(u.resetMs, d)],
+            ["Used", number(u.usedPct, 1) + "%"],
+            ["Remaining", number(u.remainingPct, 1) + "% at last check"],
+            ["Top-ups", money("USD", u.topUpTotal) + " purchased · ≈ " + vnd(u.topUpTotal * d.fx.usdVnd)]
+          ])}
+          <p class="section-note">Top-ups are purchases, not a remaining extra-credit balance.
+            ${u.resetPassed ? "The reset time has passed; usage is not assumed to be zero." : ""}</p>
+          ${u.ahead ? html`<p class="warn">This reading is ahead of the device clock.</p>` : ""}
+          ${u.topUps.map(t => html`<div class="source">
+            <b>${money("USD", t.usd)} · ${dateLabel(t.date, m.now, d, true)}</b><br>
+            ≈ ${vnd(t.usd * d.fx.usdVnd)}<br>
+            Reference: <span class="mono">${t.ref}</span><br>
+            Source: ${t.source}
+          </div>`)}
+          ${notesView(u.notes)}
+          <p class="source">Source: ${u.source}</p>
+        `, ui)}
+    </article>`;
+  }
+  function attentionView(m, ui) {
+    if (!m.attention.length) return "";
+    const key = "attention";
+    return html`<details class="notice" data-key="${key}" ${openAttr(ui, key)}>
+      <summary>${m.attention.length} date${m.attention.length === 1 ? "" : "s"} need${m.attention.length === 1 ? "s" : ""} attention</summary>
+      <ul>${m.attention.map(item => html`<li>
+        <a href="${item.href}"><b>${item.title}</b></a><p>${item.copy}</p>
+      </li>`)}</ul>
+    </details>`;
+  }
+  function paceStrip(c) {
+    if (c.needed === null) return "";
+    return html`<div class="pace-strip" aria-label="Estimated daily spending comparison">
+      <div><span>Needed / day</span><b>≈ ${money(c.currency, c.needed)}</b></div>
+      <div><span>Recent / day</span><b>${c.pace.rate === null ? "Unknown" : "≈ " + money(c.currency, c.pace.rate)}</b></div>
+    </div>`;
+  }
+  function forecastLine(c, m) {
+    let label, tone = "";
+    if (c.clockProblem) {
+      label = "Forecast paused · check the clock";
+      tone = "warn";
+    } else if (c.loss === null) {
+      label = "Pace unknown";
+      tone = "muted";
+    } else if (c.onPace) {
+      label = "On pace · est.";
+      tone = c.pace.lowConfidence || c.old || m.fresh.stale ? "" : "good";
+    } else {
+      label = approximate(c.currency, c.loss) + " unused at expiry · est.";
+      tone = c.tone === "danger" ? "bad" : "warn";
+    }
+    return html`<p class="forecast-line ${tone}">
+      <b>${label}</b>${c.pace.lowConfidence ? html`<span class="confidence"> · low confidence</span>` : ""}
+    </p>`;
+  }
+  function creditView(c, m, ui) {
+    const d = m.data;
+    return html`<article class="credit ${c.tone} ${!c.counted ? "restricted" : ""}" id="credit-${c.id}">
+      <div class="credit-head">
+        ${logoView(c.logo)}
+        <div class="credit-name"><h3>${c.name}</h3>
+          ${!c.counted ? html`<p class="credit-type">Cloud-only · excluded</p>` : ""}
+        </div>
+        <div class="credit-amount money">${money(c.currency, c.left)}</div>
+      </div>
+      <div class="credit-meta">
+        <span class="${c.expired && c.counted ? "bad" : ""}">
+          ${c.expired ? "Expired " : "Expires "}${c.date}${!c.expired && c.countdown ? " · " + c.countdown.toLowerCase() : ""}
+        </span>
+        ${c.currency === "USD" ? html`<span>${roundedVnd(c.vnd)}</span>` : ""}
+      </div>
+      ${c.soon ? html`${paceStrip(c)}${forecastLine(c, m)}` : ""}
+      ${c.expired && c.counted ? html`<p class="forecast-line bad">Excluded from usable credit. Confirm the final balance.</p>` : ""}
+      ${fold("credit-details-" + c.id, "History & details", html`
+        ${kv([
+          ["Balance", money(c.currency, c.left, true)],
+          ["Conversion", "≈ " + vnd(c.vnd) + (c.currency === "USD" ? " at the stored FX rate" : " · native VND")],
+          ["Cap", c.cap === null ? "Unknown" : money(c.currency, c.cap, true)],
+          ["Capacity", c.cap === null ? "Not calculable" :
+            c.cap === 0 ? "No credit granted" : number(c.left / c.cap * 100, 1) + "% of cap remaining"],
+          ["Type", c.label],
+          ["Class", c.classTitle],
+          ["Included", c.live ? "Yes, in usable API credit" :
+            !c.counted ? "No; Cloud-only, not usable for AI APIs" :
+            c.expired ? "No; expiry passed" : "Zero balance"],
+          ["Expiry", dateLabel(c.expires, m.now, d, true)],
+          ["Checked", stampLabel(Date.parse(c.checkedAt), d)],
+          ["Freshness", c.ahead ? "Reading is ahead of the device clock" :
+            c.old ? "Not re-checked in this snapshot" : "Checked for this snapshot"]
+        ])}
+        ${!c.soon && c.live ? html`${paceStrip(c)}${forecastLine(c, m)}` : ""}
+        ${c.live ? html`<p class="section-note">
+          ${c.pace.rate === null ? c.pace.reason :
+            "Recent pace uses " + number(c.pace.spanDays, 2) + " days of readings."}
+          ${c.needed !== null ? " Targets assume the recorded balance has not changed since its check." : ""}
+          ${c.pace.lowConfidence ? " Less than 3 days of history: low confidence." : ""}
+        </p>` : ""}
+        ${c.estimatedFinish && c.onPace ? html`<p class="section-note">
+          Estimated depletion: ${dateLabel(c.estimatedFinish, m.now, d, true)}.
+        </p>` : ""}
+        <p class="table-label">Recorded balance history</p>
+        <table class="history">
+          <caption class="sr-only">${c.name} balance readings in ${d.timezone.label}</caption>
+          <thead><tr><th scope="col">Reading</th><th scope="col">Balance</th></tr></thead>
+          <tbody>${c.pace.all.slice().reverse().map((reading, i) => html`<tr>
+            <td>${stampLabel(Date.parse(reading.at), d)}${i === 0 ? html`<br><span class="muted">Current reading</span>` : ""}</td>
+            <td>${money(c.currency, reading.left, true)}</td>
+          </tr>`)}</tbody>
+        </table>
+        ${notesView(c.notes)}
+        <p class="source">Source: ${c.source}</p>
+      `, ui, "Checked " + shortStamp(Date.parse(c.checkedAt), m.now, d))}
+    </article>`;
+  }
+  function creditsView(m, ui) {
+    const d = m.data;
+    return html`<section class="section" id="credits" aria-labelledby="credits-heading">
+      <div class="section-heading">
+        <h2 id="credits-heading">API credits</h2>
+        <span>${m.credits.filter(c => c.counted).length} balances</span>
+      </div>
+      ${Object.keys(d.creditClasses).map(key => {
+        const cls = d.creditClasses[key];
+        const rows = m.credits.filter(c => c.class === key);
+        if (!rows.length) return "";
+        return html`
+          ${!cls.counted ? html`<h3 class="group-heading">${cls.title}</h3>` : ""}
+          <div class="credit-grid">${rows.map(c => creditView(c, m, ui))}</div>`;
+      })}
+      ${!m.credits.length ? html`<p class="empty">No credit balances recorded.</p>` : ""}
+      <p class="section-note">Recorded balances, not live balances. Forecasts are estimates; Cloud-only and expired credit is excluded.</p>
+    </section>`;
+  }
+  function planView(s, m, ui) {
+    const d = m.data, parts = s.renews.split("-").map(Number);
+    const key = "plan-details-" + s.id;
+    return html`<details class="plan" id="plan-${s.id}" data-key="${key}" ${openAttr(ui, key)}>
+      <summary>
+        <span class="plan-date" aria-hidden="true"><b>${parts[2]}</b><span>${MONTHS[parts[1] - 1]}</span></span>
+        <span class="grow">
+          <span class="plan-name">${s.name}</span>
+          <span class="plan-sub ${s.urgent ? "warn" : ""}">
+            ${s.days < 0 ? "Date passed · confirm" : s.autoRenew ? s.countdown || s.date : "Auto-renewal off"}
+          </span>
+          <span class="sr-only">${s.date}</span>
+        </span>
+        <span class="plan-price">${money(s.price.currency, s.price.amount)}
+          ${s.price.currency === "USD" ? html`<small>${roundedVnd(s.vnd)}</small>` : ""}
+        </span>
+      </summary>
+      <div class="plan-content">
+        ${logoView(s.logo)}
+        ${kv([
+          ["Plan", s.plan],
+          ["Date", dateLabel(s.renews, m.now, d, true)],
+          ["Status", s.status],
+          ["Price", money(s.price.currency, s.price.amount) + " / month"],
+          ["Conversion", "≈ " + vnd(s.vnd)],
+          ["Card", d.card.name + " · " + d.card.note],
+          ["Via", s.via || "No intermediary recorded"]
+        ])}
+        ${notesView(s.notes)}
+        <p class="source">Source: ${s.source}</p>
+      </div>
+    </details>`;
+  }
+  function subscriptionsView(m, ui) {
+    const d = m.data;
+    return html`<section class="section" id="plans" aria-labelledby="plans-heading">
+      <div class="section-heading">
+        <h2 id="plans-heading">Subscriptions</h2>
+        <span>${m.subscriptions.length} monthly plans</span>
+      </div>
+      <div class="ledger">${m.subscriptions.map(s => planView(s, m, ui))}</div>
+      ${!m.subscriptions.length ? html`<p class="empty">No subscriptions recorded.</p>` : ""}
+      ${fold("payment-details", "Payment & monthly total", html`
+        ${kv([
+          ["Monthly", (m.monthlyUsd ? "≈ " : "") + vnd(m.monthlyVnd)],
+          ["Breakdown", money("USD", m.monthlyUsd) + " + " + vnd(m.monthlyNativeVnd)],
+          ["Card", d.card.name],
+          ["Card note", d.card.note],
+          ["FX", "1 USD = " + vnd(d.fx.usdVnd)],
+          ["FX date", d.fx.asOf]
+        ])}
+        <p class="section-note">Sum of listed monthly prices, not a forecast of bank transactions.
+          API spending and top-ups are separate. Converted amounts are indicative.</p>
+      `, ui, m.monthlyUsd ? roundedVnd(m.monthlyVnd) : vnd(m.monthlyVnd))}
+    </section>`;
+  }
+  function deadlinesView(m, ui) {
+    return html`<section class="section" id="deadlines" aria-labelledby="deadlines-heading">
+      <div class="section-heading"><h2 id="deadlines-heading">Other deadlines</h2></div>
+      <div class="ledger">${m.deadlines.map(item => {
+        const key = "deadline-details-" + item.id;
+        return html`<details class="deadline" id="deadline-${item.id}" data-key="${key}" ${openAttr(ui, key)}>
+          <summary>${logoView(item.logo)}<span class="grow">
+            <span class="plan-name">${item.name}</span>
+            <span class="plan-sub ${item.urgent ? "warn" : ""}">
+              ${item.displayDate}${item.countdown ? " · " + item.countdown : ""}
+            </span>
+          </span></summary>
+          <div class="fold-content">
+            <p>${item.note}</p><p class="source">Source: ${item.source}</p>
+          </div>
+        </details>`;
+      })}</div>
+      ${!m.deadlines.length ? html`<p class="empty">No other deadlines recorded.</p>` : ""}
+    </section>`;
+  }
+  function readingStatusView(m) {
+    const d = m.data;
+    return html`
+      ${kv([
+        ["Snapshot", stampLabel(Date.parse(d.updatedAt), d)],
+        ["Schedule", d.refreshHours.slice().sort((a,b) => a-b).map(h => pad(h) + ":00").join(", ") + " " + d.timezone.label],
+        ["Grace", d.rules.staleGraceMinutes + " minutes"],
+        ["Timezone", d.timezone.label + " · UTC" + (d.timezone.offsetHours >= 0 ? "+" : "") + d.timezone.offsetHours],
+        ["Freshness", m.fresh.future ? "Snapshot is ahead of this clock" :
+          m.fresh.stale ? m.fresh.missed + " scheduled refreshes missed" :
+          m.fresh.due ? "Refresh due, within grace" : "Snapshot is current"],
+        ["Readings", (m.readings.length - m.olderReadings) + " of " + m.readings.length + " checked for this snapshot"]
+      ])}
+      <p class="section-note">Snapshot freshness does not imply every provider was re-read.
+        Older readings retain their original checkedAt timestamps.</p>
+      <table class="checks">
+        <caption class="sr-only">Per-source reading times</caption>
+        <thead><tr><th scope="col">Source</th><th scope="col">Last checked</th></tr></thead>
+        <tbody>${m.readings.map(r => html`<tr>
+          <td>${r.name}${r.old ? html`<br><span class="muted">Not re-checked</span>` : ""}</td>
+          <td>${stampLabel(Date.parse(r.checkedAt), d)}${r.ahead ? html`<br><span class="warn">Ahead of clock</span>` : ""}</td>
+        </tr>`)}</tbody>
+      </table>
+    `;
+  }
+  function methodologyView(m) {
+    const d = m.data, r = d.rules;
+    return html`
+      <p><b>Refreshes.</b> A scheduled slot after updatedAt is missed once it is more than
+        ${r.staleGraceMinutes} minutes late. The next slot is calculated from the current clock,
+        including after a long offline period. The timestamp in the header is always updatedAt.</p>
+      <p><b>Dates.</b> Countdowns use ${d.timezone.label} calendar days.
+        Labels are hidden beyond ${r.hideCountdownAfterDays} days.
+        A date-only credit expiry is treated as valid through that local date; the provider’s exact cutoff is unknown.
+        On the expiry date, the spending target uses one remaining budgeting day.</p>
+      <p><b>Recent spending.</b> Use the oldest and latest readings within ${r.paceWindowDays} days before checkedAt.
+        At least 12 hours is required. Any balance increase within the window cancels the rate because a refill
+        or adjustment cannot safely be separated from spending.
+        Less than 3 days of readings is labelled low confidence.</p>
+      <p><b>Forecast equations.</b> Recent/day = balance decrease ÷ elapsed days.
+        Needed/day = recorded balance ÷ remaining budgeting days.
+        Estimated unused credit = max(0, balance − recent/day × remaining budgeting days).
+        No unobserved spending is deducted. These forecasts assume the recorded balance is still current.</p>
+      <p><b>Unknown forecasts.</b> Unknown pace is not treated as zero loss or as a predicted full loss.
+        The expiring balance is identified separately. Forecasts pause when their timestamps are ahead of the device clock.
+        Depletion dates are estimates, not provider dates.</p>
+      <p><b>Attention.</b> Credit enters the brief within ${r.creditRiskDays} days.
+        Unknown or behind-pace credit is amber within ${r.creditWarnDays} days and urgent within ${r.creditUrgentDays} days.
+        Renewal and deadline attention starts within ${r.renewalAlertDays} days.
+        Low-confidence or older on-pace readings do not receive an unconditional green reassurance.</p>
+      <p><b>Usage.</b> The headline and bar both show used percentage.
+        “Near limit” means at least ${NEAR_LIMIT_PCT}% used.
+        After the reset time, the old percentage remains until a new reading confirms usage.
+        Top-ups are purchase totals; their remaining balance is not supplied.</p>
+      <p><b>Payments.</b> The monthly total sums every listed monthly price.
+        Only future dates with autoRenew enabled qualify as scheduled charges.
+        Charges sharing the next date are grouped. Passed dates are never advanced automatically.
+        Credit is not cash and is not subtracted from subscriptions.</p>
+      <p><b>Conversion and rounding.</b> USD conversion uses the supplied FX rate.
+        Scanning-layer VND estimates are rounded to the nearest thousand.
+        Detailed calculations and original stored values retain their precision.
+        No displayed conversion is a bank settlement quote.</p>
+      <p><b>Exclusions.</b> ${d.creditClasses.restricted.title} cannot fund AI APIs.
+        Restricted and expired credit is excluded from usable credit and forecast risk totals.</p>
+      <p><b>Marks and sources.</b> Logos are inline monochrome identifiers.
+        Source text and snapshot attribution are retained verbatim.</p>
+    `;
+  }
+  function recordsView(m, ui) {
+    return html`<section class="records" id="records" aria-labelledby="records-heading">
+      <h2 id="records-heading">Data & sources</h2>
+      ${fold("reading-status", "Refresh & reading status", readingStatusView(m), ui,
+        m.olderReadings ? m.olderReadings + " older" : "All re-checked", "reading-status")}
+      ${fold("methodology", "Calculations & assumptions", methodologyView(m), ui)}
+      ${fold("sources", "Sources & provenance", html`<ul>
+        ${m.sources.map(source => html`<li><b>${source.name}</b><br>${source.text}</li>`)}
+      </ul>`, ui)}
+      ${fold("audit", "Complete snapshot · read-only", html`
+        <p>Every stored value, including identifiers and configuration.
+          Strings, booleans, nulls, empty arrays and numeric precision are preserved.</p>
+        <div class="audit-scroll" tabindex="0" aria-label="Complete snapshot fields">
+          <table class="audit-table">
+            <caption class="sr-only">Every field in DATA and its exact stored value</caption>
+            <tbody>${m.fields.map(field => html`<tr data-field="${field.path}">
+              <th scope="row">${field.path}</th><td>${field.value}</td>
+            </tr>`)}</tbody>
+          </table>
+        </div>
+      `, ui)}
+      <div class="footer"><span>Local calculations · no provider API calls</span><a href="#top">Back to top ↑</a></div>
+    </section>`;
+  }
+  function pageView(m, ui) {
+    return html`
+      <header class="header" id="top"><h1>AI Subscription</h1>${refreshButton(ui)}</header>
+      ${freshnessView(m)}
+      ${ui.network ? html`<p class="network ${ui.networkError ? "error" : ""}" role="status">${ui.network}</p>` : ""}
+      <main>
+        <section class="overview" aria-label="At a glance">
+          <div>${metricsView(m)}${paymentView(m)}</div>
+          <div class="operational">
+            ${riskView(m)}
+            ${m.usage.map(u => usageView(u, m, ui))}
+            ${!m.usage.length ? html`<div class="signal"><b>No usage limit recorded</b></div>` : ""}
+          </div>
+        </section>
+        ${attentionView(m, ui)}
+        ${creditsView(m, ui)}
+        <div class="lower-grid">${subscriptionsView(m, ui)}${deadlinesView(m, ui)}</div>
+        ${recordsView(m, ui)}
+      </main>`;
+  }
+  function errorView(errors) {
+    return html`<header class="header"><h1>AI Subscription</h1></header>
+      <section class="error-card" role="alert">
+        <h2>Snapshot needs repair</h2>
+        <p>No balances, totals, or forecasts are displayed because validation failed.</p>
+        <ul>${errors.map(error => html`<li>${error}</li>`)}</ul>
+        <p class="section-note">Correct the embedded JSON, then reload or check for an update.</p>
+        <button type="button" data-check>Check for updates</button>
+      </section>`;
+  }
+
+  /* Own-file updates: extract JSON without executing fetched code. */
+  const START_MARKER = "/* DATA:" + "START */";
+  const END_MARKER = "/* DATA:" + "END */";
+  function extractSnapshot(source) {
+    if (source.split(START_MARKER).length !== 2 || source.split(END_MARKER).length !== 2) {
+      throw new Error("Snapshot markers are missing or duplicated.");
+    }
+    const start = source.indexOf(START_MARKER) + START_MARKER.length;
+    const end = source.indexOf(END_MARKER);
+    if (end <= start) throw new Error("Snapshot markers are out of order.");
+    const value = JSON.parse(source.slice(start, end).trim());
+    if (validateData(value).length) throw new Error("The incoming snapshot failed validation.");
+    return value;
+  }
+  function canAcceptSnapshot(current, next) {
+    if (validateData(next).length) return false;
+    if (validateData(current).length) return true;
+    if (Date.parse(next.updatedAt) < Date.parse(current.updatedAt)) return false;
+    const incoming = new Map(
+      next.credits.concat(next.usageLimits).map(item => [item.id, Date.parse(item.checkedAt)])
+    );
+    return current.credits.concat(current.usageLimits).every(item =>
+      !incoming.has(item.id) || incoming.get(item.id) >= Date.parse(item.checkedAt)
+    );
+  }
+
+  /* Tests use deterministic clocks derived from the injected snapshot. */
+  function runSelfTests(data, source) {
+    const results = [];
+    const test = (name, fn) => {
+      let ok = false;
+      try { ok = Boolean(fn()); } catch (_) { ok = false; }
+      results.push((ok ? "PASS " : "FAIL ") + name);
+    };
+    const mutateInvalid = mutation => {
+      const d = clone(data); mutation(d); return validateData(d).length > 0;
+    };
+    const baseTime = data && Date.parse(data.updatedAt);
+    const baseline = () => buildModel(data, baseTime);
+    const ui = { open: new Set(), busy: false, network: "", networkError: false };
+    const mathCase = () => {
+      const d = clone(data);
+      const c = d.credits.find(item => d.creditClasses[item.class].counted && item.left > 0);
+      if (!c) throw new Error("A positive API credit is needed for the math diagnostic.");
+      d.credits = [c];
+      c.cap = null;
+      c.checkedAt = d.updatedAt;
+      c.expires = localYmd(baseTime + 2 * DAY, d);
+      c.history = [{ at: localISO(baseTime - 2 * DAY, d), left: c.left * 1.5 }];
+      return d;
+    };
+    const mathCredit = () => buildModel(mathCase(), baseTime).credits[0];
+    const rendered = () => {
+      const holder = document.createElement("div");
+      holder.innerHTML = markup(pageView(baseline(), ui));
+      return holder;
+    };
+
+    test("data validation", () => validateData(data).length === 0);
+    test("all logo keys supported", () =>
+      ["anthropic","openai","gemini","x","grokbot","aistudio","googledev","googlecloud"].every(k => own(LOGOS, k)));
+    test("model does not mutate DATA", () => {
+      const before = JSON.stringify(data); baseline(); return before === JSON.stringify(data);
+    });
+    test("model is deterministic with a fixed clock", () =>
+      JSON.stringify(baseline()) === JSON.stringify(baseline()));
+    test("monthly VND total", () => close(baseline().monthlyVnd,
+      data.subscriptions.reduce((a, s) =>
+        a + s.price.amount * (s.price.currency === "USD" ? data.fx.usdVnd : 1), 0)));
+    test("USD conversion", () => baseline().subscriptions.every(s =>
+      close(s.vnd, s.price.amount * (s.price.currency === "USD" ? data.fx.usdVnd : 1))));
+    test("usable total excludes expired and restricted", () => {
+      const expected = data.credits.filter(c => data.creditClasses[c.class].counted &&
+        c.expires >= localYmd(baseTime, data))
+        .reduce((a, c) => a + c.left * (c.currency === "USD" ? data.fx.usdVnd : 1), 0);
+      return close(baseline().usableVnd, expected);
+    });
+    test("restricted credit never enters risk", () =>
+      baseline().credits.filter(c => !c.counted).every(c => !c.live && !c.soon && c.loss === null));
+    test("next charge is earliest future auto-renewal", () => {
+      const expected = data.subscriptions.filter(s => s.autoRenew &&
+        s.renews >= localYmd(baseTime, data)).map(s => s.renews).sort()[0];
+      const m = baseline();
+      return expected ? m.nextCharges.length > 0 &&
+        m.nextCharges.every(s => s.renews === expected) : m.nextCharges.length === 0;
+    });
+    test("auto-renewal off excluded from next charge", () => {
+      const d = clone(data); d.subscriptions.forEach(s => s.autoRenew = false);
+      return buildModel(d, baseTime).nextCharges.length === 0;
+    });
+    test("same-day charges grouped", () => {
+      const d = clone(data), first = d.subscriptions[0];
+      if (!first) return true;
+      first.renews = localYmd(baseTime + DAY, d); first.autoRenew = true;
+      const second = clone(first); second.id += "-diagnostic";
+      d.subscriptions = [first, second];
+      return buildModel(d, baseTime).nextCharges.length === 2;
+    });
+    test("past renewals not rolled forward", () => {
+      const d = clone(data);
+      d.subscriptions.forEach(s => { s.renews = localYmd(baseTime - DAY, d); s.autoRenew = true; });
+      const m = buildModel(d, baseTime);
+      return m.nextCharges.length === 0 && m.subscriptions.every(s => s.days === -1);
+    });
+    test("same local date countdown zero", () =>
+      daysUntil(localYmd(baseTime, data), baseTime, data) === 0);
+    test("next local date countdown one", () =>
+      daysUntil(localYmd(baseTime + DAY, data), baseTime, data) === 1);
+    test("distant countdown hidden", () =>
+      countdown(data.rules.hideCountdownAfterDays + 1, data) === "");
+    test("expiry date remains included", () => {
+      const d = mathCase(); d.credits[0].expires = localYmd(baseTime, d);
+      return buildModel(d, baseTime).credits[0].live;
+    });
+    test("credit excluded on following local day", () => {
+      const d = mathCase(); d.credits[0].expires = localYmd(baseTime - DAY, d);
+      const m = buildModel(d, baseTime);
+      return !m.credits[0].live && m.usableVnd === 0 && m.attention.length > 0;
+    });
+    test("fresh within grace using fixed clock", () => {
+      const slot = nextSlot(baseTime, data);
+      return !freshness(data, slot + data.rules.staleGraceMinutes * MINUTE - 1).stale;
+    });
+    test("grace boundary not yet missed", () => {
+      const slot = nextSlot(baseTime, data);
+      return !freshness(data, slot + data.rules.staleGraceMinutes * MINUTE).stale;
+    });
+    test("stale immediately after grace", () => {
+      const slot = nextSlot(baseTime, data);
+      return freshness(data, slot + data.rules.staleGraceMinutes * MINUTE + 1).stale;
+    });
+    test("overnight next slot", () => {
+      const hours = data.refreshHours.slice().sort((a,b) => a-b);
+      const start = localOrdinal(baseTime, data) * DAY - offsetMs(data);
+      const last = start + hours[hours.length - 1] * HOUR;
+      return nextSlot(last, data) === start + DAY + hours[0] * HOUR;
+    });
+    test("long-offline missed refresh count", () => {
+      const now = baseTime + (data.rules.paceWindowDays + data.refreshHours.length) * DAY;
+      let expected = 0, slot = nextSlot(baseTime, data);
+      while (slot + data.rules.staleGraceMinutes * MINUTE < now) {
+        expected++; slot = nextSlot(slot, data);
+      }
+      return freshness(data, now).missed === expected && nextSlot(now, data) > now;
+    });
+    test("future snapshot clock warning", () => freshness(data, baseTime - MINUTE).future);
+    test("history daily rate math", () => {
+      const c = mathCredit(); return close(c.pace.rate, c.left / 4);
+    });
+    test("needed daily rate math", () => {
+      const c = mathCredit(); return close(c.needed, c.left / 2);
+    });
+    test("estimated unused credit math", () => {
+      const c = mathCredit(); return close(c.loss, c.left / 2);
+    });
+    test("on-pace forecast zero loss", () => {
+      const d = mathCase(), c = d.credits[0]; c.history[0].left = c.left * 2;
+      const result = buildModel(d, baseTime).credits[0];
+      return result.loss === 0 && result.onPace;
+    });
+    test("unknown pace is not predicted full loss", () => {
+      const d = mathCase(); d.credits[0].history = [];
+      const m = buildModel(d, baseTime);
+      return m.credits[0].loss === null && m.riskVnd === 0 && m.unknownRisk.length === 1;
+    });
+    test("short history gives unknown pace", () => {
+      const d = mathCase(); d.credits[0].history[0].at = localISO(baseTime - MIN_PACE_SPAN / 2, d);
+      return recentPace(d.credits[0], d.rules).rate === null;
+    });
+    test("balance increase cancels pace", () => {
+      const d = mathCase(); d.credits[0].history[0].left = d.credits[0].left / 2;
+      return recentPace(d.credits[0], d.rules).rate === null;
+    });
+    test("out-of-window history ignored defensively", () => {
+      const d = mathCase();
+      d.credits[0].history[0].at = localISO(baseTime - (d.rules.paceWindowDays + 1) * DAY, d);
+      return recentPace(d.credits[0], d.rules).rate === null;
+    });
+    test("history at checkedAt rejected", () => mutateInvalid(d => {
+      const c = d.credits[0]; c.history = [{ at: c.checkedAt, left: c.left }];
+    }));
+    test("duplicate history timestamps rejected", () => mutateInvalid(d => {
+      const c = d.credits[0], at = localISO(Date.parse(c.checkedAt) - MINUTE, d);
+      c.history = [{ at, left: c.left }, { at, left: c.left }];
+    }));
+    test("out-of-window history rejected by validator", () => mutateInvalid(d => {
+      const c = d.credits[0];
+      c.history = [{
+        at: localISO(Date.parse(c.checkedAt) - (d.rules.paceWindowDays + 1) * DAY, d),
+        left: c.left
+      }];
+    }));
+    test("manual reading later than updatedAt allowed", () => {
+      const d = clone(data), c = d.credits[0];
+      c.checkedAt = localISO(Math.max(Date.parse(c.checkedAt), baseTime) + MINUTE, d);
+      c.history = [];
+      return validateData(d).length === 0;
+    });
+    test("passed reset preserves recorded percentage", () => {
+      const d = clone(data), u = d.usageLimits[0];
+      if (!u) return true;
+      const m = buildModel(d, Date.parse(u.resetsAt) + MINUTE);
+      return m.usage[0].resetPassed && m.usage[0].usedPct === u.usedPct;
+    });
+    test("top-up purchase totals", () => baseline().usage.every(u =>
+      close(u.topUpTotal, u.topUps.reduce((a, t) => a + t.usd, 0))));
+    test("all top-up sources rendered", () => {
+      const content = rendered().textContent;
+      return data.usageLimits.every(u => u.topUps.every(t =>
+        content.includes(t.ref) && content.includes(t.source)));
+    });
+    test("every DATA field rendered exactly", () => {
+      const holder = rendered();
+      const rows = new Map(Array.from(holder.querySelectorAll("[data-field]")).map(row =>
+        [row.getAttribute("data-field"), row.querySelector("td").textContent]));
+      const fields = flattenData(data);
+      return rows.size === fields.length && fields.every(f => rows.get(f.path) === f.value);
+    });
+    test("HTML data escaping", () => {
+      const payload = '<img src=x onerror="alert(1)">';
+      const holder = document.createElement("div");
+      holder.innerHTML = markup(html`<p>${payload}</p>`);
+      return !holder.querySelector("img") && holder.textContent === payload;
+    });
+    test("negative balance rejected", () => mutateInvalid(d => d.credits[0].left = -1));
+    test("balance above cap rejected", () => mutateInvalid(d => {
+      d.credits[0].cap = d.credits[0].left / 2; d.credits[0].left += 1;
+    }));
+    test("unknown currency rejected", () => mutateInvalid(d => d.subscriptions[0].price.currency = "UNKNOWN"));
+    test("impossible date rejected", () => mutateInvalid(d =>
+      d.credits[0].expires = d.updatedAt.slice(0,4) + "-02-30"));
+    test("invalid timestamp hour rejected", () => mutateInvalid(d =>
+      d.updatedAt = d.updatedAt.slice(0,11) + "24" + d.updatedAt.slice(13)));
+    test("duplicate item IDs rejected", () => mutateInvalid(d => d.credits[0].id = d.subscriptions[0].id));
+    test("unsupported logo rejected", () => mutateInvalid(d => d.credits[0].logo = "unsupported"));
+    test("unordered alert thresholds rejected", () => mutateInvalid(d =>
+      d.rules.creditUrgentDays = d.rules.creditRiskDays + 1));
+    test("usage above limit rejected", () => mutateInvalid(d => d.usageLimits[0].usedPct = 100 + 1));
+    test("missing notes rejected", () => mutateInvalid(d => delete d.credits[0].notes));
+    test("duplicate refresh slots rejected", () => mutateInvalid(d => d.refreshHours.push(d.refreshHours[0])));
+    test("missing provenance rejected", () => mutateInvalid(d => delete d.credits[0].source));
+    test("secret-like values rejected", () => mutateInvalid(d =>
+      d.extraSources.push("sk" + "-" + "a".repeat(32))));
+    test("DATA and file contain no secret patterns", () => !secretLike(data) && !secretLike(source));
+    test("marker uniqueness", () =>
+      source.split(START_MARKER).length === 2 && source.split(END_MARKER).length === 2);
+    test("title remains exact", () => document.title === "AI Subscription");
+    test("visible header remains exact", () =>
+      rendered().querySelector("h1").textContent === "AI Subscription");
+    test("no external asset elements", () =>
+      !document.querySelector('script[src],link[rel="stylesheet"],img[src],iframe[src]'));
+    test("invalid-data view omits financial results", () => {
+      const holder = document.createElement("div");
+      holder.innerHTML = markup(errorView(["Invalid snapshot"]));
+      return !!holder.querySelector('[role="alert"]') &&
+        !holder.querySelector(".money,.payment,.credit");
+    });
+    test("same updatedAt newer manual reading accepted", () => {
+      const next = clone(data), c = next.credits[0];
+      c.checkedAt = localISO(Date.parse(c.checkedAt) + MINUTE, next); c.history = [];
+      return canAcceptSnapshot(data, next);
+    });
+    test("older snapshot rejected", () => {
+      const next = clone(data); next.updatedAt = localISO(baseTime - MINUTE, next);
+      return !canAcceptSnapshot(data, next);
+    });
+    test("regressing reading rejected", () => {
+      const next = clone(data), c = next.credits[0];
+      c.checkedAt = localISO(Date.parse(c.checkedAt) - MINUTE, next); c.history = [];
+      return !canAcceptSnapshot(data, next);
+    });
+    test("own-file JSON extraction round trip", () => {
+      const parsed = extractSnapshot(START_MARKER + JSON.stringify(data) + END_MARKER);
+      return JSON.stringify(parsed) === JSON.stringify(data);
+    });
+    test("malformed refresh rejected without execution", () => {
+      try { extractSnapshot(START_MARKER + "not JSON" + END_MARKER); return false; }
+      catch (_) { return true; }
+    });
+    test("partial freshness count", () => {
+      const expected = data.credits.concat(data.usageLimits)
+        .filter(item => Date.parse(item.checkedAt) < baseTime).length;
+      return baseline().olderReadings === expected;
+    });
+    test("partial refresh does not claim all readings current", () => {
+      const d = mathCase();
+      d.credits[0].checkedAt = localISO(baseTime - MINUTE, d);
+      d.credits[0].history = [];
+      const m = buildModel(d, baseTime);
+      return m.olderReadings > 0 &&
+        markup(freshnessView(m)).includes("older reading");
+    });
+    test("low confidence appears in the brief", () => {
+      const d = mathCase(); d.credits[0].history[0].left = d.credits[0].left * 2;
+      const m = buildModel(d, baseTime);
+      return m.lowConfidence && markup(riskView(m)).toLowerCase().includes("low confidence");
+    });
+    test("used headline matches usage bar", () => {
+      const holder = rendered();
+      return baseline().usage.every(u => {
+        const element = holder.querySelector("#usage-" + u.id);
+        return element.querySelector('[role="progressbar"]').getAttribute("aria-valuenow") === String(u.usedPct) &&
+          element.querySelector(".usage-amount").textContent.includes(number(u.usedPct, 1) + "%");
+      });
+    });
+    test("expiry-day budget uses one day consistently", () => {
+      const d = mathCase(), c = d.credits[0];
+      c.expires = localYmd(baseTime, d);
+      const result = buildModel(d, baseTime).credits[0];
+      return close(result.needed, c.left) &&
+        close(result.loss, Math.max(0, c.left - result.pace.rate));
+    });
+    test("future reading pauses forecast", () => {
+      const d = mathCase();
+      d.credits[0].checkedAt = localISO(baseTime + MINUTE, d);
+      const c = buildModel(d, baseTime).credits[0];
+      return c.clockProblem && c.needed === null && c.loss === null;
+    });
+    test("zero recent spending is known pace", () => {
+      const d = mathCase(), c = d.credits[0]; c.history[0].left = c.left;
+      const result = buildModel(d, baseTime).credits[0];
+      return result.pace.rate === 0 && result.loss === c.left;
+    });
+    test("rounding does not alter the model total", () => {
+      const m = baseline(), before = m.usableVnd;
+      roundedVnd(m.usableVnd);
+      return m.usableVnd === before && roundedVnd(before) === "≈ " + vnd(Math.round(before / 1000) * 1000);
+    });
+    test("all internal links have targets", () => {
+      const holder = rendered();
+      return Array.from(holder.querySelectorAll('a[href^="#"]')).every(a => {
+        const id = a.getAttribute("href").slice(1);
+        return Array.from(holder.querySelectorAll("[id]")).some(el => el.id === id);
+      });
+    });
+    test("zero-balance credits excluded from risk", () => {
+      const d = mathCase(); d.credits[0].left = 0;
+      const m = buildModel(d, baseTime);
+      return m.risks.length === 0 && m.usableVnd === 0;
+    });
+    test("nonfinite derived totals rejected", () => mutateInvalid(d => {
+      d.subscriptions[0].price.currency = "USD";
+      d.subscriptions[0].price.amount = Number.MAX_VALUE;
+      d.fx.usdVnd = Number.MAX_VALUE;
+    }));
+    test("empty inventories render safely", () => {
+      const d = clone(data);
+      d.subscriptions = []; d.credits = []; d.usageLimits = []; d.deadlines = [];
+      const m = buildModel(d, baseTime);
+      return validateData(d).length === 0 && m.monthlyVnd === 0 && m.usableVnd === 0 &&
+        markup(pageView(m, ui)).includes("No credit balances recorded");
+    });
+
+    return results;
+  }
+
+  /* Browser controller. No local storage and no provider requests. */
+  const app = document.getElementById("app");
+  const FILE_SOURCE = document.documentElement.outerHTML;
+  const FILE_URL = new URL("app.html", location.href).href;
+  let currentData = window.DATA;
+  let lastMarkup = "";
+  let lastCheck = 0;
+  let diagnosticHash = false;
+  const ui = { open: new Set(), busy: false, network: "", networkError: false };
+
+  function rememberDisclosures() {
+    app.querySelectorAll("details[data-key]").forEach(detail => {
+      if (detail.open) ui.open.add(detail.dataset.key);
+      else ui.open.delete(detail.dataset.key);
+    });
+  }
+  function focusIdentity() {
+    const active = document.activeElement;
+    if (!active || !app.contains(active)) return null;
+    if (active.matches("summary")) return { type: "summary", key: active.parentElement.dataset.key };
+    if (active.matches("[data-check]")) return { type: "check" };
+    if (active.matches("a")) return { type: "link", key: active.getAttribute("href") };
+    if (active.matches(".audit-scroll")) return { type: "audit" };
+    return null;
+  }
+  function restoreFocus(identity) {
+    if (!identity) return;
+    let target;
+    if (identity.type === "summary") {
+      const detail = Array.from(app.querySelectorAll("details[data-key]"))
+        .find(item => item.dataset.key === identity.key);
+      target = detail && detail.querySelector("summary");
+    } else if (identity.type === "check") target = app.querySelector("[data-check]");
+    else if (identity.type === "audit") target = app.querySelector(".audit-scroll");
+    else target = Array.from(app.querySelectorAll("a"))
+      .find(a => a.getAttribute("href") === identity.key);
+    if (target) target.focus({ preventScroll: true });
   }
   function render() {
-    try { draw(); } catch (err) {
-      lastMarkup = "";
-      app.innerHTML = toMarkup(html`<h1>AI Subscription</h1><div class="error" role="alert">The page could not be drawn (${String(err && err.message)}).</div>`);
-    }
-  }
-  function draw() {
     if (location.hash === "#selftest") {
-      app.innerHTML = toMarkup(html`<h1>AI Subscription · self-test</h1><div class="selftest">${runSelfTests().join("\n")}</div>`);
-      lastMarkup = "";
+      if (!diagnosticHash) {
+        app.className = "";
+        const pre = document.createElement("pre");
+        pre.className = "selftest";
+        pre.textContent = runSelfTests(currentData, FILE_SOURCE).join("\n");
+        app.replaceChildren(pre);
+        diagnosticHash = true;
+      }
       return;
     }
-    const errors = validateData(data), shown = errors.length ? lastGood() : data, model = shown ? buildModel(shown, Date.now()) : null;
-    if (!errors.length) rememberGood(data);
-    const notice = errors.length
-      ? html`<div class="error" role="alert">The latest data block could not be read (${errors.slice(0, 4).join(", ")}). ${shown ? "Showing the last good data from this device instead." : "The last refresh needs fixing."}</div>`
-      : "";
-    const markup = toMarkup(model ? html`${notice}${pageView(model, ui)}` : html`<h1>AI Subscription</h1>${notice}`);
-    const fillLive = () => {
-      if (!model) return;
-      app.querySelectorAll("[data-live]").forEach((el) => {
-        const key = el.getAttribute("data-live");
-        if (key && el.textContent !== (model.live[key] || "")) el.textContent = model.live[key] || "";
-      });
-    };
-    if (markup === lastMarkup) { fillLive(); return; }
-    const active = document.activeElement, ds = active && active.dataset ? active.dataset : {};
-    const focusSel = ds.toggle ? '[data-toggle="' + ds.toggle + '"]' : ds.action ? '[data-action="' + ds.action + '"]' : "";
-    app.innerHTML = markup;
-    lastMarkup = markup;
-    fillLive();
-    if (focusSel) { const el = app.querySelector(focusSel); if (el) el.focus({ preventScroll: true }); }
+    if (diagnosticHash) {
+      diagnosticHash = false;
+      lastMarkup = "";
+      app.className = "shell";
+    }
+    rememberDisclosures();
+    const identity = focusIdentity();
+    let nextMarkup;
+    try {
+      const errors = validateData(currentData);
+      nextMarkup = markup(errors.length
+        ? html`${errorView(errors)}${ui.network ? html`<p class="network error" role="status">${ui.network}</p>` : ""}`
+        : pageView(buildModel(currentData, Date.now()), ui));
+    } catch (_) {
+      nextMarkup = markup(errorView(["This snapshot could not be calculated safely."]));
+    }
+    if (nextMarkup !== lastMarkup) {
+      const audit = app.querySelector(".audit-scroll");
+      const scroll = audit ? audit.scrollTop : 0;
+      app.innerHTML = nextMarkup;
+      lastMarkup = nextMarkup;
+      const nextAudit = app.querySelector(".audit-scroll");
+      if (nextAudit) nextAudit.scrollTop = scroll;
+      restoreFocus(identity);
+    }
   }
-  app.addEventListener("click", (e) => {
-    const t = e.target.closest("[data-toggle]");
-    if (t) { const id = t.getAttribute("data-toggle"); ui.open[id] = !ui.open[id]; render(); return; }
-    if (e.target.closest('[data-action="check"]')) checkForUpdate(true);
+  async function checkForUpdate(manual) {
+    if (location.hash === "#selftest" || ui.busy) return;
+    if (location.protocol !== "http:" && location.protocol !== "https:") {
+      if (manual) {
+        ui.network = "Own-file checks require HTTP or HTTPS. For a local file, replace the snapshot and reload.";
+        ui.networkError = false;
+        render();
+      }
+      return;
+    }
+    if (!manual && Date.now() - lastCheck < 5 * MINUTE) return;
+    lastCheck = Date.now();
+    ui.busy = true;
+    if (manual) { ui.network = ""; ui.networkError = false; }
+    render();
+
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 20 * 1000);
+    try {
+      const response = await fetch(FILE_URL, {
+        cache: "no-cache",
+        credentials: "same-origin",
+        redirect: "error",
+        signal: controller.signal
+      });
+      if (!response.ok) throw new Error("The file was unavailable.");
+      const next = extractSnapshot(await response.text());
+      if (!canAcceptSnapshot(currentData, next)) {
+        ui.network = "An older or regressing snapshot was ignored. The loaded snapshot is unchanged.";
+        ui.networkError = true;
+      } else {
+        const changed = JSON.stringify(currentData) !== JSON.stringify(next);
+        if (changed) {
+          currentData = next;
+          window.DATA = next;
+        }
+        if (manual || changed || ui.networkError) {
+          ui.network = changed ? "Updated snapshot loaded." : "No newer snapshot is available.";
+        }
+        ui.networkError = false;
+      }
+    } catch (error) {
+      ui.network = error && error.name === "AbortError"
+        ? "The update check timed out. The loaded snapshot is unchanged."
+        : "The update could not be read or validated. The loaded snapshot is unchanged.";
+      ui.networkError = true;
+    } finally {
+      clearTimeout(timeout);
+      ui.busy = false;
+      render();
+    }
+  }
+  function revealTarget(id) {
+    const target = id && document.getElementById(id);
+    if (!target) return;
+    if (target.matches("details")) {
+      target.open = true;
+      if (target.dataset.key) ui.open.add(target.dataset.key);
+    }
+    let parent = target.parentElement;
+    while (parent && parent !== app) {
+      if (parent.matches("details")) {
+        parent.open = true;
+        if (parent.dataset.key) ui.open.add(parent.dataset.key);
+      }
+      parent = parent.parentElement;
+    }
+  }
+  function revealHashTarget() {
+    if (location.hash === "#selftest") return;
+    try { revealTarget(decodeURIComponent(location.hash.slice(1))); } catch (_) {}
+  }
+
+  app.addEventListener("click", event => {
+    if (event.target.closest("[data-check]")) {
+      checkForUpdate(true);
+      return;
+    }
+    const anchor = event.target.closest('a[href^="#"]');
+    if (anchor) {
+      try { revealTarget(decodeURIComponent(anchor.getAttribute("href").slice(1))); } catch (_) {}
+    }
+  });
+  app.addEventListener("toggle", event => {
+    const detail = event.target;
+    if (!detail.matches || !detail.matches("details[data-key]") || !app.contains(detail)) return;
+    if (detail.open) ui.open.add(detail.dataset.key);
+    else ui.open.delete(detail.dataset.key);
+  }, true);
+  window.addEventListener("hashchange", () => {
+    render();
+    revealHashTarget();
+  });
+  document.addEventListener("visibilitychange", () => {
+    if (!document.hidden) { render(); checkForUpdate(false); }
+  });
+  window.addEventListener("pageshow", () => {
+    render();
+    if (location.hash !== "#selftest") checkForUpdate(false);
+  });
+  setInterval(() => {
+    if (!document.hidden && location.hash !== "#selftest") {
+      render();
+      checkForUpdate(false);
+    }
+  }, MINUTE);
+
+  window.AISubscription = Object.freeze({
+    validateData, buildModel, recentPace, freshness, nextSlot,
+    daysUntil, flattenData, canAcceptSnapshot
   });
 
-  /* ---------- pick up newer data while open: re-read this app's own file, accept only a strictly newer snapshot ---------- */
-  const FILE = new URL("app.html", location.href).href, MARK_A = "/* DATA:" + "START */", MARK_B = "/* DATA:" + "END */";
-  let lastCheck = 0;
-  async function checkForUpdate(manual) {
-    if (ui.net.busy || location.protocol === "file:" || (!manual && Date.now() - lastCheck < 5 * 60000)) return;
-    lastCheck = Date.now();
-    ui.net.busy = true;
-    if (manual) { ui.net.message = ""; render(); }
-    try {
-      const res = await fetch(FILE, { cache: "no-cache" });
-      if (!res.ok) throw new Error("HTTP " + res.status);
-      const text = await res.text(), a = text.indexOf(MARK_A), b = text.indexOf(MARK_B);
-      if (a < 0 || b < 0) throw new Error("markers");
-      const next = JSON.parse(text.slice(a + MARK_A.length, b));
-      if (validateData(next).length) throw new Error("invalid");
-      const changed = validateData(data).length > 0 || Date.parse(next.updatedAt) > Date.parse(data.updatedAt);
-      if (changed) data = next;
-      const t = new Date();
-      ui.net.message = manual || changed ? (changed ? "New data loaded" : "No newer data yet") + " · checked " + two(t.getHours()) + ":" + two(t.getMinutes()) : "";
-    } catch (err) {
-      ui.net.message = manual ? "Couldn’t check for newer data" : ui.net.message;
-    }
-    ui.net.busy = false;
-    render();
-  }
-  const tick = () => { render(); checkForUpdate(false); };
-  tick();
-  setInterval(tick, 60000);
-  document.addEventListener("visibilitychange", () => { if (!document.hidden) tick(); });
-  window.addEventListener("pageshow", tick);
-  window.addEventListener("hashchange", () => { lastMarkup = ""; render(); });
+  render();
+  revealHashTarget();
 })();
 </script>
 </body>
