@@ -16,135 +16,118 @@
 <link rel="manifest" href="manifest.json?v=0331" />
 <style>
 :root{
-  --bg:#F7F7F5; --surface:#FFFFFF; --text:#18181B; --text2:#52525B; --text3:#71717A;
-  --border:#E4E4E7; --track:#ECECEE; --fill:#3F3F46;
-  --amber-bg:#FEF3C7; --amber-fg:#92400E; --red-bg:#FEE2E2; --red-fg:#B91C1C;
-  --chip-bg:#F1F1F3; --focus:#2563EB;
+  --bg:#F7F7F5;--surface:#FFFFFF;--text:#18181B;--text2:#52525B;--text3:#71717A;--border:#E4E4E7;--track:#ECECEE;--fill:#52525B;
+  --amber-bg:#FEF3C7;--amber-fg:#92400E;--amber-bar:#D97706;--red-bg:#FEE2E2;--red-fg:#B91C1C;--red-bar:#DC2626;--focus:#2563EB;
   --font:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
 }
-@media (prefers-color-scheme: dark){
-  :root{
-    --bg:#111113; --surface:#1B1B1F; --text:#F4F4F5; --text2:#C4C4CC; --text3:#9A9AA5;
-    --border:#2E2E35; --track:#2E2E35; --fill:#D4D4D8;
-    --amber-bg:#3B2A0A; --amber-fg:#FCD34D; --red-bg:#3F1414; --red-fg:#FCA5A5;
-    --chip-bg:#26262C; --focus:#60A5FA;
-  }
-}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#111113;--surface:#1B1B1F;--text:#F4F4F5;--text2:#C4C4CC;--text3:#9A9AA5;--border:#2E2E35;--track:#2E2E35;--fill:#C4C4CC;
+  --amber-bg:#3B2A0A;--amber-fg:#FCD34D;--amber-bar:#F59E0B;--red-bg:#3F1414;--red-fg:#FCA5A5;--red-bar:#F87171;--focus:#60A5FA;
+}}
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
-body{margin:0;background:var(--bg);color:var(--text);font-family:var(--font);font-size:16px;line-height:1.45;font-variant-numeric:tabular-nums}
-.wrap{max-width:700px;margin:0 auto;padding:calc(16px + env(safe-area-inset-top)) calc(16px + env(safe-area-inset-right)) calc(40px + env(safe-area-inset-bottom)) calc(16px + env(safe-area-inset-left))}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--font);font-size:16px;line-height:1.4;font-variant-numeric:tabular-nums}
+.wrap{max-width:700px;margin:0 auto;padding:calc(14px + env(safe-area-inset-top)) calc(16px + env(safe-area-inset-right)) calc(40px + env(safe-area-inset-bottom)) calc(16px + env(safe-area-inset-left))}
 h1{font-size:26px;line-height:1.2;margin:0;font-weight:700;letter-spacing:-.02em}
-.lede{margin:6px 0 0;color:var(--text2);font-size:15px}
-.updated{margin:0 0 12px;font-size:14px;color:var(--text2);display:flex;flex-wrap:wrap;gap:6px;align-items:center}
-.sched{font-size:13px;color:var(--text3);margin-top:2px}
-.tag{display:inline-flex;align-items:center;padding:2px 8px;border-radius:999px;font-size:12px;font-weight:600}
+h2{font-size:19px;margin:24px 0 8px;font-weight:700}
+.nw{white-space:nowrap}
+.quiet{color:var(--text3);font-size:13px}
+.status{margin-top:4px;color:var(--text2);font-size:14px;display:flex;flex-wrap:wrap;gap:2px 8px;align-items:center}
+.stale-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--amber-bar);margin-right:5px;vertical-align:1px}
+.btn{all:unset;box-sizing:border-box;cursor:pointer;font-weight:600;font-size:14px;color:var(--text);padding:0 12px;min-height:44px;display:inline-flex;align-items:center;border-radius:10px;border:1px solid var(--border);background:var(--surface)}
+.btn[aria-busy="true"]{opacity:.6;cursor:default}
+.btn:focus-visible,.row:focus-visible,details.src summary:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+.tag{display:inline-flex;align-items:center;padding:1px 8px;border-radius:999px;font-size:12px;font-weight:600;white-space:nowrap;line-height:1.5}
 .tag.amber{background:var(--amber-bg);color:var(--amber-fg)}
 .tag.red{background:var(--red-bg);color:var(--red-fg)}
-.tag.neutral{background:var(--chip-bg);color:var(--text2)}
-.attention{margin-top:16px;border-radius:12px;background:var(--red-bg);color:var(--red-fg);padding:12px 14px;font-size:15px}
-.attention b{display:block;font-size:12px;letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px}
-.card{background:var(--surface);border:1px solid var(--border);border-radius:16px}
-.summary{margin-top:16px;padding:16px}
-.k{font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--text3)}
-.big{font-size:30px;font-weight:700;letter-spacing:-.02em;line-height:1.15;margin-top:2px}
-.muted{color:var(--text2);font-size:14px}
-.faint{color:var(--text3);font-size:13px}
-.sgrid{display:grid;grid-template-columns:1fr;gap:0;margin-top:14px;border-top:1px solid var(--border)}
-.sgrid>div{padding:12px 0;border-bottom:1px solid var(--border)}
-.sgrid>div:last-child{border-bottom:0;padding-bottom:0}
-@media (min-width:520px){.sgrid{grid-template-columns:1fr 1fr}.sgrid>div{border-bottom:0}.sgrid>div:first-child{border-right:1px solid var(--border);padding-right:14px}.sgrid>div:nth-child(2){padding-left:14px}.sgrid>div:last-child{grid-column:1/-1;border-top:1px solid var(--border);padding-top:12px}}
-.mid{font-size:18px;font-weight:650;margin-top:2px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
-h2{font-size:19px;margin:28px 0 2px;font-weight:700}
-.cap{margin:0 0 10px;font-size:14px;color:var(--text2)}
-.list{overflow:hidden}
-.item+.item{border-top:1px solid var(--border)}
-.row{all:unset;box-sizing:border-box;display:flex;gap:12px;align-items:flex-start;width:100%;padding:12px 14px;min-height:56px;cursor:pointer;-webkit-tap-highlight-color:transparent}
-.row:focus-visible{outline:2px solid var(--focus);outline-offset:-2px;border-radius:12px}
-.logo{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.tag.outline{border:1px solid var(--border);color:var(--text2)}
+.alert{margin-top:12px;border-radius:12px;background:var(--red-bg);color:var(--red-fg);padding:10px 14px;font-size:14px}
+.alert ul{margin:0;padding:0;list-style:none}
+.label{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden}
+.summary{margin-top:12px;display:grid;grid-template-columns:1fr 1fr}
+.risk{grid-column:1/-1;padding:10px 14px;background:var(--amber-bg);color:var(--amber-fg);font-size:14px;border-bottom:1px solid var(--border)}
+.risk.red{background:var(--red-bg);color:var(--red-fg)}
+.risk .headline{font-weight:700;font-size:15px;margin-top:1px}
+.cell{padding:12px 14px;min-width:0}
+.cell+.cell{border-left:1px solid var(--border)}
+.cell.wide{grid-column:1/-1;border-left:0;border-top:1px solid var(--border);display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:0 12px}
+.cell .label{color:var(--text3)}
+.big{font-size:21px;font-weight:700;letter-spacing:-.01em;margin-top:2px}
+.sub{font-size:14px;color:var(--text2);margin-top:1px}
+.group{padding:8px 14px 6px;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--text3);border-top:1px solid var(--border);background:var(--bg)}
+.item+.item,.group+.item{border-top:1px solid var(--border)}
+.row{all:unset;box-sizing:border-box;display:flex;gap:12px;align-items:flex-start;width:100%;padding:11px 12px 11px 14px;min-height:56px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.logo{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;color:#fff;font-weight:700;font-size:14px}
 .logo.x{box-shadow:inset 0 0 0 1px var(--border)}
 .logo svg{width:16px;height:16px;display:block}
-.main{flex:1;min-width:0}
-.l1{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
-.name{font-weight:600;font-size:16px;min-width:0}
-.amt{font-weight:650;font-size:16px;text-align:right;white-space:nowrap}
-.l2{display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap;margin-top:3px;font-size:14px;color:var(--text2)}
-.l2 .left{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
-.chev{color:var(--text3);font-size:14px;margin-top:5px;transition:transform .15s;flex-shrink:0}
+.main{flex:1;min-width:0;display:block}
+.line1,.line2{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;column-gap:8px}
+.line1>:last-child,.line2>:last-child{margin-left:auto;text-align:right}
+.name{font-weight:600;font-size:16px}
+.amount{font-weight:650;font-size:16px;white-space:nowrap}
+.item.muted .amount{color:var(--text2)}
+.line2{margin-top:2px;font-size:14px;color:var(--text2)}
+.line2 .when{display:flex;flex-wrap:wrap;gap:4px 6px;align-items:center}
+.chev{color:var(--text3);font-size:15px;margin-top:4px;transition:transform .15s;flex-shrink:0;width:8px}
 .item.open .chev{transform:rotate(90deg)}
-.bar{height:4px;border-radius:999px;background:var(--track);overflow:hidden;margin-top:8px}
+.bar{display:block;height:4px;border-radius:999px;background:var(--track);overflow:hidden;margin-top:7px}
 .bar>i{display:block;height:100%;border-radius:999px;background:var(--fill)}
-.det{display:none;padding:0 14px 14px 54px;font-size:14px;color:var(--text2)}
-.item.open .det{display:block}
-.det div{padding:2px 0}
-.topup{margin-top:6px;padding:8px 10px;border:1px solid var(--border);border-radius:10px}
-details.src{margin-top:28px}
-details.src summary{cursor:pointer;font-size:16px;font-weight:650;min-height:44px;display:flex;align-items:center}
+.bar.amber>i{background:var(--amber-bar)}.bar.red>i{background:var(--red-bar)}.bar.soft>i{opacity:.35}
+.details{display:none;padding:0 14px 12px 54px;font-size:14px;color:var(--text2)}
+.item.open .details{display:block}
+.details div{padding:2px 0}
+.details .topup{margin-top:4px;padding:6px 10px;border:1px solid var(--border);border-radius:10px}
+details.src{margin-top:24px}
+details.src summary{cursor:pointer;font-size:16px;font-weight:650;min-height:44px;display:flex;align-items:center;gap:8px;list-style:none}
+details.src summary::-webkit-details-marker{display:none}
+details.src summary::after{content:"›";color:var(--text3);transition:transform .15s}
+details.src[open] summary::after{transform:rotate(90deg)}
 details.src ul{margin:4px 0 0;padding-left:18px;font-size:13px;color:var(--text2)}
 details.src li{margin:4px 0}
-.foot{margin-top:12px;font-size:13px;color:var(--text3)}
+.legend{margin-top:10px;font-size:13px;color:var(--text3)}
+.error{margin-top:16px;padding:12px 14px;border-radius:12px;background:var(--red-bg);color:var(--red-fg);font-size:14px}
+.selftest{margin-top:16px;font:13px/1.5 ui-monospace,Menlo,monospace;white-space:pre-wrap}
 </style>
 </head>
 <body>
 <div class="wrap" id="app">Loading…</div>
 <script>
-/* All numbers live in DATA below. The refresh routine edits ONLY the block between DATA:START and DATA:END
-   (byte-identical to the Canvas page). Totals, countdowns, sorting and colors are derived in code. */
-const DATA = /* DATA:START */ {
+/* All numbers live in DATA below. The refresh routine edits ONLY the block between the DATA:START and DATA:END
+   markers (byte-identical to the Canvas page) and must run validateData() (see #selftest) before saving.
+   Everything else (totals, conversions, countdowns, colours, sort order, stale state, source list) is derived by
+   buildModel(), re-computed every minute and whenever the app returns to the foreground. */
+var DATA = /* DATA:START */ {
   "updatedAt": "2026-11-11T09:00:00+07:00",
-  "refreshSchedule": "06 · 09 · 12 · 15 · 18 ICT",
-  "fx": { "usdVnd": 25580, "asOf": "Nov 9, 2026" },
-  "card": "Visa •••• 4771 (default · exp 12/2031)",
+  "timezone": {"offsetHours": 7, "label": "ICT"},
+  "refreshHours": [6, 9, 12, 15, 18],
+  "rules": {"staleGraceMinutes": 45, "renewalAlertDays": 3, "creditUrgentDays": 7, "creditWarnDays": 15, "creditRiskDays": 30, "hideCountdownAfterDays": 90},
+  "fx": {"usdVnd": 25580, "asOf": "Nov 9, 2026"},
+  "card": {"name": "Visa •••• 4771", "note": "default · exp 12/2031"},
+  "creditClasses": {"api": {"title": "Usable API credit", "counted": true}, "restricted": {"title": "Cloud-only · not counted", "counted": false}},
   "subscriptions": [
-    { "id": "claude", "name": "Claude Max", "logo": "anthropic", "renews": "2026-11-23", "usd": 100, "vnd": 2558000, "priceNote": "$100/mo", "payTag": "",
-      "details": ["Plan: Claude Max (5x Pro usage / 5h & / week)", "Auto-renews", "Org API linked to Max since Oct 8, 2026", "Payment: Visa •••• 4771 (default, exp 12/2031)", "No invoice in Gmail — figures from billing page Nov 9, 2026", "Source: Claude billing screenshot Nov 9, 2026"] },
-    { "id": "chatgpt", "name": "ChatGPT Pro 100", "logo": "openai", "renews": "2026-12-01", "usd": 100, "vnd": 2558000, "priceNote": "$100/mo", "payTag": "",
-      "details": ["Plan: ChatGPT Pro 100", "Auto-renews", "Payment: Visa •••• 4771 (same card as Claude / Gemini / Grok)", "No invoice in Gmail — figures from billing page Nov 9, 2026", "Source: ChatGPT billing screenshot Nov 9, 2026; price help.openai.com Pro tiers; Visa •••• 4771 per user confirm Nov 9, 2026"] },
-    { "id": "gemini", "name": "Google AI Pro (5 TB)", "logo": "gemini", "renews": "2026-12-03", "usd": null, "vnd": 489000, "priceNote": "489,000₫/mo", "payTag": "via Google Wallet",
-      "details": ["Plan: Google One — Google AI Pro (5 TB)", "Auto-renews", "Payment: Google Wallet Visa •••• 4771", "No invoice in Gmail — figures from billing page Nov 9, 2026", "Source: Google Wallet screenshot Nov 9, 2026; price one.google.com / gemini.google/vn"] },
-    { "id": "grok", "name": "Grok Super", "logo": "x", "renews": "2026-12-07", "usd": null, "vnd": 2749000, "priceNote": "next charge", "payTag": "",
-      "details": ["Plan: Super (monthly)", "Next charge 2,749,000₫ on Dec 7, 2026", "Nov 7 charge: 2,643,323₫ paid", "Period Nov 7–Dec 7, 2026", "Invoice PDF FF3789F04A", "Payment: Visa •••• 4771", "Source: X Subscription email Nov 7, 2026"] }
+    {"id": "claude", "name": "Claude Max", "logo": "anthropic", "plan": "Claude Max (5x Pro usage / 5h & / week)", "renews": "2026-11-23", "price": {"currency": "USD", "amount": 100}, "autoRenew": true, "via": "", "notes": ["Org API linked to Max since Oct 8, 2026", "No invoice in Gmail — figures from billing page"], "source": "Claude billing screenshot Nov 9, 2026"},
+    {"id": "chatgpt", "name": "ChatGPT Pro 100", "logo": "openai", "plan": "ChatGPT Pro 100", "renews": "2026-12-01", "price": {"currency": "USD", "amount": 100}, "autoRenew": true, "via": "", "notes": ["No invoice in Gmail — figures from billing page"], "source": "ChatGPT billing screenshot Nov 9, 2026; price help.openai.com Pro tiers; card confirmed by user Nov 9, 2026"},
+    {"id": "gemini", "name": "Google AI Pro (5 TB)", "logo": "gemini", "plan": "Google One — Google AI Pro (5 TB)", "renews": "2026-12-03", "price": {"currency": "VND", "amount": 489000}, "autoRenew": true, "via": "Google Wallet", "notes": ["No invoice in Gmail — figures from billing page"], "source": "Google Wallet screenshot Nov 9, 2026; price one.google.com / gemini.google/vn"},
+    {"id": "grok", "name": "Grok Super", "logo": "x", "plan": "Super (monthly)", "renews": "2026-12-07", "price": {"currency": "VND", "amount": 2749000}, "autoRenew": true, "via": "", "notes": ["Amount shown is the next charge", "Last charge Nov 7: 2,643,323₫ paid", "Period Nov 7–Dec 7, 2026", "Invoice PDF FF3789F04A"], "source": "X Subscription email Nov 7, 2026"}
   ],
   "credits": [
-    { "id": "anthropic", "name": "Anthropic API", "logo": "anthropic", "currency": "USD", "left": 82.52, "cap": 100, "expires": "2026-11-26", "sub": "Promotional credit",
-      "details": ["Purchased $0.00 · granted Oct 23, 2026", "Billing page shows expiry Nov 26; no refill info yet (Max usually grants $100/mo)", "API key on box expires Dec 2, 2026 (separate from credit expiry)", "Source: platform.claude.com billing, Nov 11, 2026 09:00"] },
-    { "id": "openai", "name": "OpenAI API", "logo": "openai", "currency": "USD", "left": 68.97, "cap": null, "expires": "2026-12-01", "sub": "org Personal · Free trial",
-      "details": ["Free trial · no payment method", "Linked to ChatGPT subscription (Personal account)", "Source: platform.openai.com billing, Nov 11, 2026 09:00"] },
-    { "id": "aistudio", "name": "Google · AI Studio prepaid", "logo": "gemini", "currency": "VND", "left": 150000, "cap": null, "expires": "2027-12-01", "sub": "Prepaid credit (Gemini API key)",
-      "details": ["Topped up Nov 2, 2026 · auto-reload off · Tier: Paid 1", "Nov (1–10): cost ₫7.31K, savings ₫7.31K, total ₫0.00", "Used directly for Gemini API key", "Billing account: My Billing Account", "Source: Google AI Studio, Nov 11, 2026 09:00"] },
-    { "id": "devprogram", "name": "Google · Developer Program", "logo": "gemini", "currency": "VND", "left": 251957.21, "cap": 258491, "expires": "2027-11-03", "sub": "Premium benefit (AI Pro)",
-      "details": ["Started Nov 2, 2026", "Monthly AI Pro credit, applies across Google Cloud + Maps", "Source: Google Developer Program, Nov 11, 2026 09:00"] },
-    { "id": "cloudtrial", "name": "Google · Cloud Free Trial", "logo": "gemini", "currency": "VND", "left": 7754701, "cap": 7754701, "expires": "2027-02-02", "sub": "~300 USD · unused",
-      "details": ["Started Nov 3, 2026", "Only some Cloud services (per free-trial terms)", "Prior Free Trial expired Nov 3, 2026", "Billing account: My Billing Account", "Source: Google Cloud, Nov 11, 2026 09:00"] }
+    {"id": "anthropic", "name": "Anthropic API", "logo": "anthropic", "class": "api", "label": "Promo credit", "currency": "USD", "left": 82.52, "cap": 100, "expires": "2026-11-26", "notes": ["Promotional credit · purchased $0.00 · granted Oct 23, 2026", "No refill info yet (Max usually grants $100/mo)", "API key on box expires Dec 2, 2026 (separate from credit expiry)"], "source": "platform.claude.com billing", "checkedAt": "2026-11-11T09:00:00+07:00"},
+    {"id": "openai", "name": "OpenAI API", "logo": "openai", "class": "api", "label": "Free trial", "currency": "USD", "left": 68.97, "cap": null, "expires": "2026-12-01", "notes": ["org Personal · free trial · no payment method", "Linked to ChatGPT subscription (Personal account)"], "source": "platform.openai.com billing", "checkedAt": "2026-11-11T09:00:00+07:00"},
+    {"id": "aistudio", "name": "AI Studio prepaid", "logo": "gemini", "class": "api", "label": "Prepaid", "currency": "VND", "left": 150000, "cap": null, "expires": "2027-12-01", "notes": ["Google · prepaid credit used directly for the Gemini API key", "Topped up Nov 2, 2026 · auto-reload off · Tier: Paid 1", "Nov (1–10): cost ₫7.31K, savings ₫7.31K, total ₫0.00", "Billing account: My Billing Account"], "source": "Google AI Studio billing", "checkedAt": "2026-11-11T09:00:00+07:00"},
+    {"id": "devprogram", "name": "Developer Program", "logo": "gemini", "class": "api", "label": "AI Pro benefit", "currency": "VND", "left": 251957.21, "cap": 258491, "expires": "2027-11-03", "notes": ["Google Developer Program premium benefit (AI Pro)", "Started Nov 2, 2026 · monthly AI Pro credit, applies across Google Cloud + Maps"], "source": "Google Developer Program", "checkedAt": "2026-11-11T09:00:00+07:00"},
+    {"id": "cloudtrial", "name": "Cloud Free Trial", "logo": "gemini", "class": "restricted", "label": "Cloud only", "currency": "VND", "left": 7754701, "cap": 7754701, "expires": "2027-02-02", "notes": ["Google Cloud Free Trial (~300 USD) · only some Cloud services (per free-trial terms)", "Started Nov 3, 2026 · prior Free Trial expired Nov 3, 2026", "Billing account: My Billing Account"], "source": "Google Cloud billing", "checkedAt": "2026-11-11T09:00:00+07:00"}
   ],
-  "grokBot": {
-    "usedPct": 5.5,
-    "resetsAt": "2026-11-12T08:55:00+07:00",
-    "resetNote": "Shared with other apps on the plan · early reset Nov 10",
-    "checked": "Nov 11, 2026 09:00 ICT",
-    "topUps": [
-      { "date": "Nov 9, 2026", "usd": "$50.00", "vnd": "≈1,279,000₫", "ref": "QCNL-JU4K-54BL", "source": "Email SpaceXSI Nov 9, 2026 17:28 (Asia/Bangkok)" },
-      { "date": "Nov 9, 2026", "usd": "$20.00", "vnd": "≈511,600₫", "ref": "FRL5-26EF-27FH", "source": "Email SpaceXSI Nov 9, 2026 14:46 (Asia/Bangkok)" }
-    ],
-    "notes": ["Remaining $ balance is only visible in Grok Bot › Settings › Usage & Billing — send a screenshot to update.", "Extra credit is separate from the Super plan · total topped up (Gmail): $70.00", "Grok Bot logo: monogram (no official SVG)"]
-  },
-  "sources": [
-    "Claude billing screenshot Nov 9, 2026 — Max, renew Nov 23, Visa •••• 4771",
-    "ChatGPT billing screenshot Nov 9, 2026 — Pro 100, renew Dec 1, Visa •••• 4771",
-    "Google Wallet screenshot Nov 9, 2026 — Google AI Pro 5TB, renew Dec 3, Visa •••• 4771; 489,000₫",
-    "Gmail — X Subscription Nov 7, 2026, PDF FF3789F04A; SpaceXSI prepaid $20 FRL5-26EF-27FH + $50 QCNL-JU4K-54BL (Nov 9)",
-    "platform.claude.com billing Nov 11, 2026 09:00 — promotional credit $82.52/$100, expires Nov 26, 2026; purchased $0.00; granted Oct 23, 2026",
-    "platform.openai.com billing Nov 11, 2026 09:00 — credit $68.97 expires Dec 1, 2026; Free trial; no payment method; linked to ChatGPT subscription (Personal account)",
-    "Google AI Studio / Cloud / Developer Program Nov 11, 2026 09:00 — AI Studio prepaid ₫150,000 expires Dec 1, 2027; Dev Program ₫251,957.21/₫258,491; Free Trial ₫7,754,701 unused; billing account My Billing Account",
-    "Grok Bot weekly 5.5% — checked Nov 11, 2026 09:00 ICT; resets 08:55 Thu Nov 12, 2026; shared with other apps on the plan",
-    "USD→VND rate ~25,580 (Nov 9, 2026)",
-    "Logos: simple-icons Anthropic, OpenAI, Google Gemini, X; Grok Bot custom monogram",
-    "Layout: redesign Nov 11, 2026 from proposals by Claude (claude-fable-5-2), GPT (gpt-6-astra), Gemini (gemini-4-carbon)"
-  ]
+  "usageLimits": [
+    {"id": "grokbot", "name": "Grok Bot · weekly", "logo": "grokbot", "usedPct": 5.5, "resetsAt": "2026-11-12T08:55:00+07:00", "topUps": [{"date": "2026-11-09", "usd": 50, "ref": "QCNL-JU4K-54BL", "source": "SpaceXSI email Nov 9, 2026 17:28 (Asia/Bangkok)"}, {"date": "2026-11-09", "usd": 20, "ref": "FRL5-26EF-27FH", "source": "SpaceXSI email Nov 9, 2026 14:46 (Asia/Bangkok)"}], "notes": ["Weekly limit (Super plan) · shared with other apps on the plan · early reset Nov 10", "Extra credit is separate from the Super plan; its remaining $ balance is only visible in Grok Bot › Settings › Usage & Billing — send a screenshot to update", "Logo: Grok Bot monogram (no official SVG)"], "source": "Grok Bot usage settings", "checkedAt": "2026-11-11T09:00:00+07:00"}
+  ],
+  "extraSources": ["Logos: simple-icons Anthropic, OpenAI, Google Gemini, X; Grok Bot custom monogram"]
 } /* DATA:END */;
 </script>
 <script>
 (function(){
+"use strict";
+const app=document.getElementById("app");
 const LOGO={
   anthropic:{bg:"#D97757",fg:"#fff",d:"M17.3041 3.541h-3.6718l6.696 16.918H24Zm-10.6082 0L0 20.459h3.7442l1.3693-3.5527h7.0052l1.3693 3.5528h3.7442L10.5363 3.5409Zm-.3712 10.2232 2.2914-5.9456 2.2914 5.9456Z"},
   openai:{bg:"#10A37F",fg:"#fff",d:"M22.2819 9.8211a5.9847 5.9847 0 0 0-.5157-4.9108 6.0462 6.0462 0 0 0-6.5098-2.9A6.0651 6.0651 0 0 0 4.9807 4.1818a5.9847 5.9847 0 0 0-3.9977 2.9 6.0462 6.0462 0 0 0 .7427 7.0966 5.98 5.98 0 0 0 .511 4.9107 6.051 6.051 0 0 0 6.5146 2.9001A5.9847 5.9847 0 0 0 13.2599 24a6.0557 6.0557 0 0 0 5.7718-4.2058 5.9894 5.9894 0 0 0 3.9977-2.9001 6.0557 6.0557 0 0 0-.7475-7.0729zm-9.022 12.6081a4.4755 4.4755 0 0 1-2.8764-1.0408l.1419-.0804 4.7783-2.7582a.7948.7948 0 0 0 .3927-.6813v-6.7369l2.02 1.1686a.071.071 0 0 1 .038.052v5.5826a4.504 4.504 0 0 1-4.4945 4.4944zm-9.6607-4.1254a4.4708 4.4708 0 0 1-.5346-3.0137l.142.0852 4.783 2.7582a.7712.7712 0 0 0 .7806 0l5.8428-3.3685v2.3324a.0804.0804 0 0 1-.0332.0615L9.74 19.9502a4.4992 4.4992 0 0 1-6.1408-1.6464zM2.3408 7.8956a4.485 4.485 0 0 1 2.3655-1.9728V11.6a.7664.7664 0 0 0 .3879.6765l5.8144 3.3543-2.0201 1.1685a.0757.0757 0 0 1-.071 0l-4.8303-2.7865A4.504 4.504 0 0 1 2.3408 7.872zm16.5963 3.8558L13.1038 8.364 15.1192 7.2a.0757.0757 0 0 1 .071 0l4.8303 2.7913a4.4944 4.4944 0 0 1-.6765 8.1042v-5.6772a.79.79 0 0 0-.407-.667zm2.0107-3.0231l-.142-.0852-4.7735-2.7818a.7759.7759 0 0 0-.7854 0L9.409 9.2297V6.8974a.0662.0662 0 0 1 .0284-.0615l4.8303-2.7866a4.4992 4.4992 0 0 1 6.6802 4.66zM8.3065 12.863l-2.02-1.1638a.0804.0804 0 0 1-.038-.0567V6.0742a4.4992 4.4992 0 0 1 7.3757-3.4537l-.142.0805L8.704 5.459a.7948.7948 0 0 0-.3927.6813zm1.0976-2.3654l2.602-1.4998 2.6069 1.4998v2.9994l-2.5974 1.4997-2.6067-1.4997Z"},
@@ -152,59 +135,231 @@ const LOGO={
   x:{bg:"#000000",fg:"#fff",d:"M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"},
   grokbot:{bg:"#FF5C8A",fg:"#fff",d:"M12 2a4 4 0 0 1 4 4v1h1a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3h-1v1a4 4 0 0 1-8 0v-1H7a3 3 0 0 1-3-3V10a3 3 0 0 1 3-3h1V6a4 4 0 0 1 4-4zm-2 9a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm4 0a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zM9 17h6v1a2 2 0 0 1-6 0v-1z"}
 };
-const MON=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-const DOW=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
-const ICT=7*3600000;
-function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
-function ictParts(ms){const d=new Date(ms+ICT);return{y:d.getUTCFullYear(),m:d.getUTCMonth(),d:d.getUTCDate(),h:d.getUTCHours(),mi:d.getUTCMinutes(),w:d.getUTCDay()};}
-function pad(n){return String(n).padStart(2,"0");}
-function fmtStamp(iso){const p=ictParts(Date.parse(iso));return MON[p.m]+" "+p.d+", "+p.y+" · "+pad(p.h)+":"+pad(p.mi)+" ICT";}
-function fmtDate(ymd,withYear){const [y,m,d]=ymd.split("-").map(Number);return MON[m-1]+" "+d+(withYear?", "+y:"");}
-function daysUntil(ymd){const t=ictParts(Date.now());const [y,m,d]=ymd.split("-").map(Number);return Math.round((Date.UTC(y,m-1,d)-Date.UTC(t.y,t.m,t.d))/86400000);}
-function vnd(n){return n.toLocaleString("en-US",{maximumFractionDigits:2})+"₫";}
-function usd(n){return "$"+n.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});}
-function money(c){return c.currency==="USD"?usd(c.left):vnd(c.left);}
-function tone(days){if(days<0)return"past";if(days<=3)return"red";if(days<=14)return"amber";return"neutral";}
-function countLabel(days,kind){if(days<0)return kind==="sub"?"Renewal unverified":"Expired";if(days===0)return"Today";if(days===1)return"Tomorrow";return days+" days";}
-function chip(days,kind){const t=tone(days);const cls=t==="past"?"neutral":t;if(t==="neutral")return '<span class="faint">'+countLabel(days,kind)+'</span>';return '<span class="tag '+cls+'">'+countLabel(days,kind)+'</span>';}
-function logo(k){const L=LOGO[k];return '<span class="logo '+k+'" style="background:'+L.bg+'"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="'+L.fg+'" d="'+L.d+'"/></svg></span>';}
-const D=DATA, fx=D.fx.usdVnd;
-const subs=D.subscriptions.slice().sort((a,b)=>a.renews.localeCompare(b.renews));
-const credits=D.credits.slice().sort((a,b)=>a.expires.localeCompare(b.expires));
-const monthly=subs.reduce((s,x)=>s+x.vnd,0);
-const live=credits.filter(c=>daysUntil(c.expires)>=0&&c.left>0);
-const usdLeft=live.filter(c=>c.currency==="USD").reduce((s,c)=>s+c.left,0);
-const vndLeft=live.filter(c=>c.currency==="VND").reduce((s,c)=>s+c.left,0);
-const creditTotal=Math.round((usdLeft*fx+vndLeft)/1000)*1000;
-const trial=live.find(c=>c.id==="cloudtrial");
-const nextSub=subs.find(s=>daysUntil(s.renews)>=0);
-const nextCredit=live[0];
-const ageH=(Date.now()-Date.parse(D.updatedAt))/3600000;
-const att=[];
-subs.forEach(s=>{const d=daysUntil(s.renews);if(d<=3)att.push(s.name+" — "+(d<0?"renewal date "+fmtDate(s.renews)+" passed, unverified":"renews "+fmtDate(s.renews)+" ("+countLabel(d,"sub").toLowerCase()+")"));});
-live.forEach(c=>{const d=daysUntil(c.expires);if(d<=3)att.push(c.name+" — "+money(c)+" expires "+fmtDate(c.expires)+" ("+countLabel(d,"credit").toLowerCase()+")");});
-const G=D.grokBot;const resetMs=Date.parse(G.resetsAt)-Date.now();
-function resetLine(){const rp=ictParts(Date.parse(G.resetsAt));const base="Resets "+DOW[rp.w]+" "+MON[rp.m]+" "+rp.d+", "+pad(rp.h)+":"+pad(rp.mi)+" ICT";if(resetMs<=0)return base+" · reset since last update";const dd=Math.floor(resetMs/86400000),hh=Math.floor(resetMs%86400000/3600000),mm=Math.floor(resetMs%3600000/60000);return base+" · in "+(dd>0?dd+"d "+hh+"h":hh+"h "+mm+"m");}
-let h="";
-h+='<h1>AI Subscription</h1>';
-h+='<p class="lede">4 AI plans, API credits and usage limits. Updated '+fmtStamp(D.updatedAt)+'.</p>';
-if(att.length)h+='<div class="attention" role="alert"><b>Needs attention · within 3 days</b>'+att.map(esc).join("<br>")+'</div>';
-h+='<div class="card summary"><div class="updated">Updated '+fmtStamp(D.updatedAt)+(ageH>13?' <span class="tag amber">Stale</span>':'')+' <span class="faint">· refreshes '+esc(D.refreshSchedule)+'</span></div><div class="k">Monthly subscription cost</div><div class="big">'+vnd(monthly)+'</div><div class="muted">≈ $'+Math.round(monthly/fx)+' · '+subs.length+' plans · API credits not included</div><div class="sgrid">';
-if(nextSub){const d=daysUntil(nextSub.renews);h+='<div><div class="k">Next renewal</div><div class="mid">'+esc(nextSub.name)+' '+chip(d,"sub")+'</div><div class="muted">'+fmtDate(nextSub.renews,true)+' · '+(nextSub.usd?usd(nextSub.usd)+' ≈ ':'')+vnd(nextSub.vnd)+'</div></div>';}
-h+='<div><div class="k">API credit left</div><div class="mid">≈ '+vnd(creditTotal)+'</div><div class="muted">'+usd(usdLeft)+' + '+vnd(vndLeft)+(trial?' · incl. '+vnd(trial.left)+' Cloud trial':'')+'</div></div>';
-if(nextCredit){const d=daysUntil(nextCredit.expires);h+='<div><div class="k">Next credit expiry</div><div class="mid">'+esc(nextCredit.name)+' '+chip(d,"credit")+'</div><div class="muted">'+money(nextCredit)+' · expires '+fmtDate(nextCredit.expires,true)+'</div></div>';}
-h+='</div></div>';
-h+='<h2>Subscriptions</h2><p class="cap">All paid with '+esc(D.card)+' · sorted by renewal · tap a row for details</p><div class="card list">';
-subs.forEach(s=>{const d=daysUntil(s.renews);h+='<div class="item" data-id="'+s.id+'"><button class="row" aria-expanded="false">'+logo(s.logo)+'<div class="main"><div class="l1"><span class="name">'+esc(s.name)+'</span><span class="amt">'+(s.usd?usd(s.usd):vnd(s.vnd))+'</span></div><div class="l2"><span class="left">Renews '+fmtDate(s.renews,true)+' '+chip(d,"sub")+(s.payTag?' <span class="tag neutral">'+esc(s.payTag)+'</span>':'')+'</span><span>'+(s.usd?'≈ '+vnd(s.vnd)+'/mo':esc(s.priceNote))+'</span></div></div><span class="chev">›</span></button><div class="det">'+s.details.map(x=>'<div>'+esc(x)+'</div>').join("")+'</div></div>';});
-h+='</div>';
-h+='<h2>API credits</h2><p class="cap">Balances as of '+fmtStamp(D.updatedAt)+' · sorted by expiry · bars show remaining</p><div class="card list">';
-credits.forEach(c=>{const d=daysUntil(c.expires);const pct=c.cap?Math.max(0,Math.min(100,c.left/c.cap*100)):null;h+='<div class="item" data-id="'+c.id+'"><button class="row" aria-expanded="false">'+logo(c.logo)+'<div class="main"><div class="l1"><span class="name">'+esc(c.name)+'</span><span class="amt">'+money(c)+'</span></div><div class="l2"><span class="left">Expires '+fmtDate(c.expires,true)+' '+chip(d,"credit")+'</span><span>'+(c.cap?'of '+(c.currency==="USD"?usd(c.cap):vnd(c.cap))+' · '+Math.round(pct)+'% left':esc(c.sub))+'</span></div>'+(pct!==null?'<div class="bar" aria-label="'+Math.round(pct)+'% remaining"><i style="width:'+pct.toFixed(2)+'%"></i></div>':'')+'</div><span class="chev">›</span></button><div class="det"><div>'+esc(c.sub)+'</div>'+c.details.map(x=>'<div>'+esc(x)+'</div>').join("")+'</div></div>';});
-h+='</div>';
-const left=Math.max(0,100-G.usedPct);
-h+='<h2>Usage limits</h2><p class="cap">Checked '+esc(G.checked)+'</p><div class="card list"><div class="item" data-id="grokbot"><button class="row" aria-expanded="false">'+logo("grokbot")+'<div class="main"><div class="l1"><span class="name">Grok Bot · weekly limit</span><span class="amt">'+(+left.toFixed(1))+'% left</span></div><div class="l2"><span class="left">'+G.usedPct+'% used · '+esc(resetLine())+'</span></div><div class="bar" aria-label="'+left+'% remaining"><i style="width:'+left+'%;'+(resetMs<=0?'opacity:.4':'')+'"></i></div><div class="l2"><span class="left">Extra credit top-ups $70.00 · balance in app only</span></div></div><span class="chev">›</span></button><div class="det"><div>Weekly limit (Super plan) · '+esc(G.resetNote)+'</div>'+G.topUps.map(t=>'<div class="topup"><b>'+esc(t.usd)+' · '+esc(t.vnd)+'</b> · '+esc(t.date)+'<br>Ref '+esc(t.ref)+'<br><span class="faint">'+esc(t.source)+'</span></div>').join("")+G.notes.map(x=>'<div>'+esc(x)+'</div>').join("")+'</div></div></div>';
-h+='<details class="src"><summary>Data sources ('+D.sources.length+')</summary><ul>'+D.sources.map(s=>'<li>'+esc(s)+'</li>').join("")+'</ul><div class="foot">1 USD ≈ '+fx.toLocaleString("en-US")+'₫ (indicative, '+esc(D.fx.asOf)+') · countdowns in ICT calendar days · amber ≤ 14 days · red ≤ 3 days</div></details>';
-const app=document.getElementById("app");app.innerHTML=h;
-app.querySelectorAll(".item").forEach(it=>{const b=it.querySelector(".row");b.addEventListener("click",()=>{const o=it.classList.toggle("open");b.setAttribute("aria-expanded",o?"true":"false");});});
+/* ---------- safe templating: html`…${value}…` escapes value; trusted() marks markup that is already safe ---------- */
+const TRUSTED=Symbol("trusted");
+const trusted=markup=>({[TRUSTED]:String(markup)});
+const escapeText=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const toMarkup=v=>v==null||v===false?"":Array.isArray(v)?v.map(toMarkup).join(""):(typeof v==="object"&&TRUSTED in v)?v[TRUSTED]:escapeText(v);
+const html=(parts,...values)=>trusted(parts.reduce((acc,part,i)=>acc+part+(i<values.length?toMarkup(values[i]):""),""));
+const noWrap=text=>html`<span class="nw">${text}</span>`;
+
+/* ---------- schema validation of a DATA block ---------- */
+function validateData(data){
+  const errors=[],isText=x=>typeof x==="string"&&x.length>0,isNumber=x=>typeof x==="number"&&isFinite(x),isAmount=x=>isNumber(x)&&x>=0,isCurrency=x=>x==="USD"||x==="VND";
+  const isDay=x=>{if(typeof x!=="string"||!/^\d{4}-\d{2}-\d{2}$/.test(x))return false;const [y,m,d]=x.split("-").map(Number),u=new Date(Date.UTC(y,m-1,d));return u.getUTCFullYear()===y&&u.getUTCMonth()===m-1&&u.getUTCDate()===d;};
+  const isTimestamp=x=>isText(x)&&/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2})?([+-]\d{2}:\d{2}|Z)$/.test(x)&&!isNaN(Date.parse(x))&&isDay(x.slice(0,10));
+  if(!data||typeof data!=="object")return["DATA missing"];
+  if(!isTimestamp(data.updatedAt))errors.push("updatedAt");
+  if(!data.timezone||!isNumber(data.timezone.offsetHours)||!isText(data.timezone.label))errors.push("timezone");
+  if(!Array.isArray(data.refreshHours)||!data.refreshHours.length||!data.refreshHours.every(h=>Number.isInteger(h)&&h>=0&&h<24))errors.push("refreshHours");
+  const rules=data.rules||{};
+  if(!["staleGraceMinutes","renewalAlertDays","creditUrgentDays","creditWarnDays","creditRiskDays","hideCountdownAfterDays"].every(k=>isAmount(rules[k]))||!(rules.creditUrgentDays<=rules.creditWarnDays&&rules.creditWarnDays<=rules.creditRiskDays))errors.push("rules");
+  if(!data.fx||!isNumber(data.fx.usdVnd)||!(data.fx.usdVnd>0))errors.push("fx");
+  if(!data.card||!isText(data.card.name))errors.push("card");
+  if(!data.creditClasses||typeof data.creditClasses!=="object")errors.push("creditClasses");
+  const seen=new Set(),unique=(id,where)=>{if(seen.has(id))errors.push("duplicate id "+id+" in "+where);seen.add(id);};
+  const list=(key)=>{if(!Array.isArray(data[key])){errors.push(key);return[];}return data[key].filter((x,i)=>{if(!x||typeof x!=="object"){errors.push(key+"["+i+"]");return false;}return true;});};
+  list("subscriptions").forEach((s,i)=>{unique(s.id,"subscriptions");if(!isText(s.id)||!isText(s.name)||!isDay(s.renews)||!s.price||!isCurrency(s.price.currency)||!isAmount(s.price.amount)||!Array.isArray(s.notes))errors.push("subscriptions["+i+"]");});
+  list("credits").forEach((c,i)=>{unique(c.id,"credits");if(!isText(c.id)||!isText(c.name)||!isCurrency(c.currency)||!isAmount(c.left)||!(c.cap===null||(isAmount(c.cap)&&c.cap>=c.left))||!isDay(c.expires)||!(data.creditClasses&&data.creditClasses[c.class])||!isTimestamp(c.checkedAt)||!Array.isArray(c.notes))errors.push("credits["+i+"]");});
+  list("usageLimits").forEach((u,i)=>{unique(u.id,"usageLimits");if(!isText(u.id)||!(isNumber(u.usedPct)&&u.usedPct>=0&&u.usedPct<=100)||!isTimestamp(u.resetsAt)||!isTimestamp(u.checkedAt)||!Array.isArray(u.notes)||!(u.topUps||[]).every(x=>isAmount(x.usd)&&isDay(x.date)))errors.push("usageLimits["+i+"]");});
+  return errors;
+}
+
+/* ---------- formatting ---------- */
+const MONTHS=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],WEEKDAYS=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+const twoDigits=n=>String(n).padStart(2,"0");
+const formatVnd=n=>Math.round(n).toLocaleString("en-US")+"₫";
+const formatUsd=n=>"$"+n.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});
+const formatUsdWhole=n=>"$"+Math.round(n).toLocaleString("en-US");
+const roundThousand=n=>Math.round(n/1000)*1000;
+
+/* ---------- pure model: DATA + now → everything the view shows ---------- */
+function buildModel(data,now){
+  const rules=data.rules,fxRate=data.fx.usdVnd,offsetMs=data.timezone.offsetHours*3600000,tzLabel=data.timezone.label;
+  const localParts=ms=>{const d=new Date(ms+offsetMs);return{year:d.getUTCFullYear(),month:d.getUTCMonth(),day:d.getUTCDate(),hour:d.getUTCHours(),minute:d.getUTCMinutes(),weekday:d.getUTCDay()};};
+  const today=localParts(now);
+  const money=(currency,n)=>currency==="USD"?formatUsd(n):formatVnd(n);
+  const toVnd=(currency,n)=>currency==="USD"?n*fxRate:n;
+  const daysUntil=ymd=>{const [y,m,d]=ymd.split("-").map(Number);return Math.round((Date.UTC(y,m-1,d)-Date.UTC(today.year,today.month,today.day))/86400000);};
+  const shortDate=ymd=>{const [y,m,d]=ymd.split("-").map(Number);return MONTHS[m-1]+" "+d+(y!==today.year?", "+y:"");};
+  const timeStamp=iso=>{const p=localParts(Date.parse(iso));return MONTHS[p.month]+" "+p.day+(p.year!==today.year?", "+p.year:"")+" · "+twoDigits(p.hour)+":"+twoDigits(p.minute)+" "+tzLabel;};
+  const countdown=(days,kind)=>days<0?(kind==="renewal"?"Renewal unconfirmed":"Expiry passed"):days===0?"Today":days===1?"Tomorrow":days>rules.hideCountdownAfterDays?"":days+" days";
+  const sum=(items,pick)=>items.reduce((acc,x)=>acc+pick(x),0);
+
+  // Stale = the first scheduled refresh after updatedAt (plus grace) has passed.
+  const updatedMs=Date.parse(data.updatedAt),updated=localParts(updatedMs),hours=data.refreshHours.slice().sort((a,b)=>a-b);
+  let dueMs=null;
+  for(let dayOffset=0;dayOffset<3&&dueMs===null;dayOffset++)for(const h of hours){const ms=Date.UTC(updated.year,updated.month,updated.day+dayOffset,h)-offsetMs;if(ms>updatedMs+60000){dueMs=ms;break;}}
+  const stale=dueMs!==null&&now>dueMs+rules.staleGraceMinutes*60000;
+
+  const subscriptions=data.subscriptions.slice().sort((a,b)=>a.renews.localeCompare(b.renews)).map(s=>{const days=daysUntil(s.renews);
+    return {...s,days,vnd:toVnd(s.price.currency,s.price.amount),amountText:money(s.price.currency,s.price.amount),
+      tone:days<=rules.renewalAlertDays?"red":"none",countdown:countdown(days,"renewal"),when:shortDate(s.renews)};});
+  const credits=data.credits.slice().sort((a,b)=>a.expires.localeCompare(b.expires)).map(c=>{const days=daysUntil(c.expires),expired=days<0,cls=data.creditClasses[c.class];
+    let tone="none";
+    if(c.left>0&&cls.counted&&!expired){if(days<=rules.creditUrgentDays)tone="red";else if(days<=rules.creditWarnDays)tone="amber";else if(days<=rules.creditRiskDays)tone="outline";}
+    return {...c,days,expired,counted:cls.counted,vnd:toVnd(c.currency,c.left),amountText:money(c.currency,c.left),capText:c.cap?money(c.currency,c.cap):"",
+      tone,countdown:countdown(days,"credit"),when:shortDate(c.expires),perDay:days>0&&c.left>0?c.left/days:null,
+      notRechecked:Date.parse(c.checkedAt)<updatedMs,checkedText:timeStamp(c.checkedAt),pct:c.cap?Math.max(0,Math.min(100,c.left/c.cap*100)):null};});
+  const live=credits.filter(c=>!c.expired&&c.left>0);
+  const usable=live.filter(c=>c.counted),passedWithBalance=credits.filter(c=>c.expired&&c.left>0);
+  const expiringSoon=usable.filter(c=>c.days<=rules.creditRiskDays);
+  const usage=data.usageLimits.map(u=>{const resetMs=Date.parse(u.resetsAt),msLeft=resetMs-now,r=localParts(resetMs),at=WEEKDAYS[r.weekday]+" "+twoDigits(r.hour)+":"+twoDigits(r.minute);
+    const d=Math.floor(msLeft/86400000),h=Math.floor(msLeft%86400000/3600000),m=Math.floor(msLeft%3600000/60000);
+    return {...u,left:Math.max(0,100-u.usedPct),resetPassed:msLeft<=0,checkedText:timeStamp(u.checkedAt),notRechecked:Date.parse(u.checkedAt)<updatedMs,
+      resetText:msLeft<=0?"reset "+at+" — awaiting refresh":"resets "+at+" · in "+(d>0?d+"d "+h+"h":h+"h "+m+"m"),
+      topUpTotal:sum(u.topUps||[],x=>x.usd),topUpRows:(u.topUps||[]).map(x=>({...x,when:shortDate(x.date),vnd:x.usd*fxRate}))};});
+
+  const attention=[];
+  subscriptions.forEach(s=>{if(s.days<0)attention.push(s.name+": renewal date "+s.when+" passed — confirm the charge");else if(s.days<=rules.renewalAlertDays)attention.push(s.name+" renews "+s.when+" ("+s.countdown.toLowerCase()+") · "+s.amountText);});
+  passedWithBalance.forEach(c=>attention.push(c.name+": expiry "+c.when+" passed · last known balance "+c.amountText+" — check & update"));
+  usable.filter(c=>c.days<=rules.creditUrgentDays).forEach(c=>attention.push(c.name+": "+c.amountText+" expires "+c.when+" ("+c.countdown.toLowerCase()+")"));
+
+  const sources=[...data.subscriptions.map(s=>s.name+" — "+s.source),...credits.map(c=>c.name+" — "+c.source+", checked "+c.checkedText),...usage.map(u=>u.name+" — "+u.source+", checked "+u.checkedText),
+    ...usage.flatMap(u=>u.topUpRows.map(x=>u.name+" top-up "+formatUsd(x.usd)+" (ref "+x.ref+") — "+x.source)),"USD→VND rate "+fxRate.toLocaleString("en-US")+" — "+data.fx.asOf,...(data.extraSources||[])];
+  const groups=Object.keys(data.creditClasses).map(key=>({title:data.creditClasses[key].title,items:credits.filter(c=>c.class===key)})).filter(g=>g.items.length);
+  const usableUsd=sum(usable.filter(c=>c.currency==="USD"),c=>c.left),usableVndOnly=sum(usable.filter(c=>c.currency==="VND"),c=>c.left);
+  return {rules,fxRate,tzLabel,timeStamp,stale,dueHour:dueMs!==null?localParts(dueMs).hour:null,subscriptions,credits,groups,usage,attention,sources,expiringSoon,
+    anyUsdPlan:subscriptions.some(s=>s.price.currency==="USD"),monthlyVnd:sum(subscriptions,s=>s.vnd),
+    usableVnd:sum(usable,c=>c.vnd),usableUsd,usableVndOnly,usableCount:usable.length,expiringVnd:sum(expiringSoon,c=>c.vnd),
+    nextRenewal:subscriptions.find(s=>s.days>=0),anyNotRechecked:credits.some(c=>c.notRechecked)||usage.some(u=>u.notRechecked)};
+}
+
+/* ---------- view ---------- */
+const countdownTag=(tone,text)=>!text?"":tone==="none"?html`<span class="quiet nw">${text}</span>`:html`<span class="tag ${tone}">${text}</span>`;
+const brandLogo=key=>{const L=LOGO[key];if(!L)return html`<span class="logo" style="background:#71717A">${String(key||"?").charAt(0).toUpperCase()}</span>`;
+  return html`<span class="logo ${key}" style="background:${L.bg}"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="${L.fg}" d="${L.d}"/></svg></span>`;};
+const progressBar=(pct,style)=>html`<span class="bar ${style}" role="img" aria-label="${Math.round(pct)}% balance remaining"><i style="width:${pct.toFixed(2)}%"></i></span>`;
+const detailLines=lines=>lines.filter(Boolean).map(x=>html`<div>${x}</div>`);
+const listRow=(o,openRows)=>html`<div class="item${openRows[o.id]?" open":""}${o.muted?" muted":""}" data-id="${o.id}">
+  <button class="row" data-toggle="${o.id}" aria-expanded="${openRows[o.id]?"true":"false"}" aria-controls="details-${o.id}">${brandLogo(o.logo)}
+    <span class="main"><span class="line1"><span class="name">${o.name}</span><span class="amount">${o.amount}</span></span>
+      <span class="line2"><span class="when">${o.when}</span><span>${o.secondary||""}</span></span>${o.bar||""}</span>
+    <span class="chev" aria-hidden="true">›</span></button>
+  <div class="details" id="details-${o.id}">${o.details}</div></div>`;
+const inCurrency=(c,n)=>c.currency==="USD"?formatUsd(n):formatVnd(n);
+const conversion=(currency,vnd)=>currency==="USD"?"≈ "+formatVnd(roundThousand(vnd)):"";
+
+function creditRow(c,openRows){
+  const status=c.expired?(c.left>0?"Excluded — expiry passed; last known balance":"Expired"):c.counted?"Counted as usable API credit":"Not counted ("+c.label+")";
+  return listRow({id:c.id,logo:c.logo,name:c.name,amount:c.amountText,muted:!c.counted||c.expired,
+    when:html`${noWrap((c.expired?"Expired ":"Expires ")+c.when)} ${countdownTag(c.tone,c.countdown)}${c.notRechecked?html` <span class="tag outline">not re-checked</span>`:""}`,
+    secondary:conversion(c.currency,c.vnd),
+    bar:c.pct!==null?progressBar(c.pct,c.expired||!c.counted?"soft":c.tone==="red"||c.tone==="amber"?c.tone:""):"",
+    details:detailLines([status+": "+c.amountText+(c.cap?" of "+c.capText+" ("+Math.round(c.pct)+"% left)":"")+" · "+c.label,
+      c.perDay&&c.counted?"To use it all by "+c.when+": ≈ "+inCurrency(c,c.perDay)+" per day":"",...c.notes,"Source: "+c.source+", checked "+c.checkedText])},openRows);
+}
+
+function renderPage(data,m,openRows,net){
+  const {rules,fxRate}=m,soon=m.expiringSoon;
+  const share=m.usableVnd?Math.round(m.expiringVnd/m.usableVnd*100):0;
+  const riskTone=soon.some(c=>c.tone==="red")?"red":"";
+  const range=soon.length?(soon[0].when===soon[soon.length-1].when?soon[0].when:soon[0].when+"–"+soon[soon.length-1].when):"";
+  const checkLabel=net.busy?"Checking…":"Check now";
+  return html`
+<h1>AI Subscription</h1>
+<div class="status"><span>Updated ${m.timeStamp(data.updatedAt)}</span>${m.stale?html`<span><span class="stale-dot" aria-hidden="true"></span>${twoDigits(m.dueHour)}:00 refresh missed</span><button class="btn" data-action="check" aria-busy="${net.busy?"true":"false"}">${checkLabel}</button>`:""}<span class="quiet">Refreshes ${data.refreshHours.map(twoDigits).join(" · ")} ${m.tzLabel}</span>${net.message?html`<span class="quiet" role="status">${net.message}</span>`:""}</div>
+${m.attention.length?html`<div class="alert" role="alert"><div class="label">Needs attention</div><ul>${m.attention.map(a=>html`<li>${a}</li>`)}</ul></div>`:""}
+<div class="card summary">
+  ${soon.length?html`<div class="risk ${riskTone}"><div class="label">Expiring if unused · ${range}</div><div class="headline">${soon.map((c,i)=>html`${i?(i===soon.length-1?", then ":", "):""}${noWrap(c.amountText+" by "+c.when)}`)}</div><div>${share}% of usable API credit · ≈ ${formatVnd(roundThousand(m.expiringVnd))}</div></div>`:""}
+  <div class="cell"><div class="label">Monthly plans</div><div class="big">${m.anyUsdPlan?"≈ ":""}${formatVnd(m.monthlyVnd)}</div><div class="sub">${m.subscriptions.length} plans · ≈ ${formatUsdWhole(m.monthlyVnd/fxRate)}</div></div>
+  <div class="cell"><div class="label">Next charge</div>${m.nextRenewal?html`<div class="big">${m.nextRenewal.amountText}</div><div class="sub">${m.nextRenewal.name} · ${noWrap(m.nextRenewal.when)} ${countdownTag(m.nextRenewal.tone,m.nextRenewal.countdown)}</div>`:html`<div class="big">None</div>`}</div>
+  <div class="cell wide"><div><div class="label">Usable API credit</div><div class="big">≈ ${formatVnd(roundThousand(m.usableVnd))}</div></div><div class="sub">${[m.usableUsd?formatUsd(m.usableUsd):"",m.usableVndOnly?formatVnd(m.usableVndOnly):""].filter(Boolean).join(" + ")||"none left"} · ${m.usableCount} balances</div></div>
+</div>
+
+<h2>Subscriptions</h2>
+<div class="card">${m.subscriptions.map(s=>listRow({id:s.id,logo:s.logo,name:s.name,amount:s.amountText,
+  when:html`${noWrap((s.days<0?"Was due ":"Renews ")+s.when)} ${countdownTag(s.tone,s.countdown)}`,secondary:conversion(s.price.currency,s.vnd),
+  details:detailLines([(s.autoRenew?"Auto-renews monthly ":"Renews ")+s.when+" · "+s.amountText+(s.price.currency==="USD"?" (≈ "+formatVnd(s.vnd)+")":""),
+    "Plan: "+s.plan,"Payment: "+data.card.name+(s.via?" via "+s.via:"")+(data.card.note?" ("+data.card.note+")":""),...s.notes,"Source: "+s.source])},openRows))}</div>
+
+<h2>API credits</h2>
+<div class="card">${m.groups.map((g,i)=>html`${i?html`<div class="group">${g.title}</div>`:""}${g.items.map(c=>creditRow(c,openRows))}`)}</div>
+
+<h2>Usage limits</h2>
+<div class="card">${m.usage.map(u=>listRow({id:u.id,logo:u.logo,name:u.name,amount:(u.resetPassed?"last ":"")+(+u.left.toFixed(1))+"% left",muted:u.resetPassed,
+  when:html`${noWrap((+u.usedPct)+"% used")} · ${u.resetText}`,bar:progressBar(u.left,u.resetPassed?"soft":""),
+  details:html`${detailLines(["Usage checked "+u.checkedText])}${u.topUpRows.length?html`<div>Extra-credit top-ups: ${formatUsd(u.topUpTotal)} total (${u.topUpRows.length})</div>${u.topUpRows.map(x=>html`<div class="topup"><b>${formatUsd(x.usd)} · ≈ ${formatVnd(x.vnd)}</b> · ${x.when}<br>Ref ${x.ref}<br><span class="quiet">${x.source}</span></div>`)}`:""}${detailLines(u.notes)}`},openRows))}</div>
+
+<details class="src"${trusted(openRows.__sources?" open":"")}><summary>Data sources & legend</summary><ul>${m.sources.map(x=>html`<li>${x}</li>`)}</ul>
+<div class="legend">Each amount is shown in the currency billed, with ≈ ₫ beside USD items; totals are in ₫ at 1 USD ≈ ${fxRate.toLocaleString("en-US")}₫ (${data.fx.asOf}). Countdowns use ${m.tzLabel} calendar days. Renewals turn red ≤ ${rules.renewalAlertDays} days. Unused API credit is outlined ≤ ${rules.creditRiskDays} days, amber ≤ ${rules.creditWarnDays}, red ≤ ${rules.creditUrgentDays}. Bars show remaining. Refresh schedule ${data.refreshHours.map(twoDigits).join(" · ")} ${m.tzLabel}; a refresh more than ${rules.staleGraceMinutes} min late is flagged.</div></details>`;
+}
+
+/* ---------- self-tests on frozen fixtures: open the page with #selftest ---------- */
+function runSelfTests(){
+  const results=[],check=(name,ok)=>results.push((ok?"PASS ":"FAIL ")+name),at=s=>Date.parse(s),clone=x=>JSON.parse(JSON.stringify(x));
+  const FIXTURE={updatedAt:"2026-11-11T09:00:00+07:00",timezone:{offsetHours:7,label:"ICT"},refreshHours:[6,9,12,15,18],
+    rules:{staleGraceMinutes:45,renewalAlertDays:3,creditUrgentDays:7,creditWarnDays:15,creditRiskDays:30,hideCountdownAfterDays:90},fx:{usdVnd:25000,asOf:"fixture"},card:{name:"Card"},
+    creditClasses:{api:{title:"Usable",counted:true},restricted:{title:"Restricted",counted:false}},
+    subscriptions:[{id:"s1",name:"Plan",logo:"x",plan:"p",renews:"2026-11-20",price:{currency:"USD",amount:10},autoRenew:true,notes:[],source:"f"}],
+    credits:[{id:"c1",name:"Credit",logo:"x",class:"api",label:"l",currency:"USD",left:10,cap:20,expires:"2026-11-15",checkedAt:"2026-11-11T09:00:00+07:00",notes:[],source:"f"},
+             {id:"c2",name:"Trial",logo:"x",class:"restricted",label:"l",currency:"VND",left:1000,cap:null,expires:"2026-11-12",checkedAt:"2026-11-11T09:00:00+07:00",notes:[],source:"f"}],
+    usageLimits:[{id:"u1",name:"Limit",logo:"x",usedPct:10,resetsAt:"2026-11-12T08:55:00+07:00",checkedAt:"2026-11-11T09:00:00+07:00",notes:[],source:"f"}]};
+  check("live DATA passes validation",validateData(window.DATA).length===0);
+  check("fixture passes validation",validateData(FIXTURE).length===0);
+  const mutate=fn=>{const f=clone(FIXTURE);fn(f);return validateData(f).length>0;};
+  check("rejects impossible date",mutate(f=>f.credits[0].expires="2026-02-30"));
+  check("rejects negative balance",mutate(f=>f.credits[0].left=-1));
+  check("rejects balance above cap",mutate(f=>f.credits[0].left=30));
+  check("rejects duplicate ids",mutate(f=>f.credits[1].id="c1"));
+  check("rejects unordered thresholds",mutate(f=>f.rules.creditUrgentDays=40));
+  check("rejects usage over 100%",mutate(f=>f.usageLimits[0].usedPct=120));
+  check("not stale within grace (12:30)",!buildModel(FIXTURE,at("2026-11-11T12:30:00+07:00")).stale);
+  check("stale after grace (12:50)",buildModel(FIXTURE,at("2026-11-11T12:50:00+07:00")).stale);
+  const evening=clone(FIXTURE);evening.updatedAt="2026-11-11T18:00:00+07:00";
+  check("overnight gap not stale at 05:00",!buildModel(evening,at("2026-11-12T05:00:00+07:00")).stale);
+  check("overnight stale at 06:50",buildModel(evening,at("2026-11-12T06:50:00+07:00")).stale);
+  check("credit 4 days out is red and listed",(()=>{const m=buildModel(FIXTURE,at("2026-11-11T10:00:00+07:00"));return m.credits.find(c=>c.id==="c1").tone==="red"&&m.attention.some(a=>a.startsWith("Credit"));})());
+  check("urgent credit still counted in expiring total",buildModel(FIXTURE,at("2026-11-11T10:00:00+07:00")).expiringSoon.length===1);
+  check("restricted credit never coloured or counted",(()=>{const m=buildModel(FIXTURE,at("2026-11-11T10:00:00+07:00"));return m.credits.find(c=>c.id==="c2").tone==="none"&&m.usableCount===1;})());
+  check("expired credit with balance flagged and excluded",(()=>{const m=buildModel(FIXTURE,at("2026-11-16T10:00:00+07:00"));return m.usableCount===0&&m.attention.some(a=>a.includes("expiry"));})());
+  check("renewal 9 days out stays neutral",buildModel(FIXTURE,at("2026-11-11T10:00:00+07:00")).subscriptions[0].tone==="none");
+  check("renewal 3 days out turns red",buildModel(FIXTURE,at("2026-11-17T10:00:00+07:00")).subscriptions[0].tone==="red");
+  check("passed renewal flagged unconfirmed",buildModel(FIXTURE,at("2026-11-21T10:00:00+07:00")).subscriptions[0].countdown==="Renewal unconfirmed");
+  check("usage reset passed shows awaiting refresh",buildModel(FIXTURE,at("2026-11-12T09:00:00+07:00")).usage[0].resetPassed);
+  return results;
+}
+
+/* ---------- render: change-only, delegated events, keyboard focus kept ---------- */
+let data=window.DATA,lastMarkup="";const openRows={},net={busy:false,message:""};
+function render(){
+  if(location.hash==="#selftest"){app.innerHTML=toMarkup(html`<h1>AI Subscription · self-test</h1><div class="selftest">${runSelfTests().join("\n")}</div>`);lastMarkup="";return;}
+  const errors=validateData(data);
+  const markup=errors.length?toMarkup(html`<h1>AI Subscription</h1><div class="error" role="alert">The data block could not be read (${errors.slice(0,4).join(", ")}). The last refresh needs fixing.</div>`)
+    :toMarkup(renderPage(data,buildModel(data,Date.now()),openRows,net));
+  if(markup===lastMarkup)return;
+  const active=document.activeElement,focusSelector=!active||!active.dataset?"":active.dataset.toggle?'[data-toggle="'+active.dataset.toggle+'"]':active.dataset.action?'[data-action="'+active.dataset.action+'"]':active.tagName==="SUMMARY"?"details.src summary":"";
+  app.innerHTML=markup;lastMarkup=markup;
+  if(focusSelector){const el=app.querySelector(focusSelector);if(el)el.focus({preventScroll:true});}
+}
+app.addEventListener("click",e=>{
+  const toggle=e.target.closest("[data-toggle]");
+  if(toggle){const id=toggle.dataset.toggle;openRows[id]=!openRows[id];toggle.closest(".item").classList.toggle("open",openRows[id]);toggle.setAttribute("aria-expanded",String(openRows[id]));lastMarkup="";return;}
+  if(e.target.closest('[data-action="check"]'))checkForUpdate(true);
+});
+app.addEventListener("toggle",e=>{if(e.target.matches&&e.target.matches("details.src")){openRows.__sources=e.target.open;lastMarkup="";}},true);
+
+/* ---------- fetch newer data while the app is open. index.html is only a loader, so the data lives in app.html beside it.
+   cache:"no-cache" revalidates with the server's ETag, so an unchanged file costs a 304, not a download. ---------- */
+const DATA_FILE=new URL("app.html",location.href).href,START_MARK="/* DATA:"+"START */",END_MARK="/* DATA:"+"END */";
+let lastCheck=0;
+async function checkForUpdate(manual){
+  if(net.busy||location.protocol==="file:"||(!manual&&Date.now()-lastCheck<5*60000))return;
+  lastCheck=Date.now();net.busy=true;if(manual){net.message="";render();}
+  try{
+    const text=await (await fetch(DATA_FILE,{cache:"no-cache"})).text();
+    const a=text.indexOf(START_MARK),b=text.indexOf(END_MARK);if(a<0||b<0)throw new Error("markers");
+    const next=JSON.parse(text.slice(a+START_MARK.length,b));if(validateData(next).length)throw new Error("invalid");
+    const changed=next.updatedAt!==data.updatedAt;if(changed)data=next;
+    const t=new Date();net.message=manual||changed?(changed?"New data loaded":"No newer data yet")+" · checked "+twoDigits(t.getHours())+":"+twoDigits(t.getMinutes()):"";
+  }catch(err){net.message="Couldn’t check for newer data";}
+  net.busy=false;render();
+}
+render();checkForUpdate(false);
+setInterval(()=>{render();checkForUpdate(false);},60000);
+document.addEventListener("visibilitychange",()=>{if(!document.hidden){render();checkForUpdate(false);}});
+window.addEventListener("pageshow",()=>{render();checkForUpdate(false);});
+window.addEventListener("hashchange",()=>{lastMarkup="";render();});
 })();
 </script>
 </body>
