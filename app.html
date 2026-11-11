@@ -1,107 +1,159 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>AI Subscription</title>
-<meta name="description" content="Tracker for 4 AI plans, API credits and usage limits." />
-<meta name="theme-color" media="(prefers-color-scheme: light)" content="#F7F7F5" />
-<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#111113" />
-<meta name="color-scheme" content="light dark" />
-<meta name="apple-mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-status-bar-style" content="default" />
-<meta name="apple-mobile-web-app-title" content="AI Sub" />
-<meta name="mobile-web-app-capable" content="yes" />
-<link rel="apple-touch-icon" href="apple-touch-icon.png?v=0331" />
-<link rel="manifest" href="manifest.json?v=0331" />
+<meta name="description" content="Tracker for AI plans, API credits and usage limits.">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#f4f4f1">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0e0e10">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="AI Sub">
+<meta name="format-detection" content="telephone=no,date=no,address=no">
 <style>
-:root{
-  --bg:#F7F7F5;--surface:#FFFFFF;--text:#18181B;--text2:#52525B;--text3:#71717A;--border:#E4E4E7;--track:#ECECEE;--fill:#52525B;
-  --amber-bg:#FEF3C7;--amber-fg:#92400E;--amber-bar:#D97706;--red-bg:#FEE2E2;--red-fg:#B91C1C;--red-bar:#DC2626;--focus:#2563EB;
-  --font:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+/* Theme tokens: the React canvas uses the same table as a plain object (light / dark). */
+:root {
+  --bg: #f4f4f1; --surface: #ffffff; --sunken: #f3f3ef;
+  --text: #16161a; --text2: #4d4d57; --text3: #6b6b75;
+  --line: #e3e3de; --track: #dcdcd6; --fill: #3f3f46; --press: rgba(0, 0, 0, 0.04); --ring: rgba(0, 0, 0, 0.06);
+  --ok: #126b33; --ok-bg: #def5e5; --ok-solid: #1f9d55;
+  --warn: #874805; --warn-bg: #fdf0c9; --warn-solid: #d9860b;
+  --bad: #ad241c; --bad-bg: #fde4e1; --bad-solid: #d92d20; --on-solid: #ffffff;
+  --link: #1d4ed8;
+  --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
-@media (prefers-color-scheme:dark){:root{
-  --bg:#111113;--surface:#1B1B1F;--text:#F4F4F5;--text2:#C4C4CC;--text3:#9A9AA5;--border:#2E2E35;--track:#2E2E35;--fill:#C4C4CC;
-  --amber-bg:#3B2A0A;--amber-fg:#FCD34D;--amber-bar:#F59E0B;--red-bg:#3F1414;--red-fg:#FCA5A5;--red-bar:#F87171;--focus:#60A5FA;
-}}
-*{box-sizing:border-box}
-html{-webkit-text-size-adjust:100%}
-body{margin:0;background:var(--bg);color:var(--text);font-family:var(--font);font-size:16px;line-height:1.4;font-variant-numeric:tabular-nums}
-.wrap{max-width:700px;margin:0 auto;padding:calc(14px + env(safe-area-inset-top)) calc(16px + env(safe-area-inset-right)) calc(40px + env(safe-area-inset-bottom)) calc(16px + env(safe-area-inset-left))}
-h1{font-size:26px;line-height:1.2;margin:0;font-weight:700;letter-spacing:-.02em}
-h2{font-size:19px;margin:24px 0 8px;font-weight:700}
-.nw{white-space:nowrap}
-.quiet{color:var(--text3);font-size:13px}
-.status{margin-top:4px;color:var(--text2);font-size:14px;display:flex;flex-wrap:wrap;gap:2px 8px;align-items:center}
-.stale-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--amber-bar);margin-right:5px;vertical-align:1px}
-.btn{all:unset;box-sizing:border-box;cursor:pointer;font-weight:600;font-size:14px;color:var(--text);padding:0 12px;min-height:44px;display:inline-flex;align-items:center;border-radius:10px;border:1px solid var(--border);background:var(--surface)}
-.btn[aria-busy="true"]{opacity:.6;cursor:default}
-.btn:focus-visible,.row:focus-visible,details.src summary:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
-.tag{display:inline-flex;align-items:center;padding:1px 8px;border-radius:999px;font-size:12px;font-weight:600;white-space:nowrap;line-height:1.5}
-.tag.amber{background:var(--amber-bg);color:var(--amber-fg)}
-.tag.red{background:var(--red-bg);color:var(--red-fg)}
-.tag.outline{border:1px solid var(--border);color:var(--text2)}
-.alert{margin-top:12px;border-radius:12px;background:var(--red-bg);color:var(--red-fg);padding:10px 14px;font-size:14px}
-.alert ul{margin:0;padding:0;list-style:none}
-.label{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase}
-.card{background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden}
-.summary{margin-top:12px;display:grid;grid-template-columns:1fr 1fr}
-.risk{grid-column:1/-1;padding:10px 14px;background:var(--amber-bg);color:var(--amber-fg);font-size:14px;border-bottom:1px solid var(--border)}
-.risk.red{background:var(--red-bg);color:var(--red-fg)}
-.risk .headline{font-weight:700;font-size:15px;margin-top:1px}
-.cell{padding:12px 14px;min-width:0}
-.cell+.cell{border-left:1px solid var(--border)}
-.cell.wide{grid-column:1/-1;border-left:0;border-top:1px solid var(--border);display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:0 12px}
-.cell .label{color:var(--text3)}
-.big{font-size:21px;font-weight:700;letter-spacing:-.01em;margin-top:2px}
-.sub{font-size:14px;color:var(--text2);margin-top:1px}
-.group{padding:8px 14px 6px;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--text3);border-top:1px solid var(--border);background:var(--bg)}
-.item+.item,.group+.item{border-top:1px solid var(--border)}
-.row{all:unset;box-sizing:border-box;display:flex;gap:12px;align-items:flex-start;width:100%;padding:11px 12px 11px 14px;min-height:56px;cursor:pointer;-webkit-tap-highlight-color:transparent}
-.logo{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;color:#fff;font-weight:700;font-size:14px}
-.logo.x{box-shadow:inset 0 0 0 1px var(--border)}
-.logo svg{width:16px;height:16px;display:block}
-.main{flex:1;min-width:0;display:block}
-.line1,.line2{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;column-gap:8px}
-.line1>:last-child,.line2>:last-child{margin-left:auto;text-align:right}
-.name{font-weight:600;font-size:16px}
-.amount{font-weight:650;font-size:16px;white-space:nowrap}
-.item.muted .amount{color:var(--text2)}
-.line2{margin-top:2px;font-size:14px;color:var(--text2)}
-.line2 .when{display:flex;flex-wrap:wrap;gap:4px 6px;align-items:center}
-.chev{color:var(--text3);font-size:15px;margin-top:4px;transition:transform .15s;flex-shrink:0;width:8px}
-.item.open .chev{transform:rotate(90deg)}
-.bar{display:block;height:4px;border-radius:999px;background:var(--track);overflow:hidden;margin-top:7px}
-.bar>i{display:block;height:100%;border-radius:999px;background:var(--fill)}
-.bar.amber>i{background:var(--amber-bar)}.bar.red>i{background:var(--red-bar)}.bar.soft>i{opacity:.35}
-.details{display:none;padding:0 14px 12px 54px;font-size:14px;color:var(--text2)}
-.item.open .details{display:block}
-.details div{padding:2px 0}
-.details .topup{margin-top:4px;padding:6px 10px;border:1px solid var(--border);border-radius:10px}
-details.src{margin-top:24px}
-details.src summary{cursor:pointer;font-size:16px;font-weight:650;min-height:44px;display:flex;align-items:center;gap:8px;list-style:none}
-details.src summary::-webkit-details-marker{display:none}
-details.src summary::after{content:"›";color:var(--text3);transition:transform .15s}
-details.src[open] summary::after{transform:rotate(90deg)}
-details.src ul{margin:4px 0 0;padding-left:18px;font-size:13px;color:var(--text2)}
-details.src li{margin:4px 0}
-.legend{margin-top:10px;font-size:13px;color:var(--text3)}
-.error{margin-top:16px;padding:12px 14px;border-radius:12px;background:var(--red-bg);color:var(--red-fg);font-size:14px}
-.selftest{margin-top:16px;font:13px/1.5 ui-monospace,Menlo,monospace;white-space:pre-wrap}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0e0e10; --surface: #19191d; --sunken: #121215;
+    --text: #f3f3f4; --text2: #c6c6ce; --text3: #9c9ca8;
+    --line: #2c2c33; --track: #34343c; --fill: #d0d0d8; --press: rgba(255, 255, 255, 0.05); --ring: rgba(255, 255, 255, 0.14);
+    --ok: #7ee0a3; --ok-bg: #12301f; --ok-solid: #3ecf7a;
+    --warn: #f9d06c; --warn-bg: #36280b; --warn-solid: #eda521;
+    --bad: #ffada6; --bad-bg: #3c1715; --bad-solid: #f26d63; --on-solid: #190605;
+    --link: #8ab4ff;
+  }
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--bg); color: var(--text); font: 400 1rem/1.4 var(--font); font-variant-numeric: tabular-nums; -webkit-font-smoothing: antialiased; }
+.wrap { max-width: 680px; margin: 0 auto; padding: calc(16px + env(safe-area-inset-top)) calc(16px + env(safe-area-inset-right)) calc(44px + env(safe-area-inset-bottom)) calc(16px + env(safe-area-inset-left)); }
+h1 { margin: 0; font-size: 1.75rem; line-height: 1.15; font-weight: 700; letter-spacing: -0.02em; }
+h2 { margin: 0; font-size: 1.1875rem; font-weight: 700; letter-spacing: -0.01em; }
+.nw { white-space: nowrap; }
+
+/* freshness */
+.status { display: flex; align-items: flex-start; gap: 8px; margin-top: 6px; font-size: 0.875rem; color: var(--text2); }
+.dot { flex: none; width: 8px; height: 8px; margin-top: 6px; border-radius: 50%; background: var(--ok-solid); }
+.dot.late { background: var(--warn-solid); }
+.status-2 { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 4px 12px; margin: 2px 0 0 16px; font-size: 0.875rem; font-weight: 600; color: var(--warn); }
+.stale { margin-top: 12px; padding: 12px 14px; border-radius: 14px; background: var(--warn-bg); color: var(--warn); font-size: 0.875rem; }
+.stale b { display: block; font-size: 1rem; color: var(--text); }
+.stale-row { display: flex; margin-top: 10px; }
+.net { margin-top: 6px; font-size: 0.875rem; color: var(--text3); }
+.btn { all: unset; box-sizing: border-box; display: inline-flex; align-items: center; min-height: 44px; padding: 0 14px; border-radius: 11px; border: 1px solid var(--line); background: var(--surface); color: var(--text); font-size: 0.875rem; font-weight: 600; cursor: pointer; }
+.link { all: unset; cursor: pointer; color: var(--link); font-weight: 600; white-space: nowrap; padding: 12px 4px; margin: -12px -4px; }
+.btn[aria-busy="true"], .link[aria-busy="true"] { opacity: 0.6; }
+.btn:focus-visible, .link:focus-visible, .more:focus-visible { outline: 2px solid var(--link); outline-offset: 2px; border-radius: 8px; }
+
+/* attention + errors */
+.alert, .error { margin-top: 12px; padding: 11px 14px; border-radius: 14px; background: var(--bad-bg); color: var(--bad); font-size: 0.875rem; }
+.alert ul { margin: 4px 0 0; padding: 0; list-style: none; }
+.alert li { margin-top: 4px; }
+.cap { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--text3); }
+.alert .cap { color: var(--bad); }
+
+/* headline tiles */
+.tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; }
+.tile { min-width: 0; padding: 12px 14px 13px; border-radius: 16px; border: 1px solid var(--line); background: var(--surface); }
+.tile.amber { background: var(--warn-bg); border-color: transparent; }
+.tile.red { background: var(--bad-bg); border-color: transparent; }
+.tile.amber .cap, .tile.amber .t-sub { color: var(--warn); }
+.tile.red .cap, .tile.red .t-sub { color: var(--bad); }
+.big { margin-top: 3px; font-size: 1.375rem; line-height: 1.25; font-weight: 700; letter-spacing: -0.02em; overflow-wrap: anywhere; }
+.est { margin-left: 5px; font-size: 0.8125rem; font-weight: 600; letter-spacing: 0; }
+.t-sub { margin-top: 1px; font-size: 0.875rem; color: var(--text2); }
+@media (max-width: 21.5em) { .tiles { grid-template-columns: 1fr; } }
+
+/* sections, cards, rows */
+.sec-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 2px 12px; margin: 28px 2px 8px; }
+.sec-total { font-size: 0.875rem; color: var(--text2); white-space: nowrap; }
+.card { border: 1px solid var(--line); border-radius: 16px; background: var(--surface); overflow: hidden; }
+.item { border-top: 1px solid var(--line); }
+.item.first { border-top: 0; }
+.group { padding: 8px 14px 7px; border-top: 1px solid var(--line); background: var(--sunken); }
+.row { all: unset; box-sizing: border-box; display: flex; align-items: flex-start; gap: 12px; width: 100%; min-height: 60px; padding: 12px 12px 12px 14px; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.row:active, .btn:active { background: var(--press); }
+.row:focus-visible { outline: 2px solid var(--link); outline-offset: -2px; border-radius: 14px; }
+.logo { flex: none; display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; margin-top: 2px; border-radius: 9px; box-shadow: inset 0 0 0 1px var(--ring); color: #fff; font-size: 0.875rem; font-weight: 700; }
+.logo svg { display: block; width: 18px; height: 18px; }
+.main { display: block; flex: 1; min-width: 0; }
+.l1, .l2, .l3 { display: flex; flex-wrap: wrap; justify-content: space-between; column-gap: 10px; }
+.l1 { align-items: baseline; }
+.name { font-weight: 600; }
+.amt { margin-left: auto; font-weight: 600; white-space: nowrap; }
+.item.muted .amt { color: var(--text2); }
+.l2, .l3 { align-items: center; margin-top: 2px; font-size: 0.875rem; color: var(--text2); }
+.l3 { margin-top: 6px; }
+.when { display: flex; flex-wrap: wrap; align-items: center; gap: 3px 6px; }
+.sec { margin-left: auto; white-space: nowrap; }
+.chev { flex: none; width: 10px; margin-top: 3px; color: var(--text3); font-size: 1.125rem; line-height: 1.2; text-align: center; transition: transform 0.15s; }
+.chev.open { transform: rotate(90deg); }
+.chip { display: inline-flex; align-items: center; padding: 1px 8px; border-radius: 999px; font-size: 0.8125rem; font-weight: 600; line-height: 1.5; white-space: nowrap; }
+.chip.red { background: var(--bad-solid); color: var(--on-solid); }
+.chip.amber { background: var(--warn-bg); color: var(--warn); }
+.chip.ok { background: var(--ok-bg); color: var(--ok); }
+.chip.watch { box-shadow: inset 0 0 0 1px var(--text3); color: var(--text2); }
+.chip.plain { box-shadow: inset 0 0 0 1px var(--line); color: var(--text3); }
+
+/* usage meter: filled part = share of the limit used */
+.meter, .gauge { display: block; height: 6px; margin-top: 8px; border-radius: 999px; background: var(--track); overflow: hidden; }
+.meter i, .gauge i { display: block; height: 100%; border-radius: 999px; background: var(--fill); }
+.meter.soft i { opacity: 0.35; }
+
+/* pace panel: recent spend vs the spend needed to finish before expiry */
+.pace { margin: 0 12px 12px; padding: 10px 12px 11px; border-radius: 12px; background: var(--sunken); }
+.pace-stats { display: flex; justify-content: space-between; gap: 12px; }
+.pace-stats .r { text-align: right; }
+.num { font-size: 1.125rem; font-weight: 700; letter-spacing: -0.01em; }
+.gauge.amber i { background: var(--warn-solid); }
+.gauge.red i { background: var(--bad-solid); }
+.gauge.ok i { background: var(--ok-solid); }
+.verdict { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; margin-top: 9px; font-size: 0.875rem; color: var(--text2); }
+
+/* expandable details */
+.details { display: none; padding: 0 14px 14px 58px; font-size: 0.875rem; color: var(--text2); }
+.details.open { display: block; }
+.kv { margin: 0; }
+.kv-row { display: grid; grid-template-columns: 72px 1fr; gap: 8px; padding: 2px 0; }
+.kv-row.foot { margin-top: 6px; padding-top: 8px; border-top: 1px dashed var(--line); color: var(--text3); }
+.kv dt { color: var(--text3); }
+.kv dd { margin: 0; min-width: 0; overflow-wrap: anywhere; }
+.ln { display: block; margin-top: 3px; }
+.ln.first { margin-top: 0; }
+.note { margin: 8px 4px 0; font-size: 0.8125rem; color: var(--text3); }
+
+/* sources & legend */
+.more { all: unset; box-sizing: border-box; display: flex; align-items: center; gap: 8px; min-height: 44px; margin-top: 22px; color: var(--text2); font-weight: 600; cursor: pointer; }
+.src { display: none; font-size: 0.875rem; color: var(--text2); }
+.src.open { display: block; }
+.src ul { margin: 4px 0 0; padding-left: 18px; }
+.src li { margin: 4px 0; }
+.legend { margin-top: 12px; color: var(--text3); }
+.legend p { margin: 6px 0 0; }
+.selftest { margin-top: 16px; font: 13px/1.5 ui-monospace, Menlo, monospace; white-space: pre-wrap; }
+@media (prefers-reduced-motion: reduce) { .chev { transition: none; } }
 </style>
 </head>
 <body>
 <div class="wrap" id="app">Loading…</div>
-<script>
-/* All numbers live in DATA below. The refresh routine edits ONLY the block between the DATA:START and DATA:END
-   markers (byte-identical to the Canvas page) and must run validateData() (see #selftest) before saving.
-   Everything else (totals, conversions, countdowns, colours, sort order, stale state, source list) is derived by
-   buildModel(), re-computed every minute and whenever the app returns to the foreground. */
-var DATA = /* DATA:START */ {
+<script>var DATA = /* DATA:START */ {
   "updatedAt": "2026-11-11T15:00:00+07:00",
   "timezone": {"offsetHours": 7, "label": "ICT"},
   "refreshHours": [6, 9, 12, 15, 18],
-  "rules": {"staleGraceMinutes": 45, "renewalAlertDays": 3, "creditUrgentDays": 7, "creditWarnDays": 15, "creditRiskDays": 30, "hideCountdownAfterDays": 90},
+  "rules": {"staleGraceMinutes": 45, "renewalAlertDays": 3, "creditUrgentDays": 7, "creditWarnDays": 15, "creditRiskDays": 30, "hideCountdownAfterDays": 90, "paceWindowDays": 7},
   "fx": {"usdVnd": 25580, "asOf": "Nov 9, 2026"},
   "card": {"name": "Visa •••• 4771", "note": "default · exp 12/2031"},
   "creditClasses": {"api": {"title": "Usable API credit", "counted": true}, "restricted": {"title": "Cloud-only · not counted", "counted": false}},
@@ -112,254 +164,491 @@ var DATA = /* DATA:START */ {
     {"id": "grok", "name": "Grok Super", "logo": "x", "plan": "Super (monthly)", "renews": "2026-12-07", "price": {"currency": "VND", "amount": 2749000}, "autoRenew": true, "via": "", "notes": ["Amount shown is the next charge", "Last charge Nov 7: 2,643,323₫ paid", "Period Nov 7–Dec 7, 2026", "Invoice PDF FF3789F04A"], "source": "X Subscription email Nov 7, 2026"}
   ],
   "credits": [
-    {"id": "anthropic", "name": "Anthropic API", "logo": "anthropic", "class": "api", "label": "Promo credit", "currency": "USD", "left": 75.37, "cap": 100, "expires": "2026-11-26", "notes": ["Promotional credit · purchased $0.00 · granted Oct 23, 2026", "No refill info yet (Max usually grants $100/mo)", "API key on box expires Dec 2, 2026 (separate from credit expiry)"], "source": "platform.claude.com billing", "checkedAt": "2026-11-11T15:00:00+07:00"},
-    {"id": "openai", "name": "OpenAI API", "logo": "openai", "class": "api", "label": "Free trial", "currency": "USD", "left": 63.50, "cap": null, "expires": "2026-12-01", "notes": ["org Personal · free trial · no payment method", "Linked to ChatGPT subscription (Personal account)"], "source": "platform.openai.com billing", "checkedAt": "2026-11-11T15:06:00+07:00"},
-    {"id": "aistudio", "name": "AI Studio prepaid", "logo": "gemini", "class": "api", "label": "Prepaid", "currency": "VND", "left": 150000, "cap": null, "expires": "2027-12-01", "notes": ["Google · prepaid credit used directly for the Gemini API key", "Topped up Nov 2, 2026 · auto-reload off · Tier: Paid 1", "Nov (1–11): cost ₫22.9K, savings ₫22.9K, total ₫0.00", "Billing account: My Billing Account"], "source": "Google AI Studio billing", "checkedAt": "2026-11-11T15:00:00+07:00"},
-    {"id": "devprogram", "name": "Developer Program", "logo": "gemini", "class": "api", "label": "AI Pro benefit", "currency": "VND", "left": 244359.68, "cap": 258491, "expires": "2027-11-03", "notes": ["Google Developer Program premium benefit (AI Pro)", "Started Nov 2, 2026 · monthly AI Pro credit, applies across Google Cloud + Maps"], "source": "Google Developer Program", "checkedAt": "2026-11-11T15:00:00+07:00"},
-    {"id": "cloudtrial", "name": "Cloud Free Trial", "logo": "gemini", "class": "restricted", "label": "Cloud only", "currency": "VND", "left": 7754701, "cap": 7754701, "expires": "2027-02-02", "notes": ["Google Cloud Free Trial (~300 USD) · only some Cloud services (per free-trial terms)", "Started Nov 3, 2026 · prior Free Trial expired Nov 3, 2026", "Billing account: My Billing Account"], "source": "Google Cloud billing", "checkedAt": "2026-11-11T15:00:00+07:00"}
+    {"id": "anthropic", "name": "Anthropic API", "logo": "anthropic", "class": "api", "label": "Promo credit", "currency": "USD", "left": 75.37, "cap": 100, "expires": "2026-11-26", "notes": ["Promotional credit · purchased $0.00 · granted Oct 23, 2026", "No refill info yet (Max usually grants $100/mo)"], "source": "platform.claude.com billing", "checkedAt": "2026-11-11T15:00:00+07:00", "history": [{"at": "2026-11-09T19:09:00+07:00", "left": 82.86}, {"at": "2026-11-10T08:50:00+07:00", "left": 82.52}, {"at": "2026-11-11T09:00:00+07:00", "left": 82.52}]},
+    {"id": "openai", "name": "OpenAI API", "logo": "openai", "class": "api", "label": "Free trial", "currency": "USD", "left": 63.50, "cap": null, "expires": "2026-12-01", "notes": ["org Personal · free trial · no payment method", "Linked to ChatGPT subscription (Personal account)"], "source": "platform.openai.com billing", "checkedAt": "2026-11-11T15:06:00+07:00", "history": [{"at": "2026-11-09T19:09:00+07:00", "left": 69.97}, {"at": "2026-11-10T09:35:00+07:00", "left": 68.99}, {"at": "2026-11-11T09:00:00+07:00", "left": 68.97}]},
+    {"id": "aistudio", "name": "AI Studio prepaid", "logo": "aistudio", "class": "api", "label": "Prepaid", "currency": "VND", "left": 150000, "cap": null, "expires": "2027-12-01", "notes": ["Google · prepaid credit used directly for the Gemini API key", "Topped up Nov 2, 2026 · auto-reload off · Tier: Paid 1", "Nov (1–11): cost ₫22.9K, savings ₫22.9K, total ₫0.00", "Billing account: My Billing Account"], "source": "Google AI Studio billing", "checkedAt": "2026-11-11T15:00:00+07:00", "history": [{"at": "2026-11-11T09:00:00+07:00", "left": 150000}]},
+    {"id": "devprogram", "name": "Developer Program", "logo": "googledev", "class": "api", "label": "AI Pro benefit", "currency": "VND", "left": 244359.68, "cap": 258491, "expires": "2027-11-03", "notes": ["Google Developer Program premium benefit (AI Pro)", "Started Nov 2, 2026 · monthly AI Pro credit, applies across Google Cloud + Maps"], "source": "Google Developer Program", "checkedAt": "2026-11-11T15:00:00+07:00", "history": [{"at": "2026-11-11T09:00:00+07:00", "left": 251957.21}]},
+    {"id": "cloudtrial", "name": "Cloud Free Trial", "logo": "googlecloud", "class": "restricted", "label": "Cloud only", "currency": "VND", "left": 7754701, "cap": 7754701, "expires": "2027-02-02", "notes": ["Google Cloud Free Trial (~300 USD) · only some Cloud services (per free-trial terms)", "Started Nov 3, 2026 · prior Free Trial expired Nov 3, 2026", "Billing account: My Billing Account"], "source": "Google Cloud billing", "checkedAt": "2026-11-11T15:00:00+07:00", "history": [{"at": "2026-11-11T09:00:00+07:00", "left": 7754701}]}
   ],
   "usageLimits": [
     {"id": "grokbot", "name": "Grok Bot · weekly", "logo": "grokbot", "usedPct": 11.1, "resetsAt": "2026-11-12T08:55:00+07:00", "topUps": [{"date": "2026-11-09", "usd": 50, "ref": "QCNL-JU4K-54BL", "source": "SpaceXSI email Nov 9, 2026 17:28 (Asia/Bangkok)"}, {"date": "2026-11-09", "usd": 20, "ref": "FRL5-26EF-27FH", "source": "SpaceXSI email Nov 9, 2026 14:46 (Asia/Bangkok)"}], "notes": ["Weekly limit (Super plan) · shared with other apps on the plan · early reset Nov 10", "Extra credit is separate from the Super plan; its remaining $ balance is only visible in Grok Bot › Settings › Usage & Billing — send a screenshot to update", "Logo: Grok Bot monogram (no official SVG)"], "source": "Grok Bot usage settings", "checkedAt": "2026-11-11T15:00:00+07:00"}
   ],
+  "deadlines": [
+    {"id": "anthropic-key", "name": "Anthropic API key (box)", "logo": "anthropic", "date": "2026-12-02", "note": "Separate from the API credit expiry", "source": "Noted with the Anthropic API credit"}
+  ],
   "extraSources": ["Logos: simple-icons Anthropic, OpenAI, Google Gemini, X; Grok Bot custom monogram"]
-} /* DATA:END */;
-</script>
+} /* DATA:END */;</script>
 <script>
-(function(){
-"use strict";
-const app=document.getElementById("app");
-const LOGO={
-  anthropic:{bg:"#D97757",fg:"#fff",d:"M17.3041 3.541h-3.6718l6.696 16.918H24Zm-10.6082 0L0 20.459h3.7442l1.3693-3.5527h7.0052l1.3693 3.5528h3.7442L10.5363 3.5409Zm-.3712 10.2232 2.2914-5.9456 2.2914 5.9456Z"},
-  openai:{bg:"#10A37F",fg:"#fff",d:"M22.2819 9.8211a5.9847 5.9847 0 0 0-.5157-4.9108 6.0462 6.0462 0 0 0-6.5098-2.9A6.0651 6.0651 0 0 0 4.9807 4.1818a5.9847 5.9847 0 0 0-3.9977 2.9 6.0462 6.0462 0 0 0 .7427 7.0966 5.98 5.98 0 0 0 .511 4.9107 6.051 6.051 0 0 0 6.5146 2.9001A5.9847 5.9847 0 0 0 13.2599 24a6.0557 6.0557 0 0 0 5.7718-4.2058 5.9894 5.9894 0 0 0 3.9977-2.9001 6.0557 6.0557 0 0 0-.7475-7.0729zm-9.022 12.6081a4.4755 4.4755 0 0 1-2.8764-1.0408l.1419-.0804 4.7783-2.7582a.7948.7948 0 0 0 .3927-.6813v-6.7369l2.02 1.1686a.071.071 0 0 1 .038.052v5.5826a4.504 4.504 0 0 1-4.4945 4.4944zm-9.6607-4.1254a4.4708 4.4708 0 0 1-.5346-3.0137l.142.0852 4.783 2.7582a.7712.7712 0 0 0 .7806 0l5.8428-3.3685v2.3324a.0804.0804 0 0 1-.0332.0615L9.74 19.9502a4.4992 4.4992 0 0 1-6.1408-1.6464zM2.3408 7.8956a4.485 4.485 0 0 1 2.3655-1.9728V11.6a.7664.7664 0 0 0 .3879.6765l5.8144 3.3543-2.0201 1.1685a.0757.0757 0 0 1-.071 0l-4.8303-2.7865A4.504 4.504 0 0 1 2.3408 7.872zm16.5963 3.8558L13.1038 8.364 15.1192 7.2a.0757.0757 0 0 1 .071 0l4.8303 2.7913a4.4944 4.4944 0 0 1-.6765 8.1042v-5.6772a.79.79 0 0 0-.407-.667zm2.0107-3.0231l-.142-.0852-4.7735-2.7818a.7759.7759 0 0 0-.7854 0L9.409 9.2297V6.8974a.0662.0662 0 0 1 .0284-.0615l4.8303-2.7866a4.4992 4.4992 0 0 1 6.6802 4.66zM8.3065 12.863l-2.02-1.1638a.0804.0804 0 0 1-.038-.0567V6.0742a4.4992 4.4992 0 0 1 7.3757-3.4537l-.142.0805L8.704 5.459a.7948.7948 0 0 0-.3927.6813zm1.0976-2.3654l2.602-1.4998 2.6069 1.4998v2.9994l-2.5974 1.4997-2.6067-1.4997Z"},
-  gemini:{bg:"#4285F4",fg:"#fff",d:"M11.04 19.32Q12 21.51 12 24q0-2.49.93-4.68.96-2.19 2.58-3.81t3.81-2.55Q21.51 12 24 12q-2.49 0-4.68-.93a12.3 12.3 0 0 1-3.81-2.58 12.3 12.3 0 0 1-2.58-3.81Q12 2.49 12 0q0 2.49-.96 4.68-.93 2.19-2.55 3.81a12.3 12.3 0 0 1-3.81 2.58Q2.49 12 0 12q2.49 0 4.68.96 2.19.93 3.81 2.55t2.55 3.81"},
-  x:{bg:"#000000",fg:"#fff",d:"M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"},
-  grokbot:{bg:"#FF5C8A",fg:"#fff",d:"M12 2a4 4 0 0 1 4 4v1h1a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3h-1v1a4 4 0 0 1-8 0v-1H7a3 3 0 0 1-3-3V10a3 3 0 0 1 3-3h1V6a4 4 0 0 1 4-4zm-2 9a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm4 0a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zM9 17h6v1a2 2 0 0 1-6 0v-1z"}
-};
-/* ---------- safe templating: html`…${value}…` escapes value; trusted() marks markup that is already safe ---------- */
-const TRUSTED=Symbol("trusted");
-const trusted=markup=>({[TRUSTED]:String(markup)});
-const escapeText=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const toMarkup=v=>v==null||v===false?"":Array.isArray(v)?v.map(toMarkup).join(""):(typeof v==="object"&&TRUSTED in v)?v[TRUSTED]:escapeText(v);
-const html=(parts,...values)=>trusted(parts.reduce((acc,part,i)=>acc+part+(i<values.length?toMarkup(values[i]):""),""));
-const noWrap=text=>html`<span class="nw">${text}</span>`;
+/* Everything on the page is derived from the DATA block above:
+   validateData(data) -> errors, buildModel(data, now) -> display-ready view model (both pure),
+   pageView(model, ui) -> markup. The refresh routine edits only the DATA block; open app.html#selftest to verify. */
+(function () {
+  "use strict";
+  var app = document.getElementById("app");
 
-/* ---------- schema validation of a DATA block ---------- */
-function validateData(data){
-  const errors=[],isText=x=>typeof x==="string"&&x.length>0,isNumber=x=>typeof x==="number"&&isFinite(x),isAmount=x=>isNumber(x)&&x>=0,isCurrency=x=>x==="USD"||x==="VND";
-  const isDay=x=>{if(typeof x!=="string"||!/^\d{4}-\d{2}-\d{2}$/.test(x))return false;const [y,m,d]=x.split("-").map(Number),u=new Date(Date.UTC(y,m-1,d));return u.getUTCFullYear()===y&&u.getUTCMonth()===m-1&&u.getUTCDate()===d;};
-  const isTimestamp=x=>isText(x)&&/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2})?([+-]\d{2}:\d{2}|Z)$/.test(x)&&!isNaN(Date.parse(x))&&isDay(x.slice(0,10));
-  if(!data||typeof data!=="object")return["DATA missing"];
-  if(!isTimestamp(data.updatedAt))errors.push("updatedAt");
-  if(!data.timezone||!isNumber(data.timezone.offsetHours)||!isText(data.timezone.label))errors.push("timezone");
-  if(!Array.isArray(data.refreshHours)||!data.refreshHours.length||!data.refreshHours.every(h=>Number.isInteger(h)&&h>=0&&h<24))errors.push("refreshHours");
-  const rules=data.rules||{};
-  if(!["staleGraceMinutes","renewalAlertDays","creditUrgentDays","creditWarnDays","creditRiskDays","hideCountdownAfterDays"].every(k=>isAmount(rules[k]))||!(rules.creditUrgentDays<=rules.creditWarnDays&&rules.creditWarnDays<=rules.creditRiskDays))errors.push("rules");
-  if(!data.fx||!isNumber(data.fx.usdVnd)||!(data.fx.usdVnd>0))errors.push("fx");
-  if(!data.card||!isText(data.card.name))errors.push("card");
-  if(!data.creditClasses||typeof data.creditClasses!=="object")errors.push("creditClasses");
-  const seen=new Set(),unique=(id,where)=>{if(seen.has(id))errors.push("duplicate id "+id+" in "+where);seen.add(id);};
-  const list=(key)=>{if(!Array.isArray(data[key])){errors.push(key);return[];}return data[key].filter((x,i)=>{if(!x||typeof x!=="object"){errors.push(key+"["+i+"]");return false;}return true;});};
-  list("subscriptions").forEach((s,i)=>{unique(s.id,"subscriptions");if(!isText(s.id)||!isText(s.name)||!isDay(s.renews)||!s.price||!isCurrency(s.price.currency)||!isAmount(s.price.amount)||!Array.isArray(s.notes))errors.push("subscriptions["+i+"]");});
-  list("credits").forEach((c,i)=>{unique(c.id,"credits");if(!isText(c.id)||!isText(c.name)||!isCurrency(c.currency)||!isAmount(c.left)||!(c.cap===null||(isAmount(c.cap)&&c.cap>=c.left))||!isDay(c.expires)||!(data.creditClasses&&data.creditClasses[c.class])||!isTimestamp(c.checkedAt)||!Array.isArray(c.notes))errors.push("credits["+i+"]");});
-  list("usageLimits").forEach((u,i)=>{unique(u.id,"usageLimits");if(!isText(u.id)||!(isNumber(u.usedPct)&&u.usedPct>=0&&u.usedPct<=100)||!isTimestamp(u.resetsAt)||!isTimestamp(u.checkedAt)||!Array.isArray(u.notes)||!(u.topUps||[]).every(x=>isAmount(x.usd)&&isDay(x.date)))errors.push("usageLimits["+i+"]");});
-  return errors;
-}
+  /* ---------- brand marks ---------- */
+  const STAR = "M11.04 19.32Q12 21.51 12 24q0-2.49.93-4.68.96-2.19 2.58-3.81t3.81-2.55Q21.51 12 24 12q-2.49 0-4.68-.93a12.3 12.3 0 0 1-3.81-2.58 12.3 12.3 0 0 1-2.58-3.81Q12 2.49 12 0q0 2.49-.96 4.68-.93 2.19-2.55 3.81a12.3 12.3 0 0 1-3.81 2.58Q2.49 12 0 12q2.49 0 4.68.96 2.19.93 3.81 2.55t2.55 3.81";
+  const LOGO = {
+    anthropic: { bg: "#D97757", fg: "#fff", d: "M17.3041 3.541h-3.6718l6.696 16.918H24Zm-10.6082 0L0 20.459h3.7442l1.3693-3.5527h7.0052l1.3693 3.5528h3.7442L10.5363 3.5409Zm-.3712 10.2232 2.2914-5.9456 2.2914 5.9456Z" },
+    openai: { bg: "#10A37F", fg: "#fff", d: "M22.2819 9.8211a5.9847 5.9847 0 0 0-.5157-4.9108 6.0462 6.0462 0 0 0-6.5098-2.9A6.0651 6.0651 0 0 0 4.9807 4.1818a5.9847 5.9847 0 0 0-3.9977 2.9 6.0462 6.0462 0 0 0 .7427 7.0966 5.98 5.98 0 0 0 .511 4.9107 6.051 6.051 0 0 0 6.5146 2.9001A5.9847 5.9847 0 0 0 13.2599 24a6.0557 6.0557 0 0 0 5.7718-4.2058 5.9894 5.9894 0 0 0 3.9977-2.9001 6.0557 6.0557 0 0 0-.7475-7.0729zm-9.022 12.6081a4.4755 4.4755 0 0 1-2.8764-1.0408l.1419-.0804 4.7783-2.7582a.7948.7948 0 0 0 .3927-.6813v-6.7369l2.02 1.1686a.071.071 0 0 1 .038.052v5.5826a4.504 4.504 0 0 1-4.4945 4.4944zm-9.6607-4.1254a4.4708 4.4708 0 0 1-.5346-3.0137l.142.0852 4.783 2.7582a.7712.7712 0 0 0 .7806 0l5.8428-3.3685v2.3324a.0804.0804 0 0 1-.0332.0615L9.74 19.9502a4.4992 4.4992 0 0 1-6.1408-1.6464zM2.3408 7.8956a4.485 4.485 0 0 1 2.3655-1.9728V11.6a.7664.7664 0 0 0 .3879.6765l5.8144 3.3543-2.0201 1.1685a.0757.0757 0 0 1-.071 0l-4.8303-2.7865A4.504 4.504 0 0 1 2.3408 7.872zm16.5963 3.8558L13.1038 8.364 15.1192 7.2a.0757.0757 0 0 1 .071 0l4.8303 2.7913a4.4944 4.4944 0 0 1-.6765 8.1042v-5.6772a.79.79 0 0 0-.407-.667zm2.0107-3.0231l-.142-.0852-4.7735-2.7818a.7759.7759 0 0 0-.7854 0L9.409 9.2297V6.8974a.0662.0662 0 0 1 .0284-.0615l4.8303-2.7866a4.4992 4.4992 0 0 1 6.6802 4.66zM8.3065 12.863l-2.02-1.1638a.0804.0804 0 0 1-.038-.0567V6.0742a4.4992 4.4992 0 0 1 7.3757-3.4537l-.142.0805L8.704 5.459a.7948.7948 0 0 0-.3927.6813zm1.0976-2.3654l2.602-1.4998 2.6069 1.4998v2.9994l-2.5974 1.4997-2.6067-1.4997Z" },
+    gemini: { bg: "#4285F4", fg: "#fff", d: STAR },
+    x: { bg: "#000000", fg: "#fff", d: "M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z" },
+    aistudio: { bg: "#202124", fg: "#8AB4F8", d: STAR },
+    googledev: { bg: "#188038", fg: "#fff", d: "M8.6 6.2 2.8 12l5.8 5.8 1.6-1.6L6 12l4.2-4.2zm6.8 0-1.6 1.6L18 12l-4.2 4.2 1.6 1.6 5.8-5.8z" },
+    googlecloud: { bg: "#E8F0FE", fg: "#1A73E8", d: "M19.35 10.04A7.49 7.49 0 0 0 12 4C9.11 4 6.6 5.64 5.35 8.04A5.994 5.994 0 0 0 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96z" },
+    grokbot: { bg: "#FF5C8A", fg: "#fff", d: "M12 2a4 4 0 0 1 4 4v1h1a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3h-1v1a4 4 0 0 1-8 0v-1H7a3 3 0 0 1-3-3V10a3 3 0 0 1 3-3h1V6a4 4 0 0 1 4-4zm-2 9a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm4 0a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zM9 17h6v1a2 2 0 0 1-6 0v-1z" },
+  };
 
-/* ---------- formatting ---------- */
-const MONTHS=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],WEEKDAYS=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
-const twoDigits=n=>String(n).padStart(2,"0");
-const formatVnd=n=>Math.round(n).toLocaleString("en-US")+"₫";
-const formatUsd=n=>"$"+n.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});
-const formatUsdWhole=n=>"$"+Math.round(n).toLocaleString("en-US");
-const roundThousand=n=>Math.round(n/1000)*1000;
+  /* ---------- safe templating: html`…${value}…` escapes every value ---------- */
+  const TRUSTED = Symbol("trusted");
+  const trusted = (m) => ({ [TRUSTED]: String(m) });
+  const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+  const toMarkup = (v) => v == null || v === false ? "" : Array.isArray(v) ? v.map(toMarkup).join("") : typeof v === "object" && TRUSTED in v ? v[TRUSTED] : esc(v);
+  const html = (parts, ...vals) => trusted(parts.reduce((acc, p, i) => acc + p + (i < vals.length ? toMarkup(vals[i]) : ""), ""));
 
-/* ---------- pure model: DATA + now → everything the view shows ---------- */
-function buildModel(data,now){
-  const rules=data.rules,fxRate=data.fx.usdVnd,offsetMs=data.timezone.offsetHours*3600000,tzLabel=data.timezone.label;
-  const localParts=ms=>{const d=new Date(ms+offsetMs);return{year:d.getUTCFullYear(),month:d.getUTCMonth(),day:d.getUTCDate(),hour:d.getUTCHours(),minute:d.getUTCMinutes(),weekday:d.getUTCDay()};};
-  const today=localParts(now);
-  const money=(currency,n)=>currency==="USD"?formatUsd(n):formatVnd(n);
-  const toVnd=(currency,n)=>currency==="USD"?n*fxRate:n;
-  const daysUntil=ymd=>{const [y,m,d]=ymd.split("-").map(Number);return Math.round((Date.UTC(y,m-1,d)-Date.UTC(today.year,today.month,today.day))/86400000);};
-  const shortDate=ymd=>{const [y,m,d]=ymd.split("-").map(Number);return MONTHS[m-1]+" "+d+(y!==today.year?", "+y:"");};
-  const timeStamp=iso=>{const p=localParts(Date.parse(iso));return MONTHS[p.month]+" "+p.day+(p.year!==today.year?", "+p.year:"")+" · "+twoDigits(p.hour)+":"+twoDigits(p.minute)+" "+tzLabel;};
-  const countdown=(days,kind)=>days<0?(kind==="renewal"?"Renewal unconfirmed":"Expiry passed"):days===0?"Today":days===1?"Tomorrow":days>rules.hideCountdownAfterDays?"":days+" days";
-  const sum=(items,pick)=>items.reduce((acc,x)=>acc+pick(x),0);
+  /* ---------- pure: schema validation ---------- */
+  function validateData(data) {
+    try { return collectErrors(data); } catch (e) { return ["unreadable DATA (" + e.message + ")"]; }
+  }
+  function collectErrors(data) {
+    const errors = [], isText = (x) => typeof x === "string" && x.length > 0, isNum = (x) => typeof x === "number" && isFinite(x),
+      isAmt = (x) => isNum(x) && x >= 0, isCur = (x) => x === "USD" || x === "VND";
+    const isDay = (x) => {
+      if (typeof x !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(x)) return false;
+      const [y, m, d] = x.split("-").map(Number), u = new Date(Date.UTC(y, m - 1, d));
+      return u.getUTCFullYear() === y && u.getUTCMonth() === m - 1 && u.getUTCDate() === d;
+    };
+    const isStamp = (x) => isText(x) && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2})?([+-]\d{2}:\d{2}|Z)$/.test(x) && !isNaN(Date.parse(x)) && isDay(x.slice(0, 10));
+    const isNotes = (x) => Array.isArray(x) && x.every(isText);
+    if (!data || typeof data !== "object") return ["DATA missing"];
+    if (!isStamp(data.updatedAt)) errors.push("updatedAt");
+    if (!data.timezone || !isNum(data.timezone.offsetHours) || !isText(data.timezone.label)) errors.push("timezone");
+    if (!Array.isArray(data.refreshHours) || !data.refreshHours.length || !data.refreshHours.every((h) => Number.isInteger(h) && h >= 0 && h < 24)) errors.push("refreshHours");
+    const rules = data.rules || {};
+    if (!["staleGraceMinutes", "renewalAlertDays", "creditUrgentDays", "creditWarnDays", "creditRiskDays", "hideCountdownAfterDays", "paceWindowDays"].every((k) => isAmt(rules[k])) ||
+      !(rules.creditUrgentDays <= rules.creditWarnDays && rules.creditWarnDays <= rules.creditRiskDays)) errors.push("rules");
+    if (!data.fx || !isNum(data.fx.usdVnd) || !(data.fx.usdVnd > 0) || !isText(data.fx.asOf)) errors.push("fx");
+    if (!data.card || !isText(data.card.name)) errors.push("card");
+    const classes = data.creditClasses;
+    if (!classes || typeof classes !== "object" || !Object.keys(classes).length || !Object.values(classes).every((k) => k && isText(k.title) && typeof k.counted === "boolean")) errors.push("creditClasses");
+    const seen = new Set(), unique = (id, where) => { if (seen.has(id)) errors.push("duplicate id " + id + " in " + where); seen.add(id); };
+    const list = (key) => {
+      if (!Array.isArray(data[key])) { errors.push(key); return []; }
+      return data[key].filter((x, i) => (x && typeof x === "object" ? true : (errors.push(key + "[" + i + "]"), false)));
+    };
+    list("subscriptions").forEach((s, i) => {
+      unique(s.id, "subscriptions");
+      if (!isText(s.id) || !isText(s.name) || !isDay(s.renews) || !s.price || !isCur(s.price.currency) || !isAmt(s.price.amount) || !isText(s.plan) || !isText(s.logo) ||
+        !isText(s.source) || typeof s.autoRenew !== "boolean" || !(s.via == null || typeof s.via === "string") || !isNotes(s.notes)) errors.push("subscriptions[" + i + "]");
+    });
+    list("credits").forEach((c, i) => {
+      unique(c.id, "credits");
+      if (!isText(c.id) || !isText(c.name) || !isCur(c.currency) || !isAmt(c.left) || !(c.cap === null || (isAmt(c.cap) && c.cap >= c.left)) || !isDay(c.expires) ||
+        !(classes && Object.prototype.hasOwnProperty.call(classes, c.class) && classes[c.class]) || !isText(c.label) || !isText(c.logo) || !isText(c.source) || !isStamp(c.checkedAt) ||
+        !(c.history == null || Array.isArray(c.history)) || !(c.history || []).every((h) => h && isStamp(h.at) && isAmt(h.left) && Date.parse(h.at) < Date.parse(c.checkedAt)) || !isNotes(c.notes)) errors.push("credits[" + i + "]");
+    });
+    list("usageLimits").forEach((u, i) => {
+      unique(u.id, "usageLimits");
+      if (!isText(u.id) || !(isNum(u.usedPct) && u.usedPct >= 0 && u.usedPct <= 100) || !isStamp(u.resetsAt) || !isStamp(u.checkedAt) || !isText(u.name) || !isText(u.logo) || !isText(u.source) || !isNotes(u.notes) ||
+        !(u.topUps == null || Array.isArray(u.topUps)) || !(u.topUps || []).every((x) => x && isAmt(x.usd) && isDay(x.date) && isText(x.ref) && isText(x.source))) errors.push("usageLimits[" + i + "]");
+    });
+    if (data.deadlines != null && !Array.isArray(data.deadlines)) errors.push("deadlines");
+    (Array.isArray(data.deadlines) ? list("deadlines") : []).forEach((d, i) => {
+      unique(d.id, "deadlines");
+      if (!isText(d.id) || !isText(d.name) || !isDay(d.date) || !isText(d.source) || !(d.note == null || typeof d.note === "string")) errors.push("deadlines[" + i + "]");
+    });
+    return errors;
+  }
 
-  // Stale = the first scheduled refresh after updatedAt (plus grace) has passed.
-  const updatedMs=Date.parse(data.updatedAt),updated=localParts(updatedMs),hours=data.refreshHours.slice().sort((a,b)=>a-b);
-  let dueMs=null;
-  for(let dayOffset=0;dayOffset<3&&dueMs===null;dayOffset++)for(const h of hours){const ms=Date.UTC(updated.year,updated.month,updated.day+dayOffset,h)-offsetMs;if(ms>updatedMs+60000){dueMs=ms;break;}}
-  const stale=dueMs!==null&&now>dueMs+rules.staleGraceMinutes*60000;
+  /* ---------- formatting ---------- */
+  const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"], WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  const two = (n) => String(n).padStart(2, "0");
+  const fmtInt = (n) => Math.round(n).toLocaleString("en-US");
+  const fmtVnd = (n) => fmtInt(n) + "₫";
+  const fmtUsd = (n) => "$" + n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const roundK = (n) => Math.round(n / 1000) * 1000;
+  const sum = (xs, f) => xs.reduce((a, x) => a + f(x), 0);
 
-  const subscriptions=data.subscriptions.slice().sort((a,b)=>a.renews.localeCompare(b.renews)).map(s=>{const days=daysUntil(s.renews);
-    return {...s,days,vnd:toVnd(s.price.currency,s.price.amount),amountText:money(s.price.currency,s.price.amount),
-      tone:days<=rules.renewalAlertDays?"red":"none",countdown:countdown(days,"renewal"),when:shortDate(s.renews)};});
-  const credits=data.credits.slice().sort((a,b)=>a.expires.localeCompare(b.expires)).map(c=>{const days=daysUntil(c.expires),expired=days<0,cls=data.creditClasses[c.class];
-    let tone="none";
-    if(c.left>0&&cls.counted&&!expired){if(days<=rules.creditUrgentDays)tone="red";else if(days<=rules.creditWarnDays)tone="amber";else if(days<=rules.creditRiskDays)tone="outline";}
-    return {...c,days,expired,counted:cls.counted,vnd:toVnd(c.currency,c.left),amountText:money(c.currency,c.left),capText:c.cap?money(c.currency,c.cap):"",
-      tone,countdown:countdown(days,"credit"),when:shortDate(c.expires),perDay:days>0&&c.left>0?c.left/days:null,
-      notRechecked:Date.parse(c.checkedAt)<updatedMs,checkedText:timeStamp(c.checkedAt),pct:c.cap?Math.max(0,Math.min(100,c.left/c.cap*100)):null};});
-  const live=credits.filter(c=>!c.expired&&c.left>0);
-  const usable=live.filter(c=>c.counted),passedWithBalance=credits.filter(c=>c.expired&&c.left>0);
-  const expiringSoon=usable.filter(c=>c.days<=rules.creditRiskDays);
-  const usage=data.usageLimits.map(u=>{const resetMs=Date.parse(u.resetsAt),msLeft=resetMs-now,r=localParts(resetMs),at=WEEKDAYS[r.weekday]+" "+twoDigits(r.hour)+":"+twoDigits(r.minute);
-    const d=Math.floor(msLeft/86400000),h=Math.floor(msLeft%86400000/3600000),m=Math.floor(msLeft%3600000/60000);
-    return {...u,left:Math.max(0,100-u.usedPct),resetPassed:msLeft<=0,checkedText:timeStamp(u.checkedAt),notRechecked:Date.parse(u.checkedAt)<updatedMs,
-      resetText:msLeft<=0?"reset "+at+" — awaiting refresh":"resets "+at+" · in "+(d>0?d+"d "+h+"h":h+"h "+m+"m"),
-      topUpTotal:sum(u.topUps||[],x=>x.usd),topUpRows:(u.topUps||[]).map(x=>({...x,when:shortDate(x.date),vnd:x.usd*fxRate}))};});
+  /* ---------- pure: DATA + now -> display-ready view model ---------- */
+  function buildModel(data, now) {
+    const rules = data.rules, fx = data.fx.usdVnd, offsetMs = data.timezone.offsetHours * 3600000, tz = data.timezone.label;
+    const parts = (ms) => { const d = new Date(ms + offsetMs); return { y: d.getUTCFullYear(), mo: d.getUTCMonth(), d: d.getUTCDate(), h: d.getUTCHours(), mi: d.getUTCMinutes(), wd: d.getUTCDay() }; };
+    const today = parts(now);
+    const money = (cur, n) => (cur === "USD" ? fmtUsd(n) : fmtVnd(n));
+    const rough = (cur, n) => "≈ " + (cur === "USD" ? "$" + fmtInt(n) : fmtVnd(roundK(n)));
+    const toVnd = (cur, n) => (cur === "USD" ? n * fx : n);
+    const inVnd = (cur, n) => (cur === "USD" ? "≈ " + fmtVnd(roundK(n * fx)) : "");
+    const daysUntil = (ymd) => { const [y, m, d] = ymd.split("-").map(Number); return Math.round((Date.UTC(y, m - 1, d) - Date.UTC(today.y, today.mo, today.d)) / 86400000); };
+    const dayText = (p) => MONTHS[p.mo] + " " + p.d + (p.y !== today.y ? ", " + p.y : "");
+    const shortDate = (ymd) => { const [y, m, d] = ymd.split("-").map(Number); return dayText({ y: y, mo: m - 1, d: d }); };
+    const clock = (p) => two(p.h) + ":" + two(p.mi);
+    const stampMs = (ms, omitToday) => { const p = parts(ms), isToday = p.y === today.y && p.mo === today.mo && p.d === today.d; return (omitToday && isToday ? "" : dayText(p) + " · ") + clock(p) + " " + tz; };
+    const stamp = (iso, omitToday) => stampMs(Date.parse(iso), omitToday);
+    const countdown = (days, kind) => days < 0 ? (kind === "renewal" ? "Renewal unconfirmed" : "Passed") : days === 0 ? "Today" : days === 1 ? "Tomorrow" : days > rules.hideCountdownAfterDays ? "" : days + " days";
+    const chipFor = (tone, text) => (text && tone !== "none" ? [{ tone: tone, text: text }] : []);
+    const quietCount = (tone, text) => (text && tone === "none" ? " · " + text : "");
+    const stalePill = (iso) => (Date.parse(iso) < updatedMs ? [{ tone: "plain", text: "not re-checked" }] : []);
 
-  const attention=[];
-  subscriptions.forEach(s=>{if(s.days<0)attention.push(s.name+": renewal date "+s.when+" passed — confirm the charge");else if(s.days<=rules.renewalAlertDays)attention.push(s.name+" renews "+s.when+" ("+s.countdown.toLowerCase()+") · "+s.amountText);});
-  passedWithBalance.forEach(c=>attention.push(c.name+": expiry "+c.when+" passed · last known balance "+c.amountText+" — check & update"));
-  usable.filter(c=>c.days<=rules.creditUrgentDays).forEach(c=>attention.push(c.name+": "+c.amountText+" expires "+c.when+" ("+c.countdown.toLowerCase()+")"));
+    /* freshness: a scheduled refresh is missed once its grace period has passed without a newer updatedAt */
+    const updatedMs = Date.parse(data.updatedAt), up = parts(updatedMs), hours = data.refreshHours.slice().sort((a, b) => a - b), graceMs = rules.staleGraceMinutes * 60000;
+    const missed = []; let nextMs = null;
+    for (let k = 0; k < 8; k++) for (const h of hours) {
+      const ms = Date.UTC(up.y, up.mo, up.d + k, h) - offsetMs;
+      if (ms <= updatedMs + 60000) continue;
+      if (ms + graceMs < now) missed.push(ms); else if (nextMs === null) nextMs = ms;
+    }
+    const stale = missed.length > 0, ageMin = Math.max(0, Math.floor((now - updatedMs) / 60000));
+    const live = { age: ageMin < 60 ? ageMin + " min ago" : ageMin < 2880 ? Math.floor(ageMin / 60) + "h " + (ageMin % 60) + "m ago" : Math.floor(ageMin / 1440) + " days ago" };
+    const fresh = {
+      level: missed.length === 0 ? "ok" : missed.length === 1 ? "late" : "stale",
+      updated: "Updated " + stamp(data.updatedAt, true),
+      next: nextMs === null ? "" : "next " + clock(parts(nextMs)),
+      missed: !stale ? "" : missed.length === 1 ? two(parts(missed[0]).h) + ":00 refresh missed" : missed.length + " refreshes missed since " + stampMs(missed[0], true),
+    };
 
-  const sources=[...data.subscriptions.map(s=>s.name+" — "+s.source),...credits.map(c=>c.name+" — "+c.source+", checked "+c.checkedText),...usage.map(u=>u.name+" — "+u.source+", checked "+u.checkedText),
-    ...usage.flatMap(u=>u.topUpRows.map(x=>u.name+" top-up "+formatUsd(x.usd)+" (ref "+x.ref+") — "+x.source)),"USD→VND rate "+fxRate.toLocaleString("en-US")+" — "+data.fx.asOf,...(data.extraSources||[])];
-  const groups=Object.keys(data.creditClasses).map(key=>({title:data.creditClasses[key].title,items:credits.filter(c=>c.class===key)})).filter(g=>g.items.length);
-  const usableUsd=sum(usable.filter(c=>c.currency==="USD"),c=>c.left),usableVndOnly=sum(usable.filter(c=>c.currency==="VND"),c=>c.left);
-  return {rules,fxRate,tzLabel,timeStamp,stale,dueHour:dueMs!==null?localParts(dueMs).hour:null,subscriptions,credits,groups,usage,attention,sources,expiringSoon,
-    anyUsdPlan:subscriptions.some(s=>s.price.currency==="USD"),monthlyVnd:sum(subscriptions,s=>s.vnd),
-    usableVnd:sum(usable,c=>c.vnd),usableUsd,usableVndOnly,usableCount:usable.length,expiringVnd:sum(expiringSoon,c=>c.vnd),
-    nextRenewal:subscriptions.find(s=>s.days>=0),anyNotRechecked:credits.some(c=>c.notRechecked)||usage.some(u=>u.notRechecked)};
-}
+    /* subscriptions */
+    const payment = (s) => data.card.name + (s.via ? " via " + s.via : "") + (data.card.note ? " (" + data.card.note + ")" : "");
+    const subs = data.subscriptions.slice().sort((a, b) => a.renews.localeCompare(b.renews)).map((s) => {
+      const days = daysUntil(s.renews), when = shortDate(s.renews), cur = s.price.currency, amount = money(cur, s.price.amount);
+      const tone = days <= rules.renewalAlertDays ? "red" : "none", cd = countdown(days, "renewal");
+      return {
+        id: s.id, logo: s.logo, name: s.name, amount: amount, days: days, tone: tone, cd: cd, whenShort: when, currency: cur, price: s.price.amount, vnd: toVnd(cur, s.price.amount),
+        when: (days < 0 ? "Was due " : "Renews ") + when + quietCount(tone, cd), chips: chipFor(tone, cd), secondary: inVnd(cur, s.price.amount),
+        details: [
+          ["Renewal", (s.autoRenew ? "Auto-renews monthly on " : "Renews ") + when + " · " + amount + (cur === "USD" ? " (≈ " + fmtVnd(toVnd(cur, s.price.amount)) + ")" : "")],
+          ["Plan", s.plan], ["Payment", payment(s)], ["Notes", s.notes], ["Source", s.source],
+        ],
+      };
+    });
 
-/* ---------- view ---------- */
-const countdownTag=(tone,text)=>!text?"":tone==="none"?html`<span class="quiet nw">${text}</span>`:html`<span class="tag ${tone}">${text}</span>`;
-const brandLogo=key=>{const L=LOGO[key];if(!L)return html`<span class="logo" style="background:#71717A">${String(key||"?").charAt(0).toUpperCase()}</span>`;
-  return html`<span class="logo ${key}" style="background:${L.bg}"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="${L.fg}" d="${L.d}"/></svg></span>`;};
-const progressBar=(pct,style)=>html`<span class="bar ${style}" role="img" aria-label="${Math.round(pct)}% balance remaining"><i style="width:${pct.toFixed(2)}%"></i></span>`;
-const detailLines=lines=>lines.filter(Boolean).map(x=>html`<div>${x}</div>`);
-const listRow=(o,openRows)=>html`<div class="item${openRows[o.id]?" open":""}${o.muted?" muted":""}" data-id="${o.id}">
-  <button class="row" data-toggle="${o.id}" aria-expanded="${openRows[o.id]?"true":"false"}" aria-controls="details-${o.id}">${brandLogo(o.logo)}
-    <span class="main"><span class="line1"><span class="name">${o.name}</span><span class="amount">${o.amount}</span></span>
-      <span class="line2"><span class="when">${o.when}</span><span>${o.secondary||""}</span></span>${o.bar||""}</span>
-    <span class="chev" aria-hidden="true">›</span></button>
-  <div class="details" id="details-${o.id}">${o.details}</div></div>`;
-const inCurrency=(c,n)=>c.currency==="USD"?formatUsd(n):formatVnd(n);
-const conversion=(currency,vnd)=>currency==="USD"?"≈ "+formatVnd(roundThousand(vnd)):"";
+    /* credits: pace = spend between the oldest reading inside the window and the latest one */
+    const classKeys = Object.keys(data.creditClasses);
+    const credits = data.credits.slice().sort((a, b) => classKeys.indexOf(a.class) - classKeys.indexOf(b.class) || a.expires.localeCompare(b.expires)).map((c) => {
+      const cls = data.creditClasses[c.class], days = daysUntil(c.expires), expired = days < 0, when = shortDate(c.expires), m = (n) => money(c.currency, n), checkedMs = Date.parse(c.checkedAt);
+      const all = (c.history || []).concat([{ at: c.checkedAt, left: c.left }]).sort((a, b) => Date.parse(a.at) - Date.parse(b.at));
+      const readings = all.filter((r) => Date.parse(r.at) >= checkedMs - rules.paceWindowDays * 86400000);
+      const oldest = readings.length > 1 ? readings[0] : null, refilled = readings.some((r, i) => i > 0 && r.left > readings[i - 1].left);
+      const span = oldest ? (checkedMs - Date.parse(oldest.at)) / 86400000 : 0;
+      const pace = oldest && span >= 0.5 && !refilled ? (oldest.left - c.left) / span : null;
+      const isLive = cls.counted && !expired && c.left > 0;
+      const needed = isLive ? c.left / Math.max(days, 1) : null;
+      const loss = pace === null || !isLive ? null : Math.max(0, c.left - pace * days);
+      const onPace = isLive && pace !== null && c.left - pace * Math.max(days, 1) <= 0;
+      const base = !isLive ? "none" : days <= rules.creditUrgentDays ? "red" : days <= rules.creditWarnDays ? "amber" : days <= rules.creditRiskDays ? "watch" : "none";
+      const tone = onPace ? { red: "amber", amber: "watch", watch: "none", none: "none" }[base] : base;
+      const soon = isLive && days <= rules.creditRiskDays;
+      const runOut = pace > 0 ? dayText(parts(checkedMs + (c.left / pace) * 86400000)) : "";
+      const cd = cls.counted && !expired ? countdown(days, "credit") : "";
+      let panel = null;
+      if (soon) {
+        const flag = { tone: tone === "red" || tone === "amber" ? tone : "watch", text: pace > 0 ? "Behind pace" : "Unused lately" };
+        const verdict = pace === null ? { chip: null, text: refilled ? "Balance rose between readings — no recent pace" : "No recent pace yet — needs more balance readings" }
+          : onPace ? { chip: { tone: "ok", text: "On pace" }, text: "used up ≈ " + runOut + " · est." }
+          : pace > 0 ? { chip: flag, text: rough(c.currency, loss) + " would expire unused · est." }
+          : { chip: flag, text: "all " + m(c.left) + " would expire unused · est." };
+        const pct = pace > 0 ? Math.min(100, (pace / needed) * 100) : 0;
+        panel = {
+          needed: "≈ " + m(needed), recent: pace === null ? "—" : "≈ " + m(pace), pct: pct.toFixed(1), tone: onPace ? "ok" : tone === "red" || tone === "amber" ? tone : "",
+          label: pace === null ? "Recent pace unknown" : "Recent pace is " + Math.round(pace / needed * 100) + "% of the pace needed", chip: verdict.chip, text: verdict.text,
+        };
+      }
+      return {
+        id: c.id, logo: c.logo, name: c.name, amount: m(c.left), muted: !cls.counted || expired, classKey: c.class, counted: cls.counted,
+        days: days, expired: expired, live: isLive, soon: soon, tone: tone, pace: pace, span: span, loss: loss, onPace: onPace, left: c.left, currency: c.currency,
+        risk: !soon ? 0 : loss === null ? c.left : loss, vnd: toVnd(c.currency, c.left), whenShort: when,
+        when: (expired ? "Expired " : "Expires ") + when + quietCount(tone, cd), chips: chipFor(tone, cd).concat(stalePill(c.checkedAt)), secondary: inVnd(c.currency, c.left), panel: panel,
+        details: [
+          ["Status", expired ? (c.left > 0 ? "Excluded — expiry passed; last known balance" : "Expired") : cls.counted ? "Counted as usable API credit" : "Not counted · " + cls.title],
+          ["Balance", m(c.left) + (c.cap ? " of " + m(c.cap) + " · " + Math.round((c.left / c.cap) * 100) + "% left" : " · original amount unknown")],
+          ["Type", c.label],
+          ["Pace", isLive ? (pace !== null ? "Recent ≈ " + m(pace) + "/day over " + span.toFixed(1) + " days of readings. " : "") + "Using it all by " + when + " needs ≈ " + m(needed) + "/day." : ""],
+          ["Forecast", loss === null ? "" : (onPace ? "On pace" + (runOut ? " — used up ≈ " + runOut : "") : rough(c.currency, loss) + " expires unused at the recent pace") + " (estimate)"],
+          ["Readings", all.slice().reverse().map((r) => stamp(r.at) + " — " + m(r.left))],
+          ["Notes", c.notes], ["Source", c.source + " · checked " + stamp(c.checkedAt)],
+        ],
+      };
+    });
+    const usable = credits.filter((c) => c.live), soon = usable.filter((c) => c.soon).sort((a, b) => a.days - b.days);
+    const usableVnd = sum(usable, (c) => c.vnd);
+    const range = !soon.length ? "" : soon[0].whenShort === soon[soon.length - 1].whenShort ? soon[0].whenShort : soon[0].whenShort + "–" + soon[soon.length - 1].whenShort;
+    const riskTile = (() => {
+      if (!soon.length) return { cap: "Credit at risk", tone: "none", big: "None", est: "", sub: "No usable credit expires within " + rules.creditRiskDays + " days" };
+      const same = soon.every((c) => c.currency === soon[0].currency), cur = same ? soon[0].currency : "VND", conv = (c, n) => (same ? n : toVnd(c.currency, n));
+      const total = sum(soon, (c) => conv(c, c.left)), risk = sum(soon, (c) => conv(c, c.risk)), hit = soon.filter((c) => c.risk > 0);
+      if (risk < (cur === "USD" ? 0.5 : 500)) return { cap: "Credit at risk", tone: "none", big: "On pace", est: "est.", sub: money(cur, total) + " expiring " + range };
+      return {
+        cap: "Credit at risk", tone: hit.some((c) => c.tone === "red") ? "red" : hit.some((c) => c.tone === "amber") ? "amber" : "none", big: rough(cur, risk), est: "est.",
+        sub: hit.length === 1 ? hit[0].name + " · expires " + hit[0].whenShort : hit.length + " credits · " + range,
+      };
+    })();
+    const spans = soon.filter((c) => c.pace !== null).map((c) => c.span), basis = spans.length ? Math.min.apply(null, spans) : 0;
+    const uncounted = classKeys.filter((k) => !data.creditClasses[k].counted && credits.some((c) => c.classKey === k)).map((k) => "“" + data.creditClasses[k].title + "”");
+    const creditNote = (spans.length ? "Estimates (≈ … est.) use " + basis.toFixed(1) + " days of balance readings" + (basis < 3 ? " — low confidence" : "") + (stale ? ", on data from " + stamp(data.updatedAt, true) : "") + ". " : "") +
+      (uncounted.length ? "Credit under " + uncounted.join(", ") + " is excluded from totals." : "");
+    const groups = classKeys.map((k, i) => ({ title: data.creditClasses[k].title, showTitle: i > 0 || !data.creditClasses[k].counted, rows: credits.filter((c) => c.classKey === k) })).filter((g) => g.rows.length);
 
-function creditRow(c,openRows){
-  const status=c.expired?(c.left>0?"Excluded — expiry passed; last known balance":"Expired"):c.counted?"Counted as usable API credit":"Not counted ("+c.label+")";
-  return listRow({id:c.id,logo:c.logo,name:c.name,amount:c.amountText,muted:!c.counted||c.expired,
-    when:html`${noWrap((c.expired?"Expired ":"Expires ")+c.when)} ${countdownTag(c.tone,c.countdown)}${c.notRechecked?html` <span class="tag outline">not re-checked</span>`:""}`,
-    secondary:conversion(c.currency,c.vnd),
-    bar:c.pct!==null?progressBar(c.pct,c.expired||!c.counted?"soft":c.tone==="red"||c.tone==="amber"?c.tone:""):"",
-    details:detailLines([status+": "+c.amountText+(c.cap?" of "+c.capText+" ("+Math.round(c.pct)+"% left)":"")+" · "+c.label,
-      c.perDay&&c.counted?"To use it all by "+c.when+": ≈ "+inCurrency(c,c.perDay)+" per day":"",...c.notes,"Source: "+c.source+", checked "+c.checkedText])},openRows);
-}
+    /* next charge + monthly total */
+    const next = subs.find((s) => s.days >= 0);
+    const chargeTile = next ? { cap: "Next charge", tone: next.tone, big: next.amount, est: "", sub: next.name + " · " + next.whenShort + (next.cd ? " · " + next.cd : "") } : { cap: "Next charge", tone: "none", big: "None due", est: "", sub: "" };
+    const usdSubs = subs.filter((s) => s.currency === "USD"), vndSubs = subs.filter((s) => s.currency === "VND");
+    const split = [usdSubs.length ? fmtUsd(sum(usdSubs, (s) => s.price)) : "", vndSubs.length ? fmtVnd(sum(vndSubs, (s) => s.price)) : ""].filter(Boolean).join(" + ");
+    const fxText = "1 USD ≈ " + fmtInt(fx) + "₫ (" + data.fx.asOf + ")";
 
-function renderPage(data,m,openRows,net){
-  const {rules,fxRate}=m,soon=m.expiringSoon;
-  const share=m.usableVnd?Math.round(m.expiringVnd/m.usableVnd*100):0;
-  const riskTone=soon.some(c=>c.tone==="red")?"red":"";
-  const range=soon.length?(soon[0].when===soon[soon.length-1].when?soon[0].when:soon[0].when+"–"+soon[soon.length-1].when):"";
-  const checkLabel=net.busy?"Checking…":"Check now";
-  return html`
-<h1>AI Subscription</h1>
-<div class="status"><span>Updated ${m.timeStamp(data.updatedAt)}</span>${m.stale?html`<span><span class="stale-dot" aria-hidden="true"></span>${twoDigits(m.dueHour)}:00 refresh missed</span><button class="btn" data-action="check" aria-busy="${net.busy?"true":"false"}">${checkLabel}</button>`:""}<span class="quiet">Refreshes ${data.refreshHours.map(twoDigits).join(" · ")} ${m.tzLabel}</span>${net.message?html`<span class="quiet" role="status">${net.message}</span>`:""}</div>
-${m.attention.length?html`<div class="alert" role="alert"><div class="label">Needs attention</div><ul>${m.attention.map(a=>html`<li>${a}</li>`)}</ul></div>`:""}
-<div class="card summary">
-  ${soon.length?html`<div class="risk ${riskTone}"><div class="label">Expiring if unused · ${range}</div><div class="headline">${soon.map((c,i)=>html`${i?(i===soon.length-1?", then ":", "):""}${noWrap(c.amountText+" by "+c.when)}`)}</div><div>${share}% of usable API credit · ≈ ${formatVnd(roundThousand(m.expiringVnd))}</div></div>`:""}
-  <div class="cell"><div class="label">Monthly plans</div><div class="big">${m.anyUsdPlan?"≈ ":""}${formatVnd(m.monthlyVnd)}</div><div class="sub">${m.subscriptions.length} plans · ≈ ${formatUsdWhole(m.monthlyVnd/fxRate)}</div></div>
-  <div class="cell"><div class="label">Next charge</div>${m.nextRenewal?html`<div class="big">${m.nextRenewal.amountText}</div><div class="sub">${m.nextRenewal.name} · ${noWrap(m.nextRenewal.when)} ${countdownTag(m.nextRenewal.tone,m.nextRenewal.countdown)}</div>`:html`<div class="big">None</div>`}</div>
-  <div class="cell wide"><div><div class="label">Usable API credit</div><div class="big">≈ ${formatVnd(roundThousand(m.usableVnd))}</div></div><div class="sub">${[m.usableUsd?formatUsd(m.usableUsd):"",m.usableVndOnly?formatVnd(m.usableVndOnly):""].filter(Boolean).join(" + ")||"none left"} · ${m.usableCount} balances</div></div>
-</div>
+    /* usage limits */
+    const usage = data.usageLimits.map((u) => {
+      const resetMs = Date.parse(u.resetsAt), ms = resetMs - now, r = parts(resetMs), at = WEEKDAYS[r.wd] + " " + clock(r), passed = ms <= 0;
+      const d = Math.floor(ms / 86400000), h = Math.floor((ms % 86400000) / 3600000), mi = Math.floor((ms % 3600000) / 60000);
+      const tops = u.topUps || [], topTotal = sum(tops, (x) => x.usd), left = Math.max(0, 100 - u.usedPct);
+      if (!passed) live["reset-" + u.id] = "in " + (d > 0 ? d + "d " + h + "h" : h + "h " + mi + "m");
+      return {
+        id: u.id, logo: u.logo, name: u.name, amount: (passed ? "last " : "") + +u.usedPct + "% used", muted: passed, resetPassed: passed,
+        when: passed ? "Reset " + at + " passed — awaiting refresh" : "Resets " + at, chips: stalePill(u.checkedAt), secondary: "", liveKey: passed ? "" : "reset-" + u.id,
+        meter: { pct: Math.min(100, Math.max(0, u.usedPct)).toFixed(1), soft: passed, label: +u.usedPct + "% of the limit used" },
+        foot: [+left.toFixed(1) + "% left", tops.length ? "Top-ups: " + fmtUsd(topTotal) + " (" + tops.length + ")" : ""],
+        details: [
+          ["Checked", stamp(u.checkedAt)],
+          ["Top-ups", tops.length ? ["Total " + fmtUsd(topTotal) + " extra credit bought"].concat(tops.map((x) => fmtUsd(x.usd) + " · ≈ " + fmtVnd(x.usd * fx) + " · " + shortDate(x.date) + " · ref " + x.ref)) : ""],
+          ["Notes", u.notes], ["Source", u.source],
+        ],
+      };
+    });
 
-<h2>Subscriptions</h2>
-<div class="card">${m.subscriptions.map(s=>listRow({id:s.id,logo:s.logo,name:s.name,amount:s.amountText,
-  when:html`${noWrap((s.days<0?"Was due ":"Renews ")+s.when)} ${countdownTag(s.tone,s.countdown)}`,secondary:conversion(s.price.currency,s.vnd),
-  details:detailLines([(s.autoRenew?"Auto-renews monthly ":"Renews ")+s.when+" · "+s.amountText+(s.price.currency==="USD"?" (≈ "+formatVnd(s.vnd)+")":""),
-    "Plan: "+s.plan,"Payment: "+data.card.name+(s.via?" via "+s.via:"")+(data.card.note?" ("+data.card.note+")":""),...s.notes,"Source: "+s.source])},openRows))}</div>
+    /* other dates */
+    const deadlines = (data.deadlines || []).slice().sort((a, b) => a.date.localeCompare(b.date)).map((d) => {
+      const days = daysUntil(d.date), when = shortDate(d.date), tone = days <= rules.renewalAlertDays ? "red" : "none", cd = countdown(days, "deadline");
+      return { id: d.id, logo: d.logo, name: d.name, amount: "", days: days, whenShort: when, when: (days < 0 ? "Expired " : "Expires ") + when + quietCount(tone, cd), chips: chipFor(tone, cd), secondary: "", details: [["Note", d.note || ""], ["Source", d.source]] };
+    });
 
-<h2>API credits</h2>
-<div class="card">${m.groups.map((g,i)=>html`${i?html`<div class="group">${g.title}</div>`:""}${g.items.map(c=>creditRow(c,openRows))}`)}</div>
+    const attention = [];
+    subs.forEach((s) => {
+      if (s.days < 0) attention.push(s.name + ": renewal date " + s.whenShort + " passed — confirm the charge");
+      else if (s.days <= rules.renewalAlertDays) attention.push(s.name + " renews " + s.whenShort + " (" + s.cd.toLowerCase() + ") · " + s.amount);
+    });
+    deadlines.filter((d) => d.days <= rules.renewalAlertDays).forEach((d) => attention.push(d.name + (d.days < 0 ? " expired " : " expires ") + d.whenShort));
+    credits.filter((c) => c.expired && c.left > 0).forEach((c) => attention.push(c.name + ": expiry " + c.whenShort + " passed · last known balance " + c.amount + " — check & update"));
 
-<h2>Usage limits</h2>
-<div class="card">${m.usage.map(u=>listRow({id:u.id,logo:u.logo,name:u.name,amount:(u.resetPassed?"last ":"")+(+u.left.toFixed(1))+"% left",muted:u.resetPassed,
-  when:html`${noWrap((+u.usedPct)+"% used")} · ${u.resetText}`,bar:progressBar(u.left,u.resetPassed?"soft":""),
-  details:html`${detailLines(["Usage checked "+u.checkedText])}${u.topUpRows.length?html`<div>Extra-credit top-ups: ${formatUsd(u.topUpTotal)} total (${u.topUpRows.length})</div>${u.topUpRows.map(x=>html`<div class="topup"><b>${formatUsd(x.usd)} · ≈ ${formatVnd(x.vnd)}</b> · ${x.when}<br>Ref ${x.ref}<br><span class="quiet">${x.source}</span></div>`)}`:""}${detailLines(u.notes)}`},openRows))}</div>
+    const sources = [].concat(
+      data.subscriptions.map((s) => s.name + " — " + s.source),
+      data.credits.map((c) => c.name + " — " + c.source + ", checked " + stamp(c.checkedAt)),
+      data.usageLimits.map((u) => u.name + " — " + u.source + ", checked " + stamp(u.checkedAt)),
+      data.usageLimits.reduce((acc, u) => acc.concat((u.topUps || []).map((x) => u.name + " top-up " + fmtUsd(x.usd) + " (ref " + x.ref + ") — " + x.source)), []),
+      ["USD→VND rate " + fmtInt(fx) + " — " + data.fx.asOf],
+      (data.deadlines || []).map((d) => d.name + " — " + d.source),
+      data.extraSources || []
+    );
+    const legend = [
+      "Each item is shown in the currency it is billed in, with ≈ ₫ beside USD items; totals are in ₫ at " + fxText + ". Countdowns use " + tz + " calendar days.",
+      "Renewals and other dates turn red ≤ " + rules.renewalAlertDays + " days. Usable API credit: outlined ≤ " + rules.creditRiskDays + " days before expiry, amber ≤ " + rules.creditWarnDays + ", red ≤ " + rules.creditUrgentDays + " — one step calmer when the recent pace would use it up in time.",
+      "“Recent per day” is the spend between the oldest balance reading of the last " + rules.paceWindowDays + " days and the latest one (needs ≥ 12 h of readings; any balance rise cancels it). “Needed per day” is the even daily spend that uses the balance before it expires. “Credit at risk” is the estimated leftover at the recent pace (the full balance when no pace is known); it is credit value, not cash.",
+      "Credit that is not counted cannot be used for the AI APIs and is left out of every total. The usage bar fills as the limit is used. Data refreshes at " + hours.map(two).join(" · ") + " " + tz + "; a refresh more than " + rules.staleGraceMinutes + " min late is flagged.",
+    ];
+    return {
+      fresh: fresh, live: live, stale: stale, missedCount: missed.length, attention: attention, tiles: [chargeTile, riskTile],
+      credits: { total: "≈ " + fmtVnd(roundK(usableVnd)) + " usable", groups: groups, note: creditNote }, creditRows: credits, usableVnd: usableVnd, usableCount: usable.length,
+      subs: { total: (usdSubs.length ? "≈ " : "") + fmtVnd(sum(subs, (s) => s.vnd)) + " / month", rows: subs, note: split + " per month" + (usdSubs.length ? " · " + fxText : "") },
+      usage: usage, deadlines: deadlines, sources: sources, legend: legend,
+    };
+  }
 
-<details class="src"${trusted(openRows.__sources?" open":"")}><summary>Data sources & legend</summary><ul>${m.sources.map(x=>html`<li>${x}</li>`)}</ul>
-<div class="legend">Each amount is shown in the currency billed, with ≈ ₫ beside USD items; totals are in ₫ at 1 USD ≈ ${fxRate.toLocaleString("en-US")}₫ (${data.fx.asOf}). Countdowns use ${m.tzLabel} calendar days. Renewals turn red ≤ ${rules.renewalAlertDays} days. Unused API credit is outlined ≤ ${rules.creditRiskDays} days, amber ≤ ${rules.creditWarnDays}, red ≤ ${rules.creditUrgentDays}. Bars show remaining. Refresh schedule ${data.refreshHours.map(twoDigits).join(" · ")} ${m.tzLabel}; a refresh more than ${rules.staleGraceMinutes} min late is flagged.</div></details>`;
-}
+  /* ---------- view: model -> markup (maps 1:1 to React components) ---------- */
+  const chipView = (c) => html`<span class="chip ${c.tone}">${c.text}</span>`;
+  const logoView = (key) => {
+    const L = Object.prototype.hasOwnProperty.call(LOGO, key) ? LOGO[key] : null;
+    return L
+      ? html`<span class="logo" style="background:${L.bg}"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="${L.fg}" d="${L.d}"></path></svg></span>`
+      : html`<span class="logo" style="background:#71717a">${String(key || "?").charAt(0).toUpperCase()}</span>`;
+  };
+  const detailsView = (pairs) => html`<dl class="kv">${pairs.filter((p) => p[1] && p[1].length).map((p) =>
+    html`<div class="kv-row${p[0] === "Source" ? " foot" : ""}"><dt>${p[0]}</dt><dd>${Array.isArray(p[1]) ? p[1].map((t, i) => html`<span class="ln${i ? "" : " first"}">${t}</span>`) : p[1]}</dd></div>`)}</dl>`;
+  const paceView = (p) => html`<div class="pace">
+    <div class="pace-stats">
+      <div><div class="cap">Needed per day</div><div class="num">${p.needed}</div></div>
+      <div class="r"><div class="cap">Recent per day</div><div class="num">${p.recent}</div></div>
+    </div>
+    <div class="gauge ${p.tone}" role="img" aria-label="${p.label}"><i style="width:${p.pct}%"></i></div>
+    <div class="verdict">${p.chip ? chipView(p.chip) : ""}<span>${p.text}</span></div>
+  </div>`;
+  const rowView = (r, ui, first) => {
+    const open = !!ui.open[r.id];
+    return html`<div class="item${first ? " first" : ""}${r.muted ? " muted" : ""}">
+      <button class="row" data-toggle="${r.id}" aria-expanded="${open ? "true" : "false"}" aria-controls="d-${r.id}">
+        ${logoView(r.logo)}
+        <span class="main">
+          <span class="l1"><span class="name">${r.name}</span><span class="amt">${r.amount}</span></span>
+          <span class="l2"><span class="when"><span>${r.when}</span>${r.chips.map(chipView)}</span><span class="sec" data-live="${r.liveKey || ""}">${r.liveKey ? "" : r.secondary}</span></span>
+          ${r.meter ? html`<span class="meter${r.meter.soft ? " soft" : ""}" role="img" aria-label="${r.meter.label}"><i style="width:${r.meter.pct}%"></i></span>` : ""}
+          ${r.foot ? html`<span class="l3"><span>${r.foot[0]}</span><span class="sec">${r.foot[1]}</span></span>` : ""}
+        </span>
+        <span class="chev${open ? " open" : ""}" aria-hidden="true">›</span>
+      </button>
+      ${r.panel ? paceView(r.panel) : ""}
+      <div class="details${open ? " open" : ""}" id="d-${r.id}">${detailsView(r.details)}</div>
+    </div>`;
+  };
+  const cardView = (rows, ui) => html`<div class="card">${rows.map((r, i) => rowView(r, ui, i === 0))}</div>`;
+  const creditsCard = (groups, ui) => {
+    let n = 0;
+    return html`<div class="card">${groups.map((g) => html`${g.showTitle ? html`<div class="group cap">${g.title}</div>` : ""}${g.rows.map((r) => rowView(r, ui, n++ === 0))}`)}</div>`;
+  };
+  const sectionView = (title, total, body, note) => html`<div class="sec-head"><h2>${title}</h2>${total ? html`<span class="sec-total">${total}</span>` : ""}</div>${body}${note ? html`<p class="note">${note}</p>` : ""}`;
+  const checkBtn = (cls, net) => html`<button class="${cls}" data-action="check" aria-busy="${net.busy ? "true" : "false"}">${net.busy ? "Checking…" : "Check for updates"}</button>`;
+  const statusView = (f, net) => html`${f.level === "stale"
+    ? html`<div class="stale" role="status"><b>Data may be out of date</b>${f.updated} · <span class="nw" data-live="age"></span> · ${f.missed}<div class="stale-row">${checkBtn("btn", net)}</div></div>`
+    : html`<div class="status"><span class="dot${f.level === "late" ? " late" : ""}" aria-hidden="true"></span><span>${f.updated} · <span class="nw" data-live="age"></span>${f.level === "ok" && f.next ? " · " + f.next : ""}</span></div>
+      ${f.level === "late" ? html`<div class="status-2"><span role="status">${f.missed}</span>${checkBtn("link", net)}</div>` : ""}`}
+    ${net.message ? html`<div class="net" role="status">${net.message}</div>` : ""}`;
+  const tileView = (t) => html`<div class="tile ${t.tone}"><div class="cap">${t.cap}</div><div class="big">${t.big}${t.est ? html`<span class="est">${t.est}</span>` : ""}</div>${t.sub ? html`<div class="t-sub">${t.sub}</div>` : ""}</div>`;
+  const pageView = (m, ui) => html`<h1>AI Subscription</h1>
+    ${statusView(m.fresh, ui.net)}
+    ${m.attention.length ? html`<div class="alert" role="alert"><div class="cap">Needs attention</div><ul>${m.attention.map((a) => html`<li>${a}</li>`)}</ul></div>` : ""}
+    <div class="tiles">${m.tiles.map(tileView)}</div>
+    ${sectionView("API credits", m.credits.total, creditsCard(m.credits.groups, ui), m.credits.note)}
+    ${sectionView("Subscriptions", m.subs.total, cardView(m.subs.rows, ui), m.subs.note)}
+    ${m.usage.length ? sectionView("Usage limits", "", cardView(m.usage, ui), "") : ""}
+    ${m.deadlines.length ? sectionView("Other dates", "", cardView(m.deadlines, ui), "") : ""}
+    <button class="more" data-toggle="__sources" aria-expanded="${ui.open.__sources ? "true" : "false"}" aria-controls="src"><span>Data sources &amp; legend</span><span class="chev${ui.open.__sources ? " open" : ""}" aria-hidden="true">›</span></button>
+    <div class="src${ui.open.__sources ? " open" : ""}" id="src"><ul>${m.sources.map((s) => html`<li>${s}</li>`)}</ul><div class="legend">${m.legend.map((p) => html`<p>${p}</p>`)}</div></div>`;
 
-/* ---------- self-tests on frozen fixtures: open the page with #selftest ---------- */
-function runSelfTests(){
-  const results=[],check=(name,ok)=>results.push((ok?"PASS ":"FAIL ")+name),at=s=>Date.parse(s),clone=x=>JSON.parse(JSON.stringify(x));
-  const FIXTURE={updatedAt:"2026-11-11T09:00:00+07:00",timezone:{offsetHours:7,label:"ICT"},refreshHours:[6,9,12,15,18],
-    rules:{staleGraceMinutes:45,renewalAlertDays:3,creditUrgentDays:7,creditWarnDays:15,creditRiskDays:30,hideCountdownAfterDays:90},fx:{usdVnd:25000,asOf:"fixture"},card:{name:"Card"},
-    creditClasses:{api:{title:"Usable",counted:true},restricted:{title:"Restricted",counted:false}},
-    subscriptions:[{id:"s1",name:"Plan",logo:"x",plan:"p",renews:"2026-11-20",price:{currency:"USD",amount:10},autoRenew:true,notes:[],source:"f"}],
-    credits:[{id:"c1",name:"Credit",logo:"x",class:"api",label:"l",currency:"USD",left:10,cap:20,expires:"2026-11-15",checkedAt:"2026-11-11T09:00:00+07:00",notes:[],source:"f"},
-             {id:"c2",name:"Trial",logo:"x",class:"restricted",label:"l",currency:"VND",left:1000,cap:null,expires:"2026-11-12",checkedAt:"2026-11-11T09:00:00+07:00",notes:[],source:"f"}],
-    usageLimits:[{id:"u1",name:"Limit",logo:"x",usedPct:10,resetsAt:"2026-11-12T08:55:00+07:00",checkedAt:"2026-11-11T09:00:00+07:00",notes:[],source:"f"}]};
-  check("live DATA passes validation",validateData(window.DATA).length===0);
-  check("fixture passes validation",validateData(FIXTURE).length===0);
-  const mutate=fn=>{const f=clone(FIXTURE);fn(f);return validateData(f).length>0;};
-  check("rejects impossible date",mutate(f=>f.credits[0].expires="2026-02-30"));
-  check("rejects negative balance",mutate(f=>f.credits[0].left=-1));
-  check("rejects balance above cap",mutate(f=>f.credits[0].left=30));
-  check("rejects duplicate ids",mutate(f=>f.credits[1].id="c1"));
-  check("rejects unordered thresholds",mutate(f=>f.rules.creditUrgentDays=40));
-  check("rejects usage over 100%",mutate(f=>f.usageLimits[0].usedPct=120));
-  check("not stale within grace (12:30)",!buildModel(FIXTURE,at("2026-11-11T12:30:00+07:00")).stale);
-  check("stale after grace (12:50)",buildModel(FIXTURE,at("2026-11-11T12:50:00+07:00")).stale);
-  const evening=clone(FIXTURE);evening.updatedAt="2026-11-11T18:00:00+07:00";
-  check("overnight gap not stale at 05:00",!buildModel(evening,at("2026-11-12T05:00:00+07:00")).stale);
-  check("overnight stale at 06:50",buildModel(evening,at("2026-11-12T06:50:00+07:00")).stale);
-  check("credit 4 days out is red and listed",(()=>{const m=buildModel(FIXTURE,at("2026-11-11T10:00:00+07:00"));return m.credits.find(c=>c.id==="c1").tone==="red"&&m.attention.some(a=>a.startsWith("Credit"));})());
-  check("urgent credit still counted in expiring total",buildModel(FIXTURE,at("2026-11-11T10:00:00+07:00")).expiringSoon.length===1);
-  check("restricted credit never coloured or counted",(()=>{const m=buildModel(FIXTURE,at("2026-11-11T10:00:00+07:00"));return m.credits.find(c=>c.id==="c2").tone==="none"&&m.usableCount===1;})());
-  check("expired credit with balance flagged and excluded",(()=>{const m=buildModel(FIXTURE,at("2026-11-16T10:00:00+07:00"));return m.usableCount===0&&m.attention.some(a=>a.includes("expiry"));})());
-  check("renewal 9 days out stays neutral",buildModel(FIXTURE,at("2026-11-11T10:00:00+07:00")).subscriptions[0].tone==="none");
-  check("renewal 3 days out turns red",buildModel(FIXTURE,at("2026-11-17T10:00:00+07:00")).subscriptions[0].tone==="red");
-  check("passed renewal flagged unconfirmed",buildModel(FIXTURE,at("2026-11-21T10:00:00+07:00")).subscriptions[0].countdown==="Renewal unconfirmed");
-  check("usage reset passed shows awaiting refresh",buildModel(FIXTURE,at("2026-11-12T09:00:00+07:00")).usage[0].resetPassed);
-  return results;
-}
+  /* ---------- self-tests on a frozen fixture: open app.html#selftest ---------- */
+  function runSelfTests() {
+    const out = [], check = (name, ok) => out.push((ok ? "PASS " : "FAIL ") + name), at = (s) => Date.parse(s), clone = (x) => JSON.parse(JSON.stringify(x));
+    const T = "2026-11-11T09:00:00+07:00";
+    const FIX = {
+      updatedAt: T, timezone: { offsetHours: 7, label: "ICT" }, refreshHours: [6, 9, 12, 15, 18],
+      rules: { staleGraceMinutes: 45, renewalAlertDays: 3, creditUrgentDays: 7, creditWarnDays: 15, creditRiskDays: 30, hideCountdownAfterDays: 90, paceWindowDays: 7 },
+      fx: { usdVnd: 25000, asOf: "fixture" }, card: { name: "Card" },
+      creditClasses: { api: { title: "Usable", counted: true }, restricted: { title: "Restricted", counted: false } },
+      subscriptions: [{ id: "s1", name: "Plan", logo: "x", plan: "p", renews: "2026-11-20", price: { currency: "USD", amount: 10 }, autoRenew: true, notes: [], source: "f" }],
+      credits: [
+        { id: "c1", name: "Credit", logo: "x", class: "api", label: "l", currency: "USD", left: 10, cap: 20, expires: "2026-11-15", checkedAt: T, notes: [], source: "f" },
+        { id: "c2", name: "Trial", logo: "x", class: "restricted", label: "l", currency: "VND", left: 1000, cap: null, expires: "2026-11-12", checkedAt: T, notes: [], source: "f" },
+      ],
+      usageLimits: [{ id: "u1", name: "Limit", logo: "x", usedPct: 10, resetsAt: "2026-11-12T08:55:00+07:00", checkedAt: T, notes: [], source: "f" }],
+    };
+    const NOW = at("2026-11-11T10:00:00+07:00");
+    const bad = (fn) => { const f = clone(FIX); fn(f); return validateData(f).length > 0; };
+    const c1 = (fn, now) => { const f = clone(FIX); if (fn) fn(f.credits[0], f); return buildModel(f, now || NOW).creditRows.find((c) => c.id === "c1"); };
+    const hist = (left) => (c) => { c.history = [{ at: "2026-11-09T09:00:00+07:00", left: left }]; };
+    check("live DATA passes validation", validateData(window.DATA).length === 0);
+    check("fixture passes validation", validateData(FIX).length === 0);
+    check("rejects impossible date", bad((f) => (f.credits[0].expires = "2026-02-30")));
+    check("rejects negative balance", bad((f) => (f.credits[0].left = -1)));
+    check("rejects balance above cap", bad((f) => (f.credits[0].left = 30)));
+    check("rejects duplicate ids", bad((f) => (f.credits[1].id = "c1")));
+    check("rejects unordered thresholds", bad((f) => (f.rules.creditUrgentDays = 40)));
+    check("rejects usage over 100%", bad((f) => (f.usageLimits[0].usedPct = 120)));
+    check("rejects missing source text", bad((f) => delete f.subscriptions[0].source));
+    check("rejects unknown credit class", bad((f) => (f.credits[0].class = "toString")));
+    check("rejects history reading after the current one", bad((f) => (f.credits[0].history = [{ at: "2026-11-12T09:00:00+07:00", left: 12 }])));
+    check("rejects deadline without a valid date", bad((f) => (f.deadlines = [{ id: "d1", name: "Key", date: "2026-13-01", source: "f" }])));
+    check("pace and projected loss from history", (() => { const c = c1(hist(14)); return Math.abs(c.pace - 2) < 1e-9 && Math.abs(c.loss - 2) < 1e-9; })());
+    check("readings older than the pace window are ignored", c1((c) => (c.history = [{ at: "2026-10-01T09:00:00+07:00", left: 20 }])).pace === null);
+    check("a balance rise inside the window gives no pace", c1(hist(5)).pace === null);
+    check("4 days out and behind pace is red", c1(hist(14)).tone === "red");
+    check("4 days out but on pace drops to amber", c1(hist(16)).tone === "amber");
+    check("20 days out without pace is outlined", c1((c) => (c.expires = "2026-12-01")).tone === "watch");
+    check("20 days out and on pace is neutral", c1((c) => { c.expires = "2026-12-01"; hist(12)(c); }).tone === "none");
+    check("risk tile shows the estimated leftover", (() => { const f = clone(FIX); hist(14)(f.credits[0]); return buildModel(f, NOW).tiles[1].big === "≈ $2"; })());
+    check("risk tile counts the full balance when no pace is known", buildModel(FIX, NOW).tiles[1].big === "≈ $10");
+    check("expires today counts as 0 days, not expired", (() => { const c = c1(null, at("2026-11-15T23:59:00+07:00")); return c.days === 0 && !c.expired; })());
+    check("expired the next local day", c1(null, at("2026-11-16T00:01:00+07:00")).expired);
+    check("expired credit with balance flagged and excluded", (() => { const m = buildModel(FIX, at("2026-11-16T10:00:00+07:00")); return m.usableCount === 0 && m.attention.some((a) => a.indexOf("expiry") >= 0); })());
+    check("restricted credit never coloured or counted", (() => { const m = buildModel(FIX, NOW); return m.creditRows.find((c) => c.id === "c2").tone === "none" && m.usableVnd === 250000; })());
+    check("not stale within grace (12:30)", !buildModel(FIX, at("2026-11-11T12:30:00+07:00")).stale);
+    check("stale after grace (12:50)", buildModel(FIX, at("2026-11-11T12:50:00+07:00")).stale);
+    check("counts every missed refresh", buildModel(FIX, at("2026-11-11T15:50:00+07:00")).missedCount === 2);
+    check("next refresh shown", buildModel(FIX, NOW).fresh.next === "next 12:00");
+    const eve = clone(FIX); eve.updatedAt = "2026-11-11T18:00:00+07:00";
+    check("overnight gap not stale at 05:00", !buildModel(eve, at("2026-11-12T05:00:00+07:00")).stale);
+    check("overnight stale at 06:50", buildModel(eve, at("2026-11-12T06:50:00+07:00")).stale);
+    check("renewal 9 days out stays neutral", buildModel(FIX, NOW).subs.rows[0].tone === "none");
+    check("renewal 3 days out turns red", buildModel(FIX, at("2026-11-17T10:00:00+07:00")).subs.rows[0].tone === "red");
+    check("passed renewal flagged unconfirmed", buildModel(FIX, at("2026-11-21T10:00:00+07:00")).subs.rows[0].cd === "Renewal unconfirmed");
+    check("usage reset passed shows awaiting refresh", buildModel(FIX, at("2026-11-12T09:00:00+07:00")).usage[0].resetPassed);
+    check("page renders the fixture", toMarkup(pageView(buildModel(FIX, NOW), { open: {}, net: { busy: false, message: "" } })).indexOf("Credit at risk") > 0);
+    return out;
+  }
 
-/* ---------- render: change-only, delegated events, keyboard focus kept ---------- */
-let data=window.DATA,lastMarkup="";const openRows={},net={busy:false,message:""};
-function render(){
-  if(location.hash==="#selftest"){app.innerHTML=toMarkup(html`<h1>AI Subscription · self-test</h1><div class="selftest">${runSelfTests().join("\n")}</div>`);lastMarkup="";return;}
-  const errors=validateData(data);
-  const markup=errors.length?toMarkup(html`<h1>AI Subscription</h1><div class="error" role="alert">The data block could not be read (${errors.slice(0,4).join(", ")}). The last refresh needs fixing.</div>`)
-    :toMarkup(renderPage(data,buildModel(data,Date.now()),openRows,net));
-  if(markup===lastMarkup)return;
-  const active=document.activeElement,focusSelector=!active||!active.dataset?"":active.dataset.toggle?'[data-toggle="'+active.dataset.toggle+'"]':active.dataset.action?'[data-action="'+active.dataset.action+'"]':active.tagName==="SUMMARY"?"details.src summary":"";
-  app.innerHTML=markup;lastMarkup=markup;
-  if(focusSelector){const el=app.querySelector(focusSelector);if(el)el.focus({preventScroll:true});}
-}
-app.addEventListener("click",e=>{
-  const toggle=e.target.closest("[data-toggle]");
-  if(toggle){const id=toggle.dataset.toggle;openRows[id]=!openRows[id];toggle.closest(".item").classList.toggle("open",openRows[id]);toggle.setAttribute("aria-expanded",String(openRows[id]));lastMarkup="";return;}
-  if(e.target.closest('[data-action="check"]'))checkForUpdate(true);
-});
-app.addEventListener("toggle",e=>{if(e.target.matches&&e.target.matches("details.src")){openRows.__sources=e.target.open;lastMarkup="";}},true);
+  /* ---------- controller: change-only render, live slots, last-good fallback ---------- */
+  let data = window.DATA, lastMarkup = "";
+  const ui = { open: {}, net: { busy: false, message: "" } };
+  const GOOD_KEY = "ai-subscription:last-good";
+  function lastGood() {
+    try { const s = JSON.parse(localStorage.getItem(GOOD_KEY) || "null"); return s && !validateData(s).length ? s : null; } catch (e) { return null; }
+  }
+  function rememberGood(d) {
+    try { const s = lastGood(); if (!s || Date.parse(d.updatedAt) >= Date.parse(s.updatedAt)) localStorage.setItem(GOOD_KEY, JSON.stringify(d)); } catch (e) { /* storage unavailable */ }
+  }
+  function render() {
+    try { draw(); } catch (err) {
+      lastMarkup = "";
+      app.innerHTML = toMarkup(html`<h1>AI Subscription</h1><div class="error" role="alert">The page could not be drawn (${String(err && err.message)}).</div>`);
+    }
+  }
+  function draw() {
+    if (location.hash === "#selftest") {
+      app.innerHTML = toMarkup(html`<h1>AI Subscription · self-test</h1><div class="selftest">${runSelfTests().join("\n")}</div>`);
+      lastMarkup = "";
+      return;
+    }
+    const errors = validateData(data), shown = errors.length ? lastGood() : data, model = shown ? buildModel(shown, Date.now()) : null;
+    if (!errors.length) rememberGood(data);
+    const notice = errors.length
+      ? html`<div class="error" role="alert">The latest data block could not be read (${errors.slice(0, 4).join(", ")}). ${shown ? "Showing the last good data from this device instead." : "The last refresh needs fixing."}</div>`
+      : "";
+    const markup = toMarkup(model ? html`${notice}${pageView(model, ui)}` : html`<h1>AI Subscription</h1>${notice}`);
+    const fillLive = () => {
+      if (!model) return;
+      app.querySelectorAll("[data-live]").forEach((el) => {
+        const key = el.getAttribute("data-live");
+        if (key && el.textContent !== (model.live[key] || "")) el.textContent = model.live[key] || "";
+      });
+    };
+    if (markup === lastMarkup) { fillLive(); return; }
+    const active = document.activeElement, ds = active && active.dataset ? active.dataset : {};
+    const focusSel = ds.toggle ? '[data-toggle="' + ds.toggle + '"]' : ds.action ? '[data-action="' + ds.action + '"]' : "";
+    app.innerHTML = markup;
+    lastMarkup = markup;
+    fillLive();
+    if (focusSel) { const el = app.querySelector(focusSel); if (el) el.focus({ preventScroll: true }); }
+  }
+  app.addEventListener("click", (e) => {
+    const t = e.target.closest("[data-toggle]");
+    if (t) { const id = t.getAttribute("data-toggle"); ui.open[id] = !ui.open[id]; render(); return; }
+    if (e.target.closest('[data-action="check"]')) checkForUpdate(true);
+  });
 
-/* ---------- fetch newer data while the app is open. index.html is only a loader, so the data lives in app.html beside it.
-   cache:"no-cache" revalidates with the server's ETag, so an unchanged file costs a 304, not a download. ---------- */
-const DATA_FILE=new URL("app.html",location.href).href,START_MARK="/* DATA:"+"START */",END_MARK="/* DATA:"+"END */";
-let lastCheck=0;
-async function checkForUpdate(manual){
-  if(net.busy||location.protocol==="file:"||(!manual&&Date.now()-lastCheck<5*60000))return;
-  lastCheck=Date.now();net.busy=true;if(manual){net.message="";render();}
-  try{
-    const text=await (await fetch(DATA_FILE,{cache:"no-cache"})).text();
-    const a=text.indexOf(START_MARK),b=text.indexOf(END_MARK);if(a<0||b<0)throw new Error("markers");
-    const next=JSON.parse(text.slice(a+START_MARK.length,b));if(validateData(next).length)throw new Error("invalid");
-    const changed=next.updatedAt!==data.updatedAt;if(changed)data=next;
-    const t=new Date();net.message=manual||changed?(changed?"New data loaded":"No newer data yet")+" · checked "+twoDigits(t.getHours())+":"+twoDigits(t.getMinutes()):"";
-  }catch(err){net.message="Couldn’t check for newer data";}
-  net.busy=false;render();
-}
-render();checkForUpdate(false);
-setInterval(()=>{render();checkForUpdate(false);},60000);
-document.addEventListener("visibilitychange",()=>{if(!document.hidden){render();checkForUpdate(false);}});
-window.addEventListener("pageshow",()=>{render();checkForUpdate(false);});
-window.addEventListener("hashchange",()=>{lastMarkup="";render();});
+  /* ---------- pick up newer data while open: re-read this app's own file, accept only a strictly newer snapshot ---------- */
+  const FILE = new URL("app.html", location.href).href, MARK_A = "/* DATA:" + "START */", MARK_B = "/* DATA:" + "END */";
+  let lastCheck = 0;
+  async function checkForUpdate(manual) {
+    if (ui.net.busy || location.protocol === "file:" || (!manual && Date.now() - lastCheck < 5 * 60000)) return;
+    lastCheck = Date.now();
+    ui.net.busy = true;
+    if (manual) { ui.net.message = ""; render(); }
+    try {
+      const res = await fetch(FILE, { cache: "no-cache" });
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      const text = await res.text(), a = text.indexOf(MARK_A), b = text.indexOf(MARK_B);
+      if (a < 0 || b < 0) throw new Error("markers");
+      const next = JSON.parse(text.slice(a + MARK_A.length, b));
+      if (validateData(next).length) throw new Error("invalid");
+      const changed = validateData(data).length > 0 || Date.parse(next.updatedAt) > Date.parse(data.updatedAt);
+      if (changed) data = next;
+      const t = new Date();
+      ui.net.message = manual || changed ? (changed ? "New data loaded" : "No newer data yet") + " · checked " + two(t.getHours()) + ":" + two(t.getMinutes()) : "";
+    } catch (err) {
+      ui.net.message = manual ? "Couldn’t check for newer data" : ui.net.message;
+    }
+    ui.net.busy = false;
+    render();
+  }
+  const tick = () => { render(); checkForUpdate(false); };
+  tick();
+  setInterval(tick, 60000);
+  document.addEventListener("visibilitychange", () => { if (!document.hidden) tick(); });
+  window.addEventListener("pageshow", tick);
+  window.addEventListener("hashchange", () => { lastMarkup = ""; render(); });
 })();
 </script>
 </body>
