@@ -172,11 +172,38 @@ li + li { margin-top: 6px; }
   border: 1px solid var(--hero-border);
 }
 .payment-label { color: var(--hero-label); font-size: 11px; letter-spacing: .09em; font-weight: 700; text-transform: uppercase; }
-.payment-main { display: flex; align-items: baseline; justify-content: space-between; gap: 14px; margin-top: 8px; }
-.payment-name { min-width: 0; font-size: 17px; font-weight: 700; letter-spacing: -.02em; }
+.payment-main { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-top: 8px; }
+.payment-name,
+.payment-amount,
+.payment h1,
+.payment h2,
+.payment h3,
+.payment b { color: var(--hero-text); }
+.payment-name {
+  min-width: 0;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -.02em;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+.payment-entry { display: inline-flex; align-items: center; gap: 8px; min-width: 0; }
+.payment-plan { display: inline-flex; align-items: center; gap: 8px; min-width: 0; }
+.payment-sep { flex: none; opacity: .75; }
 .payment-amount { font-size: 27px; line-height: 1.15; flex: none; }
 .payment-meta { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 3px 12px; margin-top: 8px; font-size: 12px; color: var(--hero-muted); }
 .payment a { color: var(--hero-text); }
+.payment .mark {
+  width: 22px;
+  height: 22px;
+  border: 0;
+  background: transparent;
+  color: var(--hero-text);
+  border-radius: 0;
+}
+.payment .mark svg { width: 20px; height: 20px; }
 .signal {
   display: block;
   padding: 12px 14px;
@@ -1005,7 +1032,7 @@ summary::-webkit-details-marker { display: none; }
           ? html`<b class="small">${first.countdown}</b>` : ""}
       </div>
       ${first ? html`<div class="payment-main">
-        <h2 class="payment-name" id="next-heading">${next.map(s => s.name).join(" + ")}</h2>
+        <h2 class="payment-name" id="next-heading">${next.map((s, i) => html`<span class="payment-entry">${i ? html`<span class="payment-sep" aria-hidden="true">+</span>` : ""}<span class="payment-plan">${logoView(s.logo)}<span>${s.name}</span></span></span>`)}</h2>
         <div class="payment-amount money">${charge}</div>
       </div>
       <div class="payment-meta">
