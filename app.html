@@ -40,6 +40,18 @@
   --bad-bg: #ffebe6;
   --track: #e6e1d2;
   --focus: #3446c8;
+  --brand-anthropic-bg: rgba(217, 119, 87, 0.11);
+  --brand-anthropic-line: rgba(217, 119, 87, 0.30);
+  --brand-anthropic-accent: #d97757;
+  --brand-openai-bg: rgba(24, 24, 24, 0.045);
+  --brand-openai-line: rgba(24, 24, 24, 0.14);
+  --brand-openai-accent: #3f3f46;
+  --brand-google-bg: rgba(66, 133, 244, 0.08);
+  --brand-google-line: rgba(66, 133, 244, 0.26);
+  --brand-google-accent: #4285f4;
+  --brand-xai-bg: rgba(51, 65, 85, 0.07);
+  --brand-xai-line: rgba(51, 65, 85, 0.18);
+  --brand-xai-accent: #334155;
   --radius-lg: 14px;
   --radius-md: 11px;
   --radius-sm: 7px;
@@ -71,6 +83,18 @@
     --bad-bg: #3d2721;
     --track: #2e3242;
     --focus: #cbbd84;
+    --brand-anthropic-bg: rgba(217, 119, 87, 0.18);
+    --brand-anthropic-line: rgba(217, 119, 87, 0.42);
+    --brand-anthropic-accent: #e39a80;
+    --brand-openai-bg: rgba(255, 255, 255, 0.08);
+    --brand-openai-line: rgba(255, 255, 255, 0.18);
+    --brand-openai-accent: #e4e4e7;
+    --brand-google-bg: rgba(66, 133, 244, 0.18);
+    --brand-google-line: rgba(66, 133, 244, 0.42);
+    --brand-google-accent: #8ab4f8;
+    --brand-xai-bg: rgba(148, 163, 184, 0.12);
+    --brand-xai-line: rgba(226, 232, 240, 0.22);
+    --brand-xai-accent: #cbd5e1;
   }
 }
 * { box-sizing: border-box; }
@@ -709,6 +733,108 @@ li + li { margin-top: 6px; }
 }
 .timeline-item.urgent .timeline-dot { background: var(--warn); }
 .timeline-item.passed .timeline-dot { background: var(--bad); }
+
+/* Brand tints — group products by company; layout unchanged */
+.plan-card[class*="brand-"],
+.credit[class*="brand-"],
+.usage[class*="brand-"] {
+  position: relative;
+}
+.plan-card.brand-anthropic,
+.credit.brand-anthropic,
+.timeline-item.brand-anthropic {
+  background: var(--brand-anthropic-bg);
+  border-color: var(--brand-anthropic-line);
+}
+.plan-card.brand-openai,
+.credit.brand-openai,
+.timeline-item.brand-openai {
+  background: var(--brand-openai-bg);
+  border-color: var(--brand-openai-line);
+}
+.plan-card.brand-google,
+.credit.brand-google,
+.timeline-item.brand-google {
+  background: var(--brand-google-bg);
+  border-color: var(--brand-google-line);
+}
+.plan-card.brand-xai,
+.credit.brand-xai,
+.usage.brand-xai,
+.timeline-item.brand-xai {
+  background: var(--brand-xai-bg);
+  border-color: var(--brand-xai-line);
+}
+.plan-card.brand-anthropic:not(.urgent)::before,
+.credit.brand-anthropic:not(.warning):not(.danger)::before,
+.usage.brand-anthropic::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  border-radius: var(--radius-md) 0 0 var(--radius-md);
+  background: var(--brand-anthropic-accent);
+  pointer-events: none;
+}
+.plan-card.brand-openai:not(.urgent)::before,
+.credit.brand-openai:not(.warning):not(.danger)::before,
+.usage.brand-openai::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  border-radius: var(--radius-md) 0 0 var(--radius-md);
+  background: var(--brand-openai-accent);
+  pointer-events: none;
+}
+.plan-card.brand-xai:not(.urgent)::before,
+.credit.brand-xai:not(.warning):not(.danger)::before,
+.usage.brand-xai::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  border-radius: var(--radius-md) 0 0 var(--radius-md);
+  background: var(--brand-xai-accent);
+  pointer-events: none;
+}
+.plan-card.brand-google:not(.urgent)::before,
+.credit.brand-google:not(.warning):not(.danger)::before,
+.usage.brand-google::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  border-radius: var(--radius-md) 0 0 var(--radius-md);
+  background: linear-gradient(to bottom, #4285f4, #ea4335, #fbbc05, #34a853);
+  pointer-events: none;
+}
+.plan-card.brand-google::after,
+.credit.brand-google::after,
+.usage.brand-google::after,
+.timeline-item.brand-google::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 2px;
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+  background: linear-gradient(to right, #4285f4 0 25%, #ea4335 25% 50%, #fbbc05 50% 75%, #34a853 75% 100%);
+  pointer-events: none;
+}
+.timeline-item.brand-anthropic:not(.urgent):not(.passed) .timeline-dot { background: var(--brand-anthropic-accent); }
+.timeline-item.brand-openai:not(.urgent):not(.passed) .timeline-dot { background: var(--brand-openai-accent); }
+.timeline-item.brand-google:not(.urgent):not(.passed) .timeline-dot { background: var(--brand-google-accent); }
+.timeline-item.brand-xai:not(.urgent):not(.passed) .timeline-dot { background: var(--brand-xai-accent); }
 .deadline > summary {
   display: flex;
   align-items: center;
@@ -2668,6 +2794,12 @@ summary::-webkit-details-marker { display: none; }
     return `<svg viewBox="${m.vb}" focusable="false">${g ? "<defs>" + g + "</defs>" : ""}${m.paths.map(p => `<path d="${p.d}" fill="${p.fill}"${p.evenodd ? ' fill-rule="evenodd"' : ""}/>`).join("")}</svg>`;
   };
   const logoView = key => html`<span class="mark" aria-hidden="true">${raw(logoSvg(key))}</span>`;
+  const BRAND_OF = {
+    anthropic: "anthropic", openai: "openai",
+    gemini: "google", aistudio: "google", googledev: "google", googlecloud: "google",
+    x: "xai", grokbot: "xai"
+  };
+  const brandCls = logo => BRAND_OF[logo] ? " brand-" + BRAND_OF[logo] : "";
   const notesView = notes => notes.length
     ? html`<ul class="notes">${notes.map(note => html`<li>${note}</li>`)}</ul>` : "";
   const kv = pairs => html`<dl class="kv">${pairs.map(([label, value]) =>
@@ -2940,7 +3072,7 @@ summary::-webkit-details-marker { display: none; }
 
   function usageView(u, m, ui) {
     const d = m.data;
-    return html`<article class="usage" id="usage-${u.id}">
+    return html`<article class="usage${brandCls(u.logo)}" id="usage-${u.id}">
       <div class="usage-head">
         ${logoView(u.logo)}
         <h3 class="usage-name grow">${u.name}</h3>
@@ -3032,7 +3164,7 @@ summary::-webkit-details-marker { display: none; }
     const hasSpark = sparkPoints.length >= 2;
     const delta = hasSpark ? c.left - sparkPoints[0].left : 0;
 
-    return html`<article class="credit ${c.tone} ${!c.counted ? "restricted" : ""}" id="credit-${c.id}">
+    return html`<article class="credit ${c.tone} ${!c.counted ? "restricted" : ""}${brandCls(c.logo)}" id="credit-${c.id}">
       <div class="credit-body-top">
         <div class="credit-head">
           ${logoView(c.logo)}
@@ -3142,7 +3274,7 @@ summary::-webkit-details-marker { display: none; }
     const ringTone = s.days < 0 ? "bad" : s.urgent ? "warn" : "";
     const ringText = s.days < 0 ? "!" : s.days === 0 ? "0d" : s.days + "d";
 
-    return html`<article class="plan-card ${s.urgent ? "urgent" : ""}" id="plan-${s.id}">
+    return html`<article class="plan-card ${s.urgent ? "urgent" : ""}${brandCls(s.logo)}" id="plan-${s.id}">
       <div>
         <div class="plan-top">
           <div class="plan-brand">
@@ -3226,7 +3358,7 @@ summary::-webkit-details-marker { display: none; }
       ${m.deadlines.length ? html`<div class="timeline">${m.deadlines.map(item => {
         const key = "deadline-details-" + item.id;
         const stateCls = item.days < 0 ? "passed" : item.urgent ? "urgent" : "";
-        return html`<div class="timeline-item ${stateCls}">
+        return html`<div class="timeline-item ${stateCls}${brandCls(item.logo)}">
           <span class="timeline-dot" aria-hidden="true"></span>
           <details class="deadline" id="deadline-${item.id}" data-key="${key}" ${openAttr(ui, key)}>
             <summary>
